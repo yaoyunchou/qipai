@@ -1,0 +1,36 @@
+# Python (backend)
+code/backend/.venv/
+code/backend/.dev-initialized
+code/backend/.env
+code/backend/**/__pycache__/
+code/backend/**/*.py[cod]
+code/backend/.pytest_cache/
+code/backend/.mypy_cache/
+code/backend/.ruff_cache/
+code/backend/*.egg-info/
+
+# Node / Vite (frontend)
+code/frontend/node_modules/
+code/frontend/dist/
+code/frontend/.vite/
+code/frontend/*.tsbuildinfo
+
+# 环境变量（保留 example）
+.env
+.env.*
+!.env.example
+!**/.env.example
+
+# 日志与覆盖率
+*.log
+logs/
+.coverage
+htmlcov/
+
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+*.swp
+*~
