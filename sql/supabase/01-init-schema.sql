@@ -58,9 +58,9 @@ $$ LANGUAGE plpgsql;
 
 -- ---------------------------------------------------------------------------
 -- 删表（开发初始化；生产已有数据勿直接重跑）
+-- 注意：勿在表不存在时 DROP TRIGGER ON biz_order，会报 42P01；
+--       CASCADE 删表时会一并移除触发器。
 -- ---------------------------------------------------------------------------
-DROP TRIGGER IF EXISTS trg_biz_order_one_open_insert ON biz_order;
-DROP TRIGGER IF EXISTS trg_biz_order_one_open_update ON biz_order;
 DROP TABLE IF EXISTS biz_order CASCADE;
 DROP TABLE IF EXISTS price_change_log CASCADE;
 DROP TABLE IF EXISTS room_table CASCADE;

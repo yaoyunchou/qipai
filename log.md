@@ -1,5 +1,29 @@
 # 变更日志
 
+## 2026-06-17
+
+### 修复 start.ps1 在 Windows PowerShell 5.1 下语法报错
+
+- **现象**：双击 `start.cmd` 报 `MissingEndCurlyBrace`、中文乱码导致字符串未闭合。
+- **原因**：`start.ps1` 为 UTF-8 无 BOM，中文 Windows 默认按 GBK 解析脚本。
+- **修复**：以 UTF-8 BOM 保存；提示语中 `1)` 改为单引号字符串避免误解析。
+
+### 修复开单/清台弹窗确认按钮可重复点击
+
+- **现象**：开单 Modal 点「确定」后接口返回前可多次提交。
+- **修复**：`Floor.tsx` 增加 `openSubmitting` / `closeSubmitting`，Modal 使用 `confirmLoading` 并在提交中禁用取消与遮罩关闭。
+
+### 修复 backend 启动 NameError: date 未定义
+
+- **现象**：uvicorn 启动失败，`orders.py` 报 `NameError: name 'date' is not defined`。
+- **修复**：`orders.py` 补充 `from datetime import date`。
+
+### 修复 Supabase 初始化 SQL 首次执行失败
+
+- **现象**：在 SQL Editor 执行 `01-init-schema.sql` 报错 `42P01: relation "biz_order" does not exist`。
+- **原因**：删表前先 `DROP TRIGGER ... ON biz_order`，首次建库时表尚不存在，PostgreSQL 仍会报错（`DROP TRIGGER IF EXISTS` 不跳过「表不存在」）。
+- **修复**：移除多余的 `DROP TRIGGER`，仅保留 `DROP TABLE IF EXISTS biz_order CASCADE`（CASCADE 会一并删除触发器）。
+
 ## 2026-06-11
 
 ### 修复 localhost:5180 白屏/报错

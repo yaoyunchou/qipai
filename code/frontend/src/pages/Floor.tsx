@@ -39,6 +39,8 @@ export default function FloorPage() {
   const [actualPrice, setActualPrice] = useState<number | null>(null);
   const [remark, setRemark] = useState("");
   const [closePrice, setClosePrice] = useState<number | null>(null);
+  const [openSubmitting, setOpenSubmitting] = useState(false);
+  const [closeSubmitting, setCloseSubmitting] = useState(false);
 
   const timingEnabled = storeCfg?.enable_timing ?? tables.some((t) => t.enable_timing);
 
@@ -69,7 +71,8 @@ export default function FloorPage() {
   }, [tables, tick]);
 
   const handleOpen = async () => {
-    if (!openModal) return;
+    if (!openModal || openSubmitting) return;
+    setOpenSubmitting(true);
     try {
       const payload: { table_id: number; actual_price?: number; remark?: string } = {
         table_id: openModal.id,
@@ -86,11 +89,14 @@ export default function FloorPage() {
       load();
     } catch (e) {
       message.error(e instanceof Error ? e.message : "开单失败");
+    } finally {
+      setOpenSubmitting(false);
     }
   };
 
   const handleClose = async () => {
-    if (!closeModal?.open_order_id) return;
+    if (!closeModal?.open_order_id || closeSubmitting) return;
+    setCloseSubmitting(true);
     try {
       const body: { actual_price?: number } = {};
       if (closePrice != null) body.actual_price = closePrice;
@@ -104,6 +110,8 @@ export default function FloorPage() {
       load();
     } catch (e) {
       message.error(e instanceof Error ? e.message : "清台失败");
+    } finally {
+      setCloseSubmitting(false);
     }
   };
 
@@ -167,7 +175,11 @@ export default function FloorPage() {
         title={timingEnabled ? `开始计时 · ${openModal?.name}` : `开单 · ${openModal?.name}`}
         open={!!openModal}
         onOk={handleOpen}
+        confirmLoading={openSubmitting}
+        cancelButtonProps={{ disabled: openSubmitting }}
+        maskClosable={!openSubmitting}
         onCancel={() => {
+          if (openSubmitting) return;
           setOpenModal(null);
           setRemark("");
         }}
@@ -196,7 +208,11 @@ export default function FloorPage() {
         title={`清台 · ${closeModal?.name}`}
         open={!!closeModal}
         onOk={handleClose}
+        confirmLoading={closeSubmitting}
+        cancelButtonProps={{ disabled: closeSubmitting }}
+        maskClosable={!closeSubmitting}
         onCancel={() => {
+          if (closeSubmitting) return;
           setCloseModal(null);
           setClosePrice(null);
         }}
