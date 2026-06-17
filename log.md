@@ -2,6 +2,18 @@
 
 ## 2026-06-17
 
+### 完成 Vercel 生产部署
+
+- 仓库根目录新增 `vercel.json`、`pyproject.toml`、`api/index.py`、`scripts/vercel_build.py`，从根目录构建并指向 `code/`。
+- `vercel.json` 增加 `buildCommand` 确保前端 `npm ci && vite build` 执行。
+- 通过 Vercel CLI 配置 Production 环境变量：`DATABASE_URL`、`DATABASE_SSL_MODE`、`JWT_SECRET`。
+- 生产地址：https://qipai-pearl.vercel.app（`/health` 200，`/floor` 前端可访问）。
+
+### 仓库根目录增加 Vercel 部署配置
+
+- **问题**：Vercel 从仓库根目录构建时找不到 `code/vercel.json`，部署为空壳（404）。
+- **修复**：在仓库根添加 `vercel.json`、`pyproject.toml`、`api/index.py`、`scripts/vercel_build.py`，路径指向 `code/frontend` 与 `code/backend`，无需在控制台改 Root Directory。
+
 ### 修复 start.ps1 在 Windows PowerShell 5.1 下语法报错
 
 - **现象**：双击 `start.cmd` 报 `MissingEndCurlyBrace`、中文乱码导致字符串未闭合。
