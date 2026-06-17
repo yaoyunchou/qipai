@@ -144,8 +144,8 @@ DATABASE_SSL_MODE=require
 
 ### 2. Vercel（应用）
 
-1. 将仓库推送到 GitHub，在 Vercel 导入项目
-2. **Root Directory** 设为 `code`
+1. 将仓库推送到 GitHub，在 [Vercel](https://vercel.com) 导入项目
+2. **Root Directory**：留空（仓库根目录）即可；根目录已有 `vercel.json` / `api/index.py` / `pyproject.toml` 指向 `code/`。若已在控制台设为 `code` 也兼容。
 3. 在 Vercel → Settings → Environment Variables 配置：
 
 | 变量 | 说明 |
@@ -176,9 +176,9 @@ npx vercel --prod   # 生产
 | 超时 | Hobby 计划函数最长约 10s；报表导出数据量大时需关注 |
 | 备选方案 | 若 API 延迟或超时成为瓶颈，可仅将前端放 Vercel，后端迁至 Railway / Render |
 
-相关配置文件：`code/vercel.json`、`code/pyproject.toml`、`code/api/index.py`。
+相关配置文件：仓库根目录 `vercel.json`、`pyproject.toml`、`api/index.py`；`code/` 下为本地开发与旧版对照。
 
 ## 从 MySQL 迁移说明
 
 原 `sql/01`～`03` 为 MySQL 脚本（历史保留）。当前版本使用 **Supabase PostgreSQL**，请使用 `sql/supabase/01-init-schema.sql`。
-
+

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "outputDirectory": "code/frontend/dist",
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api" },
+    { "source": "/health", "destination": "/api" },
+    { "source": "/docs", "destination": "/api" },
+    { "source": "/docs/(.*)", "destination": "/api" },
+    { "source": "/openapi.json", "destination": "/api" },
+    { "source": "/((?!assets/).*)", "destination": "/index.html" }
+  ],
+  "functions": {
+    "api/**": {
+      "excludeFiles": "code/backend/.venv/**"
+    }
+  }
+}
