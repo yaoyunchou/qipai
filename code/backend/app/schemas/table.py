@@ -12,7 +12,9 @@ class TableBoardItem(BaseModel):
     status: str  # IDLE | OCCUPIED
     open_order_id: int | None = None
     open_order_no: str | None = None
+    base_price: Decimal | None = None
     actual_price: Decimal | None = None
+    remark: str | None = None
     opened_at: datetime | None = None
     billing_minutes: int | None = None
     enable_timing: bool = False

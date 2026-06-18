@@ -47,7 +47,9 @@ export type TableBoardItem = {
   status: "IDLE" | "OCCUPIED";
   open_order_id: number | null;
   open_order_no: string | null;
+  base_price: string | null;
   actual_price: string | null;
+  remark: string | null;
   opened_at: string | null;
   billing_minutes: number | null;
   enable_timing: boolean;

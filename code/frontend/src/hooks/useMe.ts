@@ -1,18 +1,7 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { api, type UserMe } from "../api/client";
+import { useUser } from "../context/UserContext";
 
+/** 向后兼容各页面已有的 useMe() 调用 */
 export function useMe() {
-  const navigate = useNavigate();
-  const [me, setMe] = useState<UserMe | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    api<UserMe>("/api/v1/auth/me")
-      .then(setMe)
-      .catch(() => navigate("/login", { replace: true }))
-      .finally(() => setLoading(false));
-  }, [navigate]);
-
+  const { me, loading } = useUser();
   return { me, loading };
 }

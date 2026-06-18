@@ -90,7 +90,11 @@ def _to_board_item(t: RoomTable, order: BizOrder | None, cfg: SysStoreConfig | N
 
         open_order_no=order.order_no if order else None,
 
+        base_price=order.base_price if order else None,
+
         actual_price=actual_price,
+
+        remark=order.remark if order else None,
 
         opened_at=opened_at,
 

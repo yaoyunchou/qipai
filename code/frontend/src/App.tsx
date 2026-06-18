@@ -1,5 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { getToken } from "./api/client";
+import { UserProvider } from "./context/UserContext";
 import AdminPage from "./pages/Admin";
 import FloorPage from "./pages/Floor";
 import LoginPage from "./pages/Login";
@@ -11,10 +12,9 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-export default function App() {
+function AppRoutes() {
   return (
-    <BrowserRouter>
-      <Routes>
+    <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route
           path="/floor"
@@ -52,6 +52,15 @@ export default function App() {
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <UserProvider>
+        <AppRoutes />
+      </UserProvider>
     </BrowserRouter>
   );
 }

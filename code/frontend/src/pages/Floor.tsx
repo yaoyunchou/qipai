@@ -1,8 +1,9 @@
-import { Card, Input, InputNumber, Layout, Modal, Space, Tag, Typography, message } from "antd";
+import { Input, InputNumber, Layout, Modal, Tag, Typography, message } from "antd";
 import { useCallback, useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { api, type TableBoardItem } from "../api/client";
 import AppHeader from "../components/AppHeader";
+import { useIsMobile } from "../hooks/useIsMobile";
 import { useMe } from "../hooks/useMe";
 
 const { Content } = Layout;
@@ -14,7 +15,12 @@ type StoreConfig = {
   cashier_allow_custom_price: boolean;
 };
 
-function formatDuration(openedAt: string) {
+function formatOpenTime(openedAt: string) {
+  const d = new Date(openedAt);
+  return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+}
+
+function formatElapsed(openedAt: string) {
   const seconds = Math.max(0, Math.floor((Date.now() - new Date(openedAt).getTime()) / 1000));
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);
@@ -30,6 +36,7 @@ function unitLabel(minutes: number) {
 
 export default function FloorPage() {
   const { me, loading: meLoading } = useMe();
+  const isMobile = useIsMobile();
   const [tables, setTables] = useState<TableBoardItem[]>([]);
   const [storeCfg, setStoreCfg] = useState<StoreConfig | null>(null);
   const [loading, setLoading] = useState(false);
@@ -65,10 +72,10 @@ export default function FloorPage() {
   }, [load]);
 
   useEffect(() => {
-    if (!tables.some((t) => t.status === "OCCUPIED" && t.enable_timing)) return;
+    if (!tables.some((t) => t.status === "OCCUPIED" && t.opened_at)) return;
     const timer = window.setInterval(() => setTick((n) => n + 1), 1000);
     return () => window.clearInterval(timer);
-  }, [tables, tick]);
+  }, [tables]);
 
   const handleOpen = async () => {
     if (!openModal || openSubmitting) return;
@@ -117,7 +124,7 @@ export default function FloorPage() {
 
   const openCloseModal = (t: TableBoardItem) => {
     setCloseModal(t);
-    setClosePrice(t.actual_price != null ? Number(t.actual_price) : null);
+    setClosePrice(null);
   };
 
   if (meLoading) return null;
@@ -126,49 +133,65 @@ export default function FloorPage() {
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <AppHeader title="前台开单" />
-      <Content style={{ padding: 16 }}>
+      <Content style={{ padding: isMobile ? 10 : 16, paddingBottom: isMobile ? 16 : 16 }} data-tick={tick}>
         {timingEnabled && storeCfg && (
-          <Typography.Paragraph type="secondary" style={{ marginBottom: 12 }}>
+          <Typography.Paragraph type="secondary" style={{ marginBottom: 8, fontSize: 12 }}>
             计时计费：¥{storeCfg.base_price}/{unitLabel(storeCfg.billing_unit_minutes)}，清台自动结算
           </Typography.Paragraph>
         )}
-        <Space wrap size={[12, 12]}>
-          {tables.map((t) => (
-            <Card
-              key={t.id}
-              loading={loading}
-              style={{
-                width: 156,
-                borderColor: t.status === "IDLE" ? "#52c41a" : "#ff4d4f",
-                borderWidth: 2,
-              }}
-              onClick={() => {
-                if (t.status === "IDLE") {
-                  setActualPrice(null);
-                  setRemark("");
-                  setOpenModal(t);
-                } else {
-                  openCloseModal(t);
-                }
-              }}
-            >
-              <Typography.Text strong>{t.name}</Typography.Text>
-              <br />
-              <Tag color={t.status === "IDLE" ? "green" : "red"}>
-                {t.status === "IDLE" ? "空闲" : "占用"}
-              </Tag>
-              {t.status === "OCCUPIED" && t.enable_timing && t.opened_at && (
-                <div style={{ marginTop: 6, fontSize: 12 }}>
-                  <div>{formatDuration(t.opened_at)}</div>
-                  <div>预估 ¥{t.actual_price}</div>
-                </div>
-              )}
-              {t.status === "OCCUPIED" && !t.enable_timing && t.actual_price && (
-                <div style={{ marginTop: 6 }}>¥{t.actual_price}</div>
-              )}
-            </Card>
-          ))}
-        </Space>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: `repeat(auto-fill, minmax(${isMobile ? 100 : 130}px, 1fr))`,
+          gap: isMobile ? 8 : 12,
+        }}>
+          {tables.map((t) => {
+            const occupied = t.status === "OCCUPIED";
+            return (
+              <div
+                key={t.id}
+                onClick={() => {
+                  if (!occupied) {
+                    setActualPrice(null);
+                    setRemark("");
+                    setOpenModal(t);
+                  } else {
+                    openCloseModal(t);
+                  }
+                }}
+                style={{
+                  height: isMobile ? 110 : 130,
+                  border: `2px solid ${occupied ? "#ff4d4f" : "#52c41a"}`,
+                  borderRadius: 8,
+                  background: occupied ? "#fff2f0" : "#f6ffed",
+                  cursor: "pointer",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: isMobile ? 4 : 6,
+                  padding: "8px 6px",
+                  userSelect: "none",
+                  opacity: loading ? 0.5 : 1,
+                  WebkitTapHighlightColor: "transparent",
+                }}
+              >
+                <Typography.Text strong style={{ fontSize: 16 }}>{t.name}</Typography.Text>
+                <Tag color={occupied ? "red" : "green"} style={{ margin: 0 }}>
+                  {occupied ? "占用" : "空闲"}
+                </Tag>
+                {occupied && t.opened_at ? (
+                  <div style={{ fontSize: 11, color: "#ff4d4f", textAlign: "center", lineHeight: "18px" }}>
+                    <div>开台 {formatOpenTime(t.opened_at)}</div>
+                    <div>用时 {formatElapsed(t.opened_at)}</div>
+                    {t.actual_price && <div>¥{t.actual_price}</div>}
+                  </div>
+                ) : (
+                  <div style={{ fontSize: 11, color: "#95de64", textAlign: "center" }}>点击开单</div>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </Content>
 
       <Modal
@@ -178,6 +201,8 @@ export default function FloorPage() {
         confirmLoading={openSubmitting}
         cancelButtonProps={{ disabled: openSubmitting }}
         maskClosable={!openSubmitting}
+        width={isMobile ? "92vw" : 420}
+        style={{ top: isMobile ? 60 : 100 }}
         onCancel={() => {
           if (openSubmitting) return;
           setOpenModal(null);
@@ -211,6 +236,8 @@ export default function FloorPage() {
         confirmLoading={closeSubmitting}
         cancelButtonProps={{ disabled: closeSubmitting }}
         maskClosable={!closeSubmitting}
+        width={isMobile ? "92vw" : 420}
+        style={{ top: isMobile ? 60 : 100 }}
         onCancel={() => {
           if (closeSubmitting) return;
           setCloseModal(null);
@@ -218,18 +245,15 @@ export default function FloorPage() {
         }}
       >
         <Typography.Paragraph>单号 {closeModal?.open_order_no}</Typography.Paragraph>
-        {closeModal?.enable_timing && closeModal.opened_at && (
-          <Typography.Paragraph>
-            已用时 {formatDuration(closeModal.opened_at)}
-            {closeModal.billing_minutes != null && `，计费 ${closeModal.billing_minutes} 分钟`}
+        {closeModal?.opened_at && (
+          <Typography.Paragraph type="secondary">
+            开台时间 {formatOpenTime(closeModal.opened_at)}，已用时 {formatElapsed(closeModal.opened_at)}
           </Typography.Paragraph>
         )}
-        <Typography.Paragraph>
-          实收金额：¥{closeModal?.actual_price ?? "-"}
-        </Typography.Paragraph>
+        <Typography.Paragraph>原价：¥{closeModal?.base_price ?? "-"}</Typography.Paragraph>
         {(storeCfg?.cashier_allow_custom_price || me?.role === "ADMIN" || me?.role === "MANAGER") && (
           <>
-            <Typography.Paragraph type="secondary">可手动改价（留空则按自动计费）</Typography.Paragraph>
+            <Typography.Paragraph type="secondary">留空则按实收金额</Typography.Paragraph>
             <InputNumber
               style={{ width: "100%" }}
               min={0}
@@ -239,6 +263,15 @@ export default function FloorPage() {
               placeholder={closeModal?.actual_price != null ? String(closeModal.actual_price) : undefined}
             />
           </>
+        )}
+        {closeModal?.remark ? (
+          <Typography.Paragraph style={{ marginTop: 12 }}>
+            开台备注：{closeModal.remark}
+          </Typography.Paragraph>
+        ) : (
+          <Typography.Paragraph type="secondary" style={{ marginTop: 12 }}>
+            开台备注：无
+          </Typography.Paragraph>
         )}
       </Modal>
     </Layout>
