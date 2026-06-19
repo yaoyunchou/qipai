@@ -87,6 +87,57 @@ export type StoreConfigBrief = {
   cashier_allow_export: boolean;
 };
 
+export type SelectableApprover = {
+  id: number;
+  display_name: string;
+  role: string;
+};
+
+export type ExpenseApproverRecord = {
+  id: number;
+  approver_id: number;
+  approver_name: string | null;
+  status: "PENDING" | "APPROVED" | "REJECTED" | "SKIPPED";
+  comment: string | null;
+  acted_at: string | null;
+};
+
+export type ExpenseAttachment = {
+  id: number;
+  filename: string;
+  content_type: string;
+  data_base64: string;
+};
+
+export type ExpenseClaimItem = {
+  id: number;
+  claim_no: string;
+  applicant_id: number;
+  applicant_name: string | null;
+  amount: string;
+  remark: string | null;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  submitted_at: string;
+  attachments: ExpenseAttachment[];
+  approvers: ExpenseApproverRecord[];
+};
+
+export type ExpenseReportSummary = {
+  period: string;
+  start_date: string;
+  end_date: string;
+  claim_count: number;
+  amount_total: string;
+};
+
+export type ApprovePermissionItem = {
+  user_id: number;
+  username: string;
+  display_name: string;
+  role: string;
+  can_approve: boolean;
+};
+
 export type UserAccount = {
   id: number;
   username: string;

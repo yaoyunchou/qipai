@@ -1,3 +1,11 @@
+from app.models.expense import (
+    ExpenseApprovePermission,
+    ExpenseApproverStatus,
+    ExpenseClaim,
+    ExpenseClaimApprover,
+    ExpenseClaimAttachment,
+    ExpenseClaimStatus,
+)
 from app.models.order import BizOrder, OrderStatus
 from app.models.price_log import PriceChangeLog
 from app.models.room_table import RoomTable
@@ -12,4 +20,10 @@ __all__ = [
     "RoomTable",
     "BizOrder",
     "OrderStatus",
+    "ExpenseApprovePermission",
+    "ExpenseApproverStatus",
+    "ExpenseClaim",
+    "ExpenseClaimApprover",
+    "ExpenseClaimAttachment",
+    "ExpenseClaimStatus",
 ]

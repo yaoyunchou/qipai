@@ -35,6 +35,7 @@ export default function AppHeader({ title }: AppHeaderProps) {
     showFloor && { to: "/floor", label: "前台开单" },
     showOrders && { to: "/orders", label: "订单明细" },
     { to: "/reports", label: "营业报表" },
+    { to: "/expenses", label: "报销审批" },
     showAdmin && { to: "/admin", label: me?.role === "ADMIN" ? "后台配置" : "后台" },
   ].filter(Boolean) as { to: string; label: string }[];
 

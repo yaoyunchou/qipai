@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { getToken } from "./api/client";
 import { UserProvider } from "./context/UserContext";
 import AdminPage from "./pages/Admin";
+import ExpensesPage from "./pages/Expenses";
 import FloorPage from "./pages/Floor";
 import LoginPage from "./pages/Login";
 import OrdersPage from "./pages/Orders";
@@ -37,6 +38,14 @@ function AppRoutes() {
           element={
             <RequireAuth>
               <OrdersPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/expenses"
+          element={
+            <RequireAuth>
+              <ExpensesPage />
             </RequireAuth>
           }
         />
