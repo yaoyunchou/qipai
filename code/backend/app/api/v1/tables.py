@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from typing import Annotated
 
 
@@ -13,6 +11,7 @@ from sqlalchemy.orm import Session
 
 
 from app.core.deps import CurrentUser, DbSession, require_roles
+from app.core.timezone import now_cn
 
 from app.models import BizOrder, OrderStatus, RoomTable, SysStoreConfig, SysUser, UserRole
 
@@ -40,7 +39,7 @@ def _store_cfg(db: Session) -> SysStoreConfig | None:
 
 def _to_board_item(t: RoomTable, order: BizOrder | None, cfg: SysStoreConfig | None) -> TableBoardItem:
 
-    now = datetime.now()
+    now = now_cn()
 
     enable_timing = bool(cfg and cfg.enable_timing)
 

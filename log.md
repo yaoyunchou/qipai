@@ -1,6 +1,20 @@
 # 变更日志
 
+## 2026-06-19
+
+### 确认 main 分支推送自动部署（Vercel Git 集成）
+
+- 验证 `yaoyunchou/qipai` 已关联 Vercel 项目 `qipai`，生产分支为 `main`。
+- 历史部署记录显示 `githubCommitRef: main` 且 `githubDeployment: 1`，推送 main 已自动触发生产构建。
+- `code/README.md` 补充「自动部署（已配置）」说明。
+
 ## 2026-06-18
+
+### 重新部署 Vercel 生产环境
+
+- 执行 `npx vercel --prod --yes`，构建成功（前端 Vite + 后端 Python 3.12）。
+- 生产地址：https://qipai-pearl.vercel.app（`/health`、`/floor` 均 200）。
+- 部署详情：https://vercel.com/yaoyunchous-projects/qipai/3DTUhfrdLsPeqjtdYJqA2oghGAG6
 
 ### 按「先改这些」文档调整前台与后台
 

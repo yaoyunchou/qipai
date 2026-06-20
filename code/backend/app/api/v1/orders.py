@@ -4,6 +4,7 @@ from decimal import Decimal
 from fastapi import APIRouter, HTTPException, Query, status
 from sqlalchemy import select
 from app.core.deps import CurrentUser, DbSession
+from app.core.timezone import now_cn
 from app.models import BizOrder, OrderStatus, RoomTable, SysStoreConfig, SysUser, UserRole
 from app.schemas.order import OrderCloseRequest, OrderOpenRequest, OrderOut
 from app.services.billing import calc_timing_bill
@@ -75,7 +76,7 @@ def open_order(body: OrderOpenRequest, db: DbSession, user: CurrentUser):
     if not cfg:
         raise HTTPException(status_code=500, detail="门店配置未初始化")
     base = cfg.base_price
-    opened_at = datetime.now()
+    opened_at = now_cn()
     if cfg.enable_timing:
         if body.actual_price is not None:
             raise HTTPException(status_code=400, detail="计时模式下开单不需填写价格，清台时自动结算")
@@ -119,7 +120,7 @@ def close_order(
     cfg = db.get(SysStoreConfig, 1)
     if not cfg:
         raise HTTPException(status_code=500, detail="门店配置未初始化")
-    closed_at = datetime.now()
+    closed_at = now_cn()
     if cfg.enable_timing:
         auto_price, billing_minutes = calc_timing_bill(
             order.opened_at,

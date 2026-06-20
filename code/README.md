@@ -157,7 +157,27 @@ DATABASE_SSL_MODE=require
 
 > `VERCEL_URL` 由平台自动注入，后端 CORS 会自动放行预览/生产域名。
 
-4. 部署命令（也可在 Vercel 控制台一键部署）：
+### 自动部署（已配置）
+
+GitHub 仓库 `yaoyunchou/qipai` 已关联 Vercel 项目 `qipai`，**生产分支为 `main`**：
+
+| 触发方式 | 结果 |
+|----------|------|
+| `git push origin main` | 自动构建并部署到 **生产**（https://qipai-pearl.vercel.app） |
+| 推送到其他分支 / 开 PR | 自动构建 **预览** 环境 |
+| `npx vercel --prod` | 手动触发生产部署（一般不需要） |
+
+日常只需：
+
+```bash
+git add .
+git commit -m "your message"
+git push origin main
+```
+
+推送后可在 [Vercel 控制台](https://vercel.com/yaoyunchous-projects/qipai) 查看构建进度。
+
+4. 手动部署命令（可选）：
 
 ```bash
 cd code

@@ -2,6 +2,8 @@ import math
 from datetime import datetime
 from decimal import Decimal, ROUND_HALF_UP
 
+from app.core.timezone import now_cn
+
 
 def calc_timing_bill(
     opened_at: datetime,
@@ -22,5 +24,5 @@ def calc_timing_bill(
 
 
 def elapsed_minutes(opened_at: datetime, now: datetime | None = None) -> int:
-    ref = now or datetime.now()
+    ref = now or now_cn()
     return max(0, int((ref - opened_at).total_seconds() // 60))

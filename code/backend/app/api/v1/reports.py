@@ -8,6 +8,7 @@ from openpyxl import Workbook
 from sqlalchemy import func, select
 
 from app.core.deps import CurrentUser, DbSession
+from app.core.timezone import now_cn, today_cn
 from app.models import BizOrder, OrderStatus, RoomTable, SysStoreConfig, SysUser, UserRole
 from app.schemas.report import ReportSummary
 
@@ -15,7 +16,7 @@ router = APIRouter(prefix="/reports", tags=["reports"])
 
 
 def _parse_range(period: str, start: date | None, end: date | None) -> tuple[datetime, datetime, str, str]:
-    today = date.today()
+    today = today_cn()
     if period == "day":
         d = start or today
         s = datetime.combine(d, datetime.min.time())
@@ -42,11 +43,11 @@ def _apply_report_limit(user: CurrentUser, db, start: datetime) -> None:
     if not cfg:
         return
     if user.role == UserRole.CASHIER and cfg.cashier_report_months:
-        earliest = datetime.now() - timedelta(days=cfg.cashier_report_months * 31)
+        earliest = now_cn() - timedelta(days=cfg.cashier_report_months * 31)
         if start < earliest:
             raise HTTPException(status_code=403, detail="超出可查报表时间范围")
     if user.role == UserRole.ADMIN and cfg.admin_report_days:
-        earliest = datetime.now() - timedelta(days=cfg.admin_report_days)
+        earliest = now_cn() - timedelta(days=cfg.admin_report_days)
         if start < earliest:
             raise HTTPException(status_code=403, detail="超出可查报表时间范围")
 

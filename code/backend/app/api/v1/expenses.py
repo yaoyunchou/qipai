@@ -8,6 +8,7 @@ from openpyxl import Workbook
 from sqlalchemy import delete, func, select
 
 from app.core.deps import CurrentUser, DbSession
+from app.core.timezone import now_cn, today_cn
 from app.models import (
     ExpenseApprovePermission,
     ExpenseApproverStatus,
@@ -116,7 +117,7 @@ def _ensure_visible(claim_id: int, user: SysUser, db) -> ExpenseClaim:
 
 
 def _parse_range(period: str, start: date | None) -> tuple[datetime, datetime, str, str]:
-    today = date.today()
+    today = today_cn()
     if period == "day":
         d = start or today
         s = datetime.combine(d, datetime.min.time())
@@ -283,7 +284,7 @@ def create_expense(body: ExpenseCreate, db: DbSession, user: CurrentUser):
         amount=body.amount,
         remark=body.remark,
         status=ExpenseClaimStatus.PENDING,
-        submitted_at=datetime.now(),
+        submitted_at=now_cn(),
     )
     db.add(claim)
     db.flush()
@@ -462,7 +463,7 @@ def _do_approver_action(
 
     row.status = action
     row.comment = comment
-    row.acted_at = datetime.now()
+    row.acted_at = now_cn()
 
     all_approvers = db.scalars(
         select(ExpenseClaimApprover).where(ExpenseClaimApprover.claim_id == claim_id)
