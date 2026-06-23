@@ -12,6 +12,7 @@ from app.core.timezone import now_cn, today_cn
 from app.models import (
     ExpenseApprovePermission,
     ExpenseApproverStatus,
+    ExpenseCategory,
     ExpenseClaim,
     ExpenseClaimApprover,
     ExpenseClaimAttachment,
@@ -25,9 +26,11 @@ from app.schemas.expense import (
     ApproverAction,
     ApproverRecordOut,
     AttachmentOut,
+    CategorySummary,
     ExpenseClaimOut,
     ExpenseCreate,
     ExpenseReportSummary,
+    ExpenseUpdate,
     SelectableApproverOut,
 )
 from app.services.order_no import generate_order_no
@@ -43,7 +46,7 @@ def _generate_claim_no() -> str:
 
 
 def _can_manage_permissions(user: SysUser) -> bool:
-    return user.role in (UserRole.ADMIN, UserRole.SHAREHOLDER)
+    return user.role == UserRole.ADMIN
 
 
 def _recalc_claim_status(claim: ExpenseClaim, approvers: list[ExpenseClaimApprover]) -> None:
@@ -90,6 +93,7 @@ def _to_out(claim: ExpenseClaim, db) -> ExpenseClaimOut:
         applicant_name=applicant.display_name if applicant else None,
         amount=claim.amount,
         remark=claim.remark,
+        category=claim.category,
         status=claim.status,
         submitted_at=claim.submitted_at,
         attachments=[AttachmentOut.model_validate(a) for a in attachments],
@@ -163,7 +167,7 @@ def list_selectable_approvers(db: DbSession, user: CurrentUser):
 @router.get("/approve-permissions", response_model=list[ApprovePermissionOut])
 def list_approve_permissions(db: DbSession, user: CurrentUser):
     if not _can_manage_permissions(user):
-        raise HTTPException(status_code=403, detail="仅超管或股东可管理审批授权")
+        raise HTTPException(status_code=403, detail="仅超管可管理审批授权")
     permitted = set(db.scalars(select(ExpenseApprovePermission.user_id)).all())
     users = db.scalars(
         select(SysUser)
@@ -188,7 +192,7 @@ def list_approve_permissions(db: DbSession, user: CurrentUser):
 @router.put("/approve-permissions", response_model=list[ApprovePermissionOut])
 def update_approve_permissions(body: ApprovePermissionUpdate, db: DbSession, user: CurrentUser):
     if not _can_manage_permissions(user):
-        raise HTTPException(status_code=403, detail="仅超管或股东可管理审批授权")
+        raise HTTPException(status_code=403, detail="仅超管可管理审批授权")
     valid_users = db.scalars(
         select(SysUser.id).where(
             SysUser.id.in_(body.user_ids),
@@ -262,27 +266,26 @@ def create_expense(body: ExpenseCreate, db: DbSession, user: CurrentUser):
         if size > MAX_ATTACHMENT_BYTES:
             raise HTTPException(status_code=400, detail="单个附件不能超过 3MB")
 
-    permitted = set(db.scalars(select(ExpenseApprovePermission.user_id)).all())
-    approver_ids = list(dict.fromkeys(body.approver_ids))
-    for aid in approver_ids:
-        if aid not in permitted:
-            raise HTTPException(status_code=400, detail="所选审批人未获授权")
-        if aid == user.id:
-            raise HTTPException(status_code=400, detail="不能选择自己为审批人")
+    permitted_ids = db.scalars(select(ExpenseApprovePermission.user_id)).all()
+    approver_ids = [aid for aid in permitted_ids if aid != user.id]
+    if not approver_ids:
+        raise HTTPException(status_code=400, detail="暂无可用审批人，请联系超管配置审批授权")
     approvers = db.scalars(
         select(SysUser).where(
             SysUser.id.in_(approver_ids),
             SysUser.is_enabled.is_(True),
         )
     ).all()
-    if len(approvers) != len(approver_ids):
-        raise HTTPException(status_code=400, detail="审批人不存在或已禁用")
+    approver_ids = [u.id for u in approvers]
+    if not approver_ids:
+        raise HTTPException(status_code=400, detail="暂无可用审批人，请联系超管配置审批授权")
 
     claim = ExpenseClaim(
         claim_no=_generate_claim_no(),
         applicant_id=user.id,
         amount=body.amount,
         remark=body.remark,
+        category=body.category,
         status=ExpenseClaimStatus.PENDING,
         submitted_at=now_cn(),
     )
@@ -333,12 +336,30 @@ def expense_report_summary(
     if user.role == UserRole.CASHIER:
         q = q.where(ExpenseClaim.applicant_id == user.id)
     row = db.execute(q).one()
+
+    by_cat_q = (
+        select(ExpenseClaim.category, func.count(ExpenseClaim.id), func.coalesce(func.sum(ExpenseClaim.amount), 0))
+        .where(
+            ExpenseClaim.status == ExpenseClaimStatus.APPROVED,
+            ExpenseClaim.submitted_at >= s,
+            ExpenseClaim.submitted_at < e,
+        )
+        .group_by(ExpenseClaim.category)
+    )
+    if user.role == UserRole.CASHIER:
+        by_cat_q = by_cat_q.where(ExpenseClaim.applicant_id == user.id)
+    cat_rows = db.execute(by_cat_q).all()
+
     return ExpenseReportSummary(
         period=period,
         start_date=start_str,
         end_date=end_str,
         claim_count=int(row[0] or 0),
         amount_total=Decimal(str(row[1])),
+        by_category=[
+            CategorySummary(category=r[0], claim_count=int(r[1]), amount_total=Decimal(str(r[2])))
+            for r in cat_rows
+        ],
     )
 
 
@@ -367,6 +388,8 @@ def expense_report_export(
 
     claims = db.scalars(q).all()
 
+    CATEGORY_LABEL = {"FIXED": "固定支出", "OPERATIONS": "营运支出", "SANDBOX": "沙箱支出"}
+
     wb = Workbook()
     ws_sum = wb.active
     ws_sum.title = "汇总"
@@ -375,13 +398,25 @@ def expense_report_export(
     ws_sum.append(["报表类型", {"day": "日报", "week": "周报", "month": "月报"}[period]])
     ws_sum.append(["已完成报销笔数", len(claims)])
     ws_sum.append(["报销总金额", float(total)])
+    ws_sum.append([])
+    ws_sum.append(["分类", "笔数", "金额"])
+    from collections import defaultdict
+    cat_count: dict = defaultdict(int)
+    cat_amount: dict = defaultdict(float)
+    for c in claims:
+        cat_count[c.category.value] += 1
+        cat_amount[c.category.value] += float(c.amount)
+    for cat_key in ["FIXED", "OPERATIONS", "SANDBOX"]:
+        if cat_count[cat_key]:
+            ws_sum.append([CATEGORY_LABEL[cat_key], cat_count[cat_key], cat_amount[cat_key]])
 
     ws_detail = wb.create_sheet("明细")
     ws_detail.append(
-        ["单号", "申请人", "金额", "申请备注", "提交时间", "审批人", "审批意见", "审批时间"]
+        ["单号", "申请人", "分类", "金额", "申请备注", "提交时间", "审批人", "审批意见", "审批时间"]
     )
     for claim in claims:
         applicant = db.get(SysUser, claim.applicant_id)
+        cat_label = CATEGORY_LABEL.get(claim.category.value, claim.category.value)
         approver_rows = db.scalars(
             select(ExpenseClaimApprover)
             .where(
@@ -397,6 +432,7 @@ def expense_report_export(
                 [
                     claim.claim_no,
                     applicant.display_name if applicant else "",
+                    cat_label,
                     float(claim.amount),
                     claim.remark or "",
                     claim.submitted_at.strftime("%Y-%m-%d %H:%M:%S"),
@@ -412,6 +448,7 @@ def expense_report_export(
                     [
                         claim.claim_no if i == 0 else "",
                         applicant.display_name if applicant and i == 0 else "",
+                        cat_label if i == 0 else "",
                         float(claim.amount) if i == 0 else "",
                         claim.remark or "" if i == 0 else "",
                         claim.submitted_at.strftime("%Y-%m-%d %H:%M:%S") if i == 0 else "",
@@ -491,3 +528,95 @@ def reject_expense(claim_id: int, body: ApproverAction, db: DbSession, user: Cur
 @router.post("/{claim_id}/skip", response_model=ExpenseClaimOut)
 def skip_expense(claim_id: int, db: DbSession, user: CurrentUser):
     return _do_approver_action(claim_id, user, db, ExpenseApproverStatus.SKIPPED, "不参与审批")
+
+
+@router.put("/{claim_id}", response_model=ExpenseClaimOut)
+def update_expense(claim_id: int, body: ExpenseUpdate, db: DbSession, user: CurrentUser):
+    claim = db.get(ExpenseClaim, claim_id)
+    if not claim:
+        raise HTTPException(status_code=404, detail="报销单不存在")
+    if claim.applicant_id != user.id:
+        raise HTTPException(status_code=403, detail="仅申请人可编辑报销单")
+    if claim.status != ExpenseClaimStatus.REJECTED:
+        raise HTTPException(status_code=400, detail="只有被驳回的报销单可以重新编辑")
+
+    if len(body.attachments) > MAX_ATTACHMENTS:
+        raise HTTPException(status_code=400, detail=f"最多上传 {MAX_ATTACHMENTS} 个附件")
+    for att in body.attachments:
+        raw = att.data_base64
+        if raw.startswith("data:"):
+            raw = raw.split(",", 1)[-1]
+        try:
+            import base64
+            size = len(base64.b64decode(raw, validate=True))
+        except Exception:
+            raise HTTPException(status_code=400, detail="附件格式无效")
+        if size > MAX_ATTACHMENT_BYTES:
+            raise HTTPException(status_code=400, detail="单个附件不能超过 3MB")
+
+    permitted_ids = db.scalars(select(ExpenseApprovePermission.user_id)).all()
+    approver_ids = [aid for aid in permitted_ids if aid != user.id]
+    approvers = db.scalars(
+        select(SysUser).where(
+            SysUser.id.in_(approver_ids),
+            SysUser.is_enabled.is_(True),
+        )
+    ).all()
+    approver_ids = [u.id for u in approvers]
+    if not approver_ids:
+        raise HTTPException(status_code=400, detail="暂无可用审批人，请联系超管配置审批授权")
+
+    claim.amount = body.amount
+    claim.remark = body.remark
+    claim.category = body.category
+    claim.status = ExpenseClaimStatus.PENDING
+    claim.submitted_at = now_cn()
+
+    db.execute(
+        delete(ExpenseClaimAttachment).where(
+            ExpenseClaimAttachment.claim_id == claim.id
+        )
+    )
+    db.execute(
+        delete(ExpenseClaimApprover).where(
+            ExpenseClaimApprover.claim_id == claim.id
+        )
+    )
+
+    for att in body.attachments:
+        raw = att.data_base64
+        if raw.startswith("data:"):
+            raw = raw.split(",", 1)[-1]
+        db.add(
+            ExpenseClaimAttachment(
+                claim_id=claim.id,
+                filename=att.filename,
+                content_type=att.content_type,
+                data_base64=raw,
+            )
+        )
+    for aid in approver_ids:
+        db.add(
+            ExpenseClaimApprover(
+                claim_id=claim.id,
+                approver_id=aid,
+                status=ExpenseApproverStatus.PENDING,
+            )
+        )
+
+    db.commit()
+    db.refresh(claim)
+    return _to_out(claim, db)
+
+
+@router.delete("/{claim_id}", status_code=204)
+def delete_expense(claim_id: int, db: DbSession, user: CurrentUser):
+    claim = db.get(ExpenseClaim, claim_id)
+    if not claim:
+        raise HTTPException(status_code=404, detail="报销单不存在")
+    if claim.applicant_id != user.id:
+        raise HTTPException(status_code=403, detail="仅申请人可删除报销单")
+    if claim.status != ExpenseClaimStatus.REJECTED:
+        raise HTTPException(status_code=400, detail="只有被驳回的报销单可以删除")
+    db.delete(claim)
+    db.commit()

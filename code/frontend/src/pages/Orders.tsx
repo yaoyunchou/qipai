@@ -2,7 +2,6 @@ import { DatePicker, Layout, Select, Space, Table, Tag, message } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
 import { api, type OrderItem } from "../api/client";
 import AppHeader from "../components/AppHeader";
 import { useMe } from "../hooks/useMe";
@@ -34,11 +33,10 @@ export default function OrdersPage() {
   }, [status, dateRange]);
 
   useEffect(() => {
-    if (me && me.role !== "SHAREHOLDER") load();
+    if (me) load();
   }, [me, load]);
 
   if (meLoading) return null;
-  if (me?.role === "SHAREHOLDER") return <Navigate to="/reports" replace />;
 
   const columns: ColumnsType<OrderItem> = [
     { title: "单号", dataIndex: "order_no", width: 140 },

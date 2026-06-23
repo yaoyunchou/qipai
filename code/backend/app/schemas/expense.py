@@ -3,7 +3,7 @@ from decimal import Decimal
 
 from pydantic import BaseModel, Field
 
-from app.models.expense import ExpenseApproverStatus, ExpenseClaimStatus
+from app.models.expense import ExpenseApproverStatus, ExpenseCategory, ExpenseClaimStatus
 
 
 class AttachmentIn(BaseModel):
@@ -15,7 +15,14 @@ class AttachmentIn(BaseModel):
 class ExpenseCreate(BaseModel):
     amount: Decimal = Field(gt=0, decimal_places=2)
     remark: str | None = Field(default=None, max_length=500)
-    approver_ids: list[int] = Field(min_length=1)
+    category: ExpenseCategory = Field(default=ExpenseCategory.FIXED)
+    attachments: list[AttachmentIn] = Field(default_factory=list)
+
+
+class ExpenseUpdate(BaseModel):
+    amount: Decimal = Field(gt=0, decimal_places=2)
+    remark: str | None = Field(default=None, max_length=500)
+    category: ExpenseCategory = Field(default=ExpenseCategory.FIXED)
     attachments: list[AttachmentIn] = Field(default_factory=list)
 
 
@@ -50,6 +57,7 @@ class ExpenseClaimOut(BaseModel):
     applicant_name: str | None = None
     amount: Decimal
     remark: str | None
+    category: ExpenseCategory = ExpenseCategory.FIXED
     status: ExpenseClaimStatus
     submitted_at: datetime
     attachments: list[AttachmentOut] = []
@@ -76,9 +84,16 @@ class ApprovePermissionUpdate(BaseModel):
     user_ids: list[int]
 
 
+class CategorySummary(BaseModel):
+    category: ExpenseCategory
+    claim_count: int
+    amount_total: Decimal
+
+
 class ExpenseReportSummary(BaseModel):
     period: str
     start_date: str
     end_date: str
     claim_count: int
     amount_total: Decimal
+    by_category: list[CategorySummary] = []

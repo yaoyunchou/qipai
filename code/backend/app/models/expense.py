@@ -8,6 +8,12 @@ from sqlalchemy.orm import Mapped, mapped_column
 from app.database import Base
 
 
+class ExpenseCategory(str, enum.Enum):
+    FIXED = "FIXED"
+    OPERATIONS = "OPERATIONS"
+    SANDBOX = "SANDBOX"
+
+
 class ExpenseClaimStatus(str, enum.Enum):
     PENDING = "PENDING"
     APPROVED = "APPROVED"
@@ -39,6 +45,11 @@ class ExpenseClaim(Base):
     applicant_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("sys_user.id"), nullable=False)
     amount: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
     remark: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    category: Mapped[ExpenseCategory] = mapped_column(
+        Enum(ExpenseCategory, name="expense_category", create_type=False),
+        nullable=False,
+        default=ExpenseCategory.FIXED,
+    )
     status: Mapped[ExpenseClaimStatus] = mapped_column(
         Enum(ExpenseClaimStatus, name="expense_claim_status", create_type=False),
         nullable=False,

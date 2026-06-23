@@ -116,10 +116,17 @@ export type ExpenseClaimItem = {
   applicant_name: string | null;
   amount: string;
   remark: string | null;
+  category: "FIXED" | "OPERATIONS" | "SANDBOX";
   status: "PENDING" | "APPROVED" | "REJECTED";
   submitted_at: string;
   attachments: ExpenseAttachment[];
   approvers: ExpenseApproverRecord[];
+};
+
+export type CategorySummary = {
+  category: "FIXED" | "OPERATIONS" | "SANDBOX";
+  claim_count: number;
+  amount_total: string;
 };
 
 export type ExpenseReportSummary = {
@@ -128,6 +135,7 @@ export type ExpenseReportSummary = {
   end_date: string;
   claim_count: number;
   amount_total: string;
+  by_category: CategorySummary[];
 };
 
 export type ApprovePermissionItem = {

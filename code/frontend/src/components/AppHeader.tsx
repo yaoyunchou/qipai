@@ -21,8 +21,8 @@ export default function AppHeader({ title }: AppHeaderProps) {
   const isMobile = useIsMobile();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const showFloor = me?.role !== "SHAREHOLDER";
-  const showOrders = me?.role !== "SHAREHOLDER";
+  const showFloor = true;
+  const showOrders = true;
   const showAdmin = me?.role === "ADMIN" || me?.role === "MANAGER";
 
   const logout = () => {

@@ -1,6 +1,7 @@
 from app.models.expense import (
     ExpenseApprovePermission,
     ExpenseApproverStatus,
+    ExpenseCategory,
     ExpenseClaim,
     ExpenseClaimApprover,
     ExpenseClaimAttachment,
@@ -22,6 +23,7 @@ __all__ = [
     "OrderStatus",
     "ExpenseApprovePermission",
     "ExpenseApproverStatus",
+    "ExpenseCategory",
     "ExpenseClaim",
     "ExpenseClaimApprover",
     "ExpenseClaimAttachment",

@@ -22,11 +22,12 @@ import {
 } from "antd";
 import type { UploadFile } from "antd/es/upload";
 import dayjs from "dayjs";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   api,
   downloadFile,
   type ApprovePermissionItem,
+  type CategorySummary,
   type ExpenseClaimItem,
   type ExpenseReportSummary,
   type SelectableApprover,
@@ -43,6 +44,18 @@ const ROLE_LABEL: Record<string, string> = {
   SHAREHOLDER: "股东",
   ADMIN: "超管",
 };
+
+const CATEGORY_LABEL: Record<string, string> = {
+  FIXED: "固定支出",
+  OPERATIONS: "营运支出",
+  SANDBOX: "沙箱支出",
+};
+
+const CATEGORY_OPTIONS = [
+  { label: "固定支出", value: "FIXED" },
+  { label: "营运支出", value: "OPERATIONS" },
+  { label: "沙箱支出", value: "SANDBOX" },
+];
 
 const STATUS_TAG: Record<string, { color: string; label: string }> = {
   PENDING: { color: "orange", label: "待审批" },
@@ -92,7 +105,13 @@ export default function ExpensesPage() {
   const [permLoading, setPermLoading] = useState(false);
   const [permSaving, setPermSaving] = useState(false);
 
-  const canManagePerm = me?.role === "ADMIN" || me?.role === "SHAREHOLDER";
+  const [editOpen, setEditOpen] = useState(false);
+  const [editClaim, setEditClaim] = useState<ExpenseClaimItem | null>(null);
+  const [editForm] = Form.useForm();
+  const [editFileList, setEditFileList] = useState<UploadFile[]>([]);
+  const [editSubmitting, setEditSubmitting] = useState(false);
+
+  const canManagePerm = me?.role === "ADMIN";
   const canExportReport = me?.role !== "SHAREHOLDER";
 
   const loadApprovers = useCallback(async () => {
@@ -160,14 +179,6 @@ export default function ExpensesPage() {
     loadPermissions();
   }, [loadPermissions]);
 
-  const approverOptions = useMemo(
-    () =>
-      selectableApprovers.map((a) => ({
-        label: `${a.display_name}（${ROLE_LABEL[a.role] || a.role}）`,
-        value: a.id,
-      })),
-    [selectableApprovers]
-  );
 
   const openDetail = async (id: number) => {
     try {
@@ -263,8 +274,64 @@ export default function ExpensesPage() {
     }
   };
 
-  const handleExport = async () => {
-    setExporting(true);
+  const openEdit = (claim: ExpenseClaimItem) => {
+    setEditClaim(claim);
+    editForm.setFieldsValue({
+      amount: parseFloat(claim.amount),
+      remark: claim.remark,
+      category: claim.category,
+    });
+    setEditFileList([]);
+    setEditOpen(true);
+  };
+
+  const submitEdit = async (values: { amount: number; remark?: string; approver_ids: number[] }) => {
+    if (!editClaim) return;
+    setEditSubmitting(true);
+    try {
+      const attachments = await Promise.all(
+        editFileList
+          .filter((f) => f.originFileObj)
+          .map(async (f) => ({
+            filename: f.name,
+            content_type: f.type || "image/jpeg",
+            data_base64: await fileToBase64(f.originFileObj as File),
+          }))
+      );
+      await api<ExpenseClaimItem>(`/api/v1/expenses/${editClaim.id}`, {
+        method: "PUT",
+        body: JSON.stringify({ ...values, attachments }),
+      });
+      message.success("已重新提交，等待审批");
+      setEditOpen(false);
+      loadLists();
+    } catch (e) {
+      message.error(e instanceof Error ? e.message : "提交失败");
+    } finally {
+      setEditSubmitting(false);
+    }
+  };
+
+  const deleteClaim = (claimId: number) => {
+    Modal.confirm({
+      title: "确认删除",
+      content: "删除后无法恢复，确认删除该报销单吗？",
+      okText: "删除",
+      okButtonProps: { danger: true },
+      cancelText: "取消",
+      onOk: async () => {
+        try {
+          await api(`/api/v1/expenses/${claimId}`, { method: "DELETE" });
+          message.success("已删除");
+          loadLists();
+        } catch (e) {
+          message.error(e instanceof Error ? e.message : "删除失败");
+        }
+      },
+    });
+  };
+
+  const handleExport = async () => {    setExporting(true);
     try {
       await downloadFile(
         `/api/v1/expenses/reports/export?period=${period}&start=${anchorDate.format("YYYY-MM-DD")}`,
@@ -288,6 +355,12 @@ export default function ExpensesPage() {
     },
     { title: "金额", dataIndex: "amount", width: 90, render: (v: string) => `¥${v}` },
     {
+      title: "分类",
+      dataIndex: "category",
+      width: 90,
+      render: (v: string) => CATEGORY_LABEL[v] || v,
+    },
+    {
       title: "状态",
       dataIndex: "status",
       width: 90,
@@ -305,7 +378,7 @@ export default function ExpensesPage() {
     { title: "备注", dataIndex: "remark", ellipsis: true },
     {
       title: "操作",
-      width: 200,
+      width: 240,
       render: (_: unknown, row: ExpenseClaimItem) => (
         <Space size={0}>
           <Button type="link" size="small" onClick={() => openDetail(row.id)}>
@@ -327,6 +400,16 @@ export default function ExpensesPage() {
                 </Button>
               </>
             )}
+          {row.status === "REJECTED" && row.applicant_id === me?.id && (
+            <>
+              <Button type="link" size="small" onClick={() => openEdit(row)}>
+                编辑重提
+              </Button>
+              <Button type="link" danger size="small" onClick={() => deleteClaim(row.id)}>
+                删除
+              </Button>
+            </>
+          )}
         </Space>
       ),
     },
@@ -334,20 +417,28 @@ export default function ExpensesPage() {
 
   const createTab = (
     <Card title="新建报销">
-      {selectableApprovers.length === 0 && (
-        <Typography.Paragraph type="warning" style={{ marginBottom: 16 }}>
-          暂无可选审批人，请联系超管或股东在「审批授权」中配置。
-        </Typography.Paragraph>
-      )}
       <Form form={form} layout="vertical" onFinish={submitClaim} style={{ maxWidth: 520 }}>
         <Form.Item name="amount" label="报销金额" rules={[{ required: true, message: "请输入金额" }]}>
           <InputNumber min={0.01} precision={2} prefix="¥" style={{ width: "100%" }} />
         </Form.Item>
+        <Form.Item name="category" label="报销分类" rules={[{ required: true, message: "请选择分类" }]} initialValue="FIXED">
+          <Select options={CATEGORY_OPTIONS} />
+        </Form.Item>
         <Form.Item name="remark" label="备注">
           <TextArea rows={3} maxLength={500} showCount placeholder="费用说明（选填）" />
         </Form.Item>
-        <Form.Item name="approver_ids" label="审批人（可多选，均需审批）" rules={[{ required: true, message: "请选择审批人" }]}>
-          <Select mode="multiple" options={approverOptions} placeholder="选择经理/股东等已授权人员" />
+        <Form.Item label="审批人">
+          {selectableApprovers.length === 0 ? (
+            <Typography.Text type="warning">暂无审批人，请联系超管配置审批授权</Typography.Text>
+          ) : (
+            <Space wrap>
+              {selectableApprovers.map((a) => (
+                <Tag key={a.id} color="blue">
+                  {a.display_name}（{ROLE_LABEL[a.role] || a.role}）
+                </Tag>
+              ))}
+            </Space>
+          )}
         </Form.Item>
         <Form.Item label="附件/图片（最多5张，单张≤3MB）">
           <Upload
@@ -427,10 +518,34 @@ export default function ExpensesPage() {
         )}
       </Space>
       {reportData && (
-        <Space size={48}>
-          <Statistic title="已完成笔数" value={reportData.claim_count} />
-          <Statistic title="报销总金额" value={reportData.amount_total} prefix="¥" precision={2} />
-        </Space>
+        <>
+          <Space size={48}>
+            <Statistic title="已完成笔数" value={reportData.claim_count} />
+            <Statistic title="报销总金额" value={reportData.amount_total} prefix="¥" precision={2} />
+          </Space>
+          {reportData.by_category.length > 0 && (
+          <Table
+            size="small"
+            style={{ marginTop: 16, maxWidth: 480 }}
+            rowKey="category"
+            pagination={false}
+            dataSource={reportData.by_category}
+            columns={[
+              {
+                title: "分类",
+                dataIndex: "category",
+                render: (v: string) => CATEGORY_LABEL[v] || v,
+              },
+              { title: "笔数", dataIndex: "claim_count" },
+              {
+                title: "金额",
+                dataIndex: "amount_total",
+                render: (v: string) => `¥${parseFloat(v).toFixed(2)}`,
+              },
+            ]}
+          />
+        )}
+        </>
       )}
     </Card>
   );
@@ -445,7 +560,7 @@ export default function ExpensesPage() {
       }
     >
       <Typography.Paragraph type="secondary">
-        勾选后可被选为报销审批人。仅超管与股东可配置。
+        勾选后可被选为报销审批人。仅超管可配置。
       </Typography.Paragraph>
       <Table
         rowKey="user_id"
@@ -586,6 +701,53 @@ export default function ExpensesPage() {
             rules={[{ required: true, message: "请填写审批意见" }]}
           >
             <TextArea rows={3} maxLength={500} showCount />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      <Modal
+        title="编辑重提报销单"
+        open={editOpen}
+        onCancel={() => setEditOpen(false)}
+        onOk={() => editForm.submit()}
+        okText="重新提交"
+        confirmLoading={editSubmitting}
+        width={560}
+        destroyOnClose
+      >
+        <Form form={editForm} layout="vertical" onFinish={submitEdit}>
+          <Form.Item name="amount" label="报销金额" rules={[{ required: true, message: "请输入金额" }]}>
+            <InputNumber min={0.01} precision={2} prefix="¥" style={{ width: "100%" }} />
+          </Form.Item>
+          <Form.Item name="category" label="报销分类" rules={[{ required: true, message: "请选择分类" }]}>
+            <Select options={CATEGORY_OPTIONS} />
+          </Form.Item>
+          <Form.Item name="remark" label="备注">
+            <TextArea rows={3} maxLength={500} showCount placeholder="费用说明（选填）" />
+          </Form.Item>
+          <Form.Item label="审批人">
+            {selectableApprovers.length === 0 ? (
+              <Typography.Text type="warning">暂无审批人，请联系超管配置审批授权</Typography.Text>
+            ) : (
+              <Space wrap>
+                {selectableApprovers.map((a) => (
+                  <Tag key={a.id} color="blue">
+                    {a.display_name}（{ROLE_LABEL[a.role] || a.role}）
+                  </Tag>
+                ))}
+              </Space>
+            )}
+          </Form.Item>
+          <Form.Item label="附件/图片（最多5张，单张≤3MB，不上传则清空原附件）">
+            <Upload
+              listType="picture-card"
+              fileList={editFileList}
+              accept="image/*"
+              beforeUpload={() => false}
+              onChange={({ fileList: fl }) => setEditFileList(fl.slice(0, 5))}
+            >
+              {editFileList.length < 5 && "+ 上传"}
+            </Upload>
           </Form.Item>
         </Form>
       </Modal>
