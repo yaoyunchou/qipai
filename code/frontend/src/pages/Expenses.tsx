@@ -27,7 +27,6 @@ import {
   api,
   downloadFile,
   type ApprovePermissionItem,
-  type CategorySummary,
   type ExpenseClaimItem,
   type ExpenseReportSummary,
   type SelectableApprover,
