@@ -50,7 +50,7 @@ def list_orders(
         q = q.where(BizOrder.opened_at >= datetime.combine(start, datetime.min.time()))
     if end:
         q = q.where(BizOrder.opened_at < datetime.combine(end + timedelta(days=1), datetime.min.time()))
-    if user.role == UserRole.CASHIER:
+    if user.role in (UserRole.CASHIER, UserRole.SHAREHOLDER):
         q = q.where(BizOrder.opened_by == user.id)
     orders = db.scalars(q).all()
     return [_to_out(o, db) for o in orders]

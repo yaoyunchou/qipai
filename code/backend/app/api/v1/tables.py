@@ -139,10 +139,6 @@ def _board_items(db: Session) -> list[TableBoardItem]:
 
 def board(db: DbSession, user: CurrentUser):
 
-    if user.role == UserRole.SHAREHOLDER:
-
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="股东无开单权限")
-
     return _board_items(db)
 
 

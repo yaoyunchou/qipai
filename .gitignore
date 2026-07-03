@@ -31,6 +31,10 @@ htmlcov/
 .vercel/
 code/.vercel/
 
+# 部署敏感信息（含服务器密码/密钥路径，禁止提交）
+DEPLOY.md
+.deploy_scripts/
+
 # 系统与编辑器
 .DS_Store
 Thumbs.db

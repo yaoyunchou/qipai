@@ -1,6 +1,5 @@
 import { Input, InputNumber, Layout, Modal, Tag, Typography, message } from "antd";
 import { useCallback, useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
 import { api, type TableBoardItem } from "../api/client";
 import AppHeader from "../components/AppHeader";
 import { useIsMobile } from "../hooks/useIsMobile";
@@ -128,7 +127,6 @@ export default function FloorPage() {
   };
 
   if (meLoading) return null;
-  if (me?.role === "SHAREHOLDER") return <Navigate to="/reports" replace />;
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
