@@ -1,6 +1,7 @@
 fastapi>=0.115.0
 uvicorn[standard]>=0.32.0
 sqlalchemy>=2.0.36
+greenlet==3.1.1  # 锁定版本：3.5.x 未提供 cp310 manylinux 预编译包，会触发源码编译失败
 psycopg2-binary>=2.9.10
 pydantic>=2.10.0
 pydantic-settings>=2.6.0
