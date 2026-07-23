@@ -7,6 +7,7 @@ code/backend/**/*.py[cod]
 code/backend/.pytest_cache/
 code/backend/.mypy_cache/
 code/backend/.ruff_cache/
+code/backend/uploads/
 code/backend/*.egg-info/
 
 # Node / Vite (frontend)

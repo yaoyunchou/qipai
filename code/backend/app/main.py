@@ -1,5 +1,8 @@
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.api.v1.router import api_router
 from app.config import settings
@@ -15,6 +18,11 @@ app.add_middleware(
 )
 
 app.include_router(api_router)
+
+_upload_root = Path(settings.upload_dir)
+_upload_root.mkdir(parents=True, exist_ok=True)
+_prefix = settings.upload_url_prefix.strip("/") or "uploads"
+app.mount(f"/{_prefix}", StaticFiles(directory=str(_upload_root)), name="uploads")
 
 
 @app.get("/health")

@@ -25,6 +25,7 @@ import dayjs from "dayjs";
 import { useCallback, useEffect, useState } from "react";
 import {
   api,
+  attachmentUrl,
   downloadFile,
   type ApprovePermissionItem,
   type ExpenseClaimItem,
@@ -648,11 +649,7 @@ export default function ExpensesPage() {
                         width={80}
                         height={80}
                         style={{ objectFit: "cover" }}
-                        src={
-                          a.data_base64.startsWith("data:")
-                            ? a.data_base64
-                            : `data:${a.content_type};base64,${a.data_base64}`
-                        }
+                        src={attachmentUrl(a.url)}
                       />
                     ))}
                   </Space>

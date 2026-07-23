@@ -1,4 +1,11 @@
 const TOKEN_KEY = "qipai_token";
+const API_BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+/** 报销附件静态 URL（兼容子路径部署如 /qipai/） */
+export function attachmentUrl(url: string): string {
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  return `${API_BASE}${url.startsWith("/") ? url : `/${url}`}`;
+}
 
 export function getToken(): string | null {
   return localStorage.getItem(TOKEN_KEY);
@@ -23,7 +30,7 @@ export async function api<T>(
   const token = getToken();
   if (token) headers.Authorization = `Bearer ${token}`;
 
-  const res = await fetch(path, { ...options, headers });
+  const res = await fetch(API_BASE + path, { ...options, headers });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
     throw new Error((data as { detail?: string }).detail || res.statusText);
@@ -106,7 +113,7 @@ export type ExpenseAttachment = {
   id: number;
   filename: string;
   content_type: string;
-  data_base64: string;
+  url: string;
 };
 
 export type ExpenseClaimItem = {
@@ -158,7 +165,7 @@ export async function downloadFile(path: string, filename = "download.xlsx") {
   const headers: Record<string, string> = {};
   const token = getToken();
   if (token) headers.Authorization = `Bearer ${token}`;
-  const res = await fetch(path, { headers });
+  const res = await fetch(API_BASE + path, { headers });
   if (!res.ok) {
     const data = await res.json().catch(() => ({}));
     throw new Error((data as { detail?: string }).detail || res.statusText);

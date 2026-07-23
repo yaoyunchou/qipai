@@ -33,6 +33,12 @@ from app.schemas.expense import (
     ExpenseUpdate,
     SelectableApproverOut,
 )
+from app.services.expense_storage import (
+    attachment_url,
+    decode_base64_payload,
+    delete_claim_attachment_files,
+    save_attachment,
+)
 from app.services.order_no import generate_order_no
 
 router = APIRouter(prefix="/expenses", tags=["expenses"])
@@ -61,6 +67,27 @@ def _recalc_claim_status(claim: ExpenseClaim, approvers: list[ExpenseClaimApprov
         claim.status = ExpenseClaimStatus.APPROVED
     else:
         claim.status = ExpenseClaimStatus.PENDING
+
+
+def _attachment_out(att: ExpenseClaimAttachment) -> AttachmentOut:
+    return AttachmentOut(
+        id=att.id,
+        filename=att.filename,
+        content_type=att.content_type,
+        url=attachment_url(att.file_path),
+    )
+
+
+def _validate_attachments(attachments) -> None:
+    if len(attachments) > MAX_ATTACHMENTS:
+        raise HTTPException(status_code=400, detail=f"最多上传 {MAX_ATTACHMENTS} 个附件")
+    for att in attachments:
+        try:
+            size = len(decode_base64_payload(att.data_base64))
+        except Exception:
+            raise HTTPException(status_code=400, detail="附件格式无效")
+        if size > MAX_ATTACHMENT_BYTES:
+            raise HTTPException(status_code=400, detail="单个附件不能超过 3MB")
 
 
 def _to_out(claim: ExpenseClaim, db) -> ExpenseClaimOut:
@@ -96,7 +123,7 @@ def _to_out(claim: ExpenseClaim, db) -> ExpenseClaimOut:
         category=claim.category,
         status=claim.status,
         submitted_at=claim.submitted_at,
-        attachments=[AttachmentOut.model_validate(a) for a in attachments],
+        attachments=[_attachment_out(a) for a in attachments],
         approvers=approvers,
     )
 
@@ -251,21 +278,7 @@ def list_expenses(
 
 @router.post("", response_model=ExpenseClaimOut, status_code=status.HTTP_201_CREATED)
 def create_expense(body: ExpenseCreate, db: DbSession, user: CurrentUser):
-    if len(body.attachments) > MAX_ATTACHMENTS:
-        raise HTTPException(status_code=400, detail=f"最多上传 {MAX_ATTACHMENTS} 个附件")
-    for att in body.attachments:
-        raw = att.data_base64
-        if raw.startswith("data:"):
-            raw = raw.split(",", 1)[-1]
-        try:
-            import base64
-
-            size = len(base64.b64decode(raw, validate=True))
-        except Exception:
-            raise HTTPException(status_code=400, detail="附件格式无效")
-        if size > MAX_ATTACHMENT_BYTES:
-            raise HTTPException(status_code=400, detail="单个附件不能超过 3MB")
-
+    _validate_attachments(body.attachments)
     permitted_ids = db.scalars(select(ExpenseApprovePermission.user_id)).all()
     approver_ids = [aid for aid in permitted_ids if aid != user.id]
     if not approver_ids:
@@ -293,15 +306,13 @@ def create_expense(body: ExpenseCreate, db: DbSession, user: CurrentUser):
     db.flush()
 
     for att in body.attachments:
-        raw = att.data_base64
-        if raw.startswith("data:"):
-            raw = raw.split(",", 1)[-1]
+        file_path = save_attachment(claim.id, att.filename, att.content_type, att.data_base64)
         db.add(
             ExpenseClaimAttachment(
                 claim_id=claim.id,
                 filename=att.filename,
                 content_type=att.content_type,
-                data_base64=raw,
+                file_path=file_path,
             )
         )
     for aid in approver_ids:
@@ -540,19 +551,7 @@ def update_expense(claim_id: int, body: ExpenseUpdate, db: DbSession, user: Curr
     if claim.status != ExpenseClaimStatus.REJECTED:
         raise HTTPException(status_code=400, detail="只有被驳回的报销单可以重新编辑")
 
-    if len(body.attachments) > MAX_ATTACHMENTS:
-        raise HTTPException(status_code=400, detail=f"最多上传 {MAX_ATTACHMENTS} 个附件")
-    for att in body.attachments:
-        raw = att.data_base64
-        if raw.startswith("data:"):
-            raw = raw.split(",", 1)[-1]
-        try:
-            import base64
-            size = len(base64.b64decode(raw, validate=True))
-        except Exception:
-            raise HTTPException(status_code=400, detail="附件格式无效")
-        if size > MAX_ATTACHMENT_BYTES:
-            raise HTTPException(status_code=400, detail="单个附件不能超过 3MB")
+    _validate_attachments(body.attachments)
 
     permitted_ids = db.scalars(select(ExpenseApprovePermission.user_id)).all()
     approver_ids = [aid for aid in permitted_ids if aid != user.id]
@@ -572,6 +571,11 @@ def update_expense(claim_id: int, body: ExpenseUpdate, db: DbSession, user: Curr
     claim.status = ExpenseClaimStatus.PENDING
     claim.submitted_at = now_cn()
 
+    old_attachments = db.scalars(
+        select(ExpenseClaimAttachment).where(ExpenseClaimAttachment.claim_id == claim.id)
+    ).all()
+    delete_claim_attachment_files([a.file_path for a in old_attachments])
+
     db.execute(
         delete(ExpenseClaimAttachment).where(
             ExpenseClaimAttachment.claim_id == claim.id
@@ -584,15 +588,13 @@ def update_expense(claim_id: int, body: ExpenseUpdate, db: DbSession, user: Curr
     )
 
     for att in body.attachments:
-        raw = att.data_base64
-        if raw.startswith("data:"):
-            raw = raw.split(",", 1)[-1]
+        file_path = save_attachment(claim.id, att.filename, att.content_type, att.data_base64)
         db.add(
             ExpenseClaimAttachment(
                 claim_id=claim.id,
                 filename=att.filename,
                 content_type=att.content_type,
-                data_base64=raw,
+                file_path=file_path,
             )
         )
     for aid in approver_ids:
@@ -618,5 +620,9 @@ def delete_expense(claim_id: int, db: DbSession, user: CurrentUser):
         raise HTTPException(status_code=403, detail="仅申请人可删除报销单")
     if claim.status != ExpenseClaimStatus.REJECTED:
         raise HTTPException(status_code=400, detail="只有被驳回的报销单可以删除")
+    attachments = db.scalars(
+        select(ExpenseClaimAttachment).where(ExpenseClaimAttachment.claim_id == claim.id)
+    ).all()
+    delete_claim_attachment_files([a.file_path for a in attachments])
     db.delete(claim)
     db.commit()

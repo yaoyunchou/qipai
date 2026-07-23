@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS expense_claim_attachment (
   claim_id      BIGINT NOT NULL REFERENCES expense_claim(id) ON DELETE CASCADE,
   filename      VARCHAR(255) NOT NULL,
   content_type  VARCHAR(128) NOT NULL DEFAULT 'image/jpeg',
-  data_base64   TEXT NOT NULL,
+  file_path     VARCHAR(512) NOT NULL,
   created_at    TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3)
 );
 

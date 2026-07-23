@@ -34,9 +34,7 @@ class AttachmentOut(BaseModel):
     id: int
     filename: str
     content_type: str
-    data_base64: str
-
-    model_config = {"from_attributes": True}
+    url: str
 
 
 class ApproverRecordOut(BaseModel):

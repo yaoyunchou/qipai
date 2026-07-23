@@ -1,6 +1,9 @@
 import os
+from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+_BACKEND_ROOT = Path(__file__).resolve().parents[1]
 
 
 class Settings(BaseSettings):
@@ -13,6 +16,10 @@ class Settings(BaseSettings):
     jwt_secret: str = "dev-secret-change-me"
     jwt_expire_minutes: int = 1440
     cors_origins: str = "http://127.0.0.1:5180,http://localhost:5180"
+    # 报销附件磁盘目录；生产可设为 /www/server/qipai/uploads
+    upload_dir: str = str(_BACKEND_ROOT / "uploads")
+    # 对外访问 URL 前缀；子路径部署如 /qipai/uploads
+    upload_url_prefix: str = "/uploads"
 
     @property
     def cors_origin_list(self) -> list[str]:
