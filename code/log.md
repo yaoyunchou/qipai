@@ -6,6 +6,7 @@
 - 本地开发：FastAPI 挂载 `/uploads` 静态目录，Vite 代理 `/uploads` → 8000
 - 迁移：`sql/supabase/06-expense-attachment-file.sql` + `scripts.apply_expense_attachment_file` + `scripts.migrate_expense_attachments`（旧库 Base64 导出为文件）
 - 生产 Nginx 需增加 `location /qipai/uploads/` alias 到 uploads 目录，并配置 `UPLOAD_DIR`、`UPLOAD_URL_PREFIX=/qipai/uploads`
+- 根目录 `README.md` 补充**快速启动**（配置数据库、`start.ps1`、访问地址），详细说明仍见 `code/README.md`
 
 ## 2026-07-03
 

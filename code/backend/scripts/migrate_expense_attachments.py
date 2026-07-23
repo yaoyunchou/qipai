@@ -111,16 +111,21 @@ def main() -> None:
                 WHERE file_path IS NULL OR file_path = ''
                 """
             )
-            if cur.fetchone()[0] == 0:
-                print("删除 data_base64 列并设置 file_path NOT NULL ...")
-                conn.autocommit = True
+            pending = cur.fetchone()[0]
+
+        conn.commit()
+
+        if pending == 0 and has_base64:
+            print("删除 data_base64 列并设置 file_path NOT NULL ...")
+            conn.autocommit = True
+            with conn.cursor() as cur:
                 cur.execute("ALTER TABLE expense_claim_attachment DROP COLUMN data_base64")
                 cur.execute(
                     "ALTER TABLE expense_claim_attachment ALTER COLUMN file_path SET NOT NULL"
                 )
-                print("迁移完成。")
-            else:
-                print("仍有附件未迁移，未删除 data_base64 列。")
+            print("迁移完成。")
+        elif pending > 0:
+            print("仍有附件未迁移，未删除 data_base64 列。")
     finally:
         conn.close()
 
