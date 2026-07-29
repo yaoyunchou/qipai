@@ -32,6 +32,7 @@ from app.schemas.expense import (
     ExpenseReportSummary,
     ExpenseUpdate,
     SelectableApproverOut,
+    VoidAction,
 )
 from app.services.expense_storage import (
     attachment_url,
@@ -113,6 +114,7 @@ def _to_out(claim: ExpenseClaim, db) -> ExpenseClaimOut:
                 acted_at=row.acted_at,
             )
         )
+    voided_by_user = db.get(SysUser, claim.voided_by) if claim.voided_by else None
     return ExpenseClaimOut(
         id=claim.id,
         claim_no=claim.claim_no,
@@ -123,12 +125,17 @@ def _to_out(claim: ExpenseClaim, db) -> ExpenseClaimOut:
         category=claim.category,
         status=claim.status,
         submitted_at=claim.submitted_at,
+        void_reason=claim.void_reason,
+        voided_by_name=voided_by_user.display_name if voided_by_user else None,
+        voided_at=claim.voided_at,
         attachments=[_attachment_out(a) for a in attachments],
         approvers=approvers,
     )
 
 
 def _visible_claim_ids(db, user: SysUser) -> set[int]:
+    if user.role == UserRole.ADMIN:
+        return set(db.scalars(select(ExpenseClaim.id)).all())
     own = db.scalars(
         select(ExpenseClaim.id).where(ExpenseClaim.applicant_id == user.id)
     ).all()
@@ -381,8 +388,6 @@ def expense_report_export(
     period: str = Query("day", pattern="^(day|week|month)$"),
     start: date | None = None,
 ):
-    if user.role == UserRole.SHAREHOLDER:
-        raise HTTPException(status_code=403, detail="股东仅可查看汇总报表")
     s, e, start_str, end_str = _parse_range(period, start)
 
     q = (
@@ -539,6 +544,24 @@ def reject_expense(claim_id: int, body: ApproverAction, db: DbSession, user: Cur
 @router.post("/{claim_id}/skip", response_model=ExpenseClaimOut)
 def skip_expense(claim_id: int, db: DbSession, user: CurrentUser):
     return _do_approver_action(claim_id, user, db, ExpenseApproverStatus.SKIPPED, "不参与审批")
+
+
+@router.post("/{claim_id}/void", response_model=ExpenseClaimOut)
+def void_expense(claim_id: int, body: VoidAction, db: DbSession, user: CurrentUser):
+    if user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=403, detail="仅超级管理员可作废报销单")
+    claim = db.get(ExpenseClaim, claim_id)
+    if not claim:
+        raise HTTPException(status_code=404, detail="报销单不存在")
+    if claim.status != ExpenseClaimStatus.APPROVED:
+        raise HTTPException(status_code=400, detail="仅已完成的报销单可作废")
+    claim.status = ExpenseClaimStatus.VOIDED
+    claim.void_reason = body.reason.strip()
+    claim.voided_by = user.id
+    claim.voided_at = now_cn()
+    db.commit()
+    db.refresh(claim)
+    return _to_out(claim, db)
 
 
 @router.put("/{claim_id}", response_model=ExpenseClaimOut)

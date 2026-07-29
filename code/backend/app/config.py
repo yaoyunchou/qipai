@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     cors_origins: str = "http://127.0.0.1:5180,http://localhost:5180"
     # 报销附件磁盘目录；生产可设为 /www/server/qipai/uploads
     upload_dir: str = str(_BACKEND_ROOT / "uploads")
-    # 对外访问 URL 前缀；子路径部署如 /qipai/uploads
+    # 对外 URL 路径前缀（不含子路径 BASE，前端会拼 /qipai）；生产填 /uploads
     upload_url_prefix: str = "/uploads"
 
     @property
@@ -36,4 +36,4 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-
+

@@ -46,6 +46,31 @@ python -m scripts.migrate_expense_attachments
 
 按 `Ctrl+C` 可同时停止前后端。
 
+### 同步生产数据到 Supabase（与线上一致）
+
+本地 `.env` 指向 Supabase 时，一键把**生产库 + 附件**同步过来（会覆盖 Supabase 里 public 数据）：
+
+```powershell
+cd code\backend
+.\.venv\Scripts\python.exe -m pip install paramiko python-dotenv
+cd ..\..
+code\backend\.venv\Scripts\python.exe scripts\sync_prod_to_dev.py --yes
+```
+
+或：
+
+```powershell
+cd code
+.\sync-prod-to-dev.ps1 --yes
+```
+
+同步后确认 `.env`：
+
+```env
+UPLOAD_DIR=uploads
+UPLOAD_URL_PREFIX=/uploads
+```
+
 ### 3. 手动启动（可选）
 
 ```powershell

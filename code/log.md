@@ -1,5 +1,19 @@
 # 变更日志
 
+## 2026-07-28
+
+- 报销单支持**超管作废**（方案 E）：新增状态 `VOIDED`；仅 `ADMIN` 可对「已完成」单据作废，须填写作废原因；记录作废人/时间；报表与导出自动排除已作废单据
+- 迁移脚本：`sql/supabase/07-expense-voided.sql`、`python -m scripts.apply_expense_void`
+- 新增 `scripts/sync_prod_to_dev.py` + `code/sync-prod-to-dev.ps1`：一键将生产 PostgreSQL 与 uploads 附件同步到 Supabase 开发库
+- **生产 → Supabase 同步完成**：改用 plain SQL + psycopg2 写入（无需 pg_restore/Docker）；pooler 6543 自动切换 5432 会话模式执行 DDL；当前 Supabase 与线上一致（`expense_claim=64` 条 + 附件已下载至 `backend/uploads/`）
+- **超管报销列表**：新增「全部报销」Tab；超管可查看全部单据并对「已完成」单据作废；「待我审批」仍仅显示指定您为审批人的待处理单
+- 修复同步后缺少 `void_reason` 等字段：生产 dump 不含作废迁移，需额外执行 `python -m scripts.apply_expense_void`；同步脚本已自动在恢复后跑 `sql/supabase/*.sql`
+- 修复「全部报销」为空：等待用户信息加载后再拉列表；三个列表独立加载，避免一个接口失败导致全部为空
+- 优化报销报表 Tab 布局：筛选区与统计区分行、统计卡片栅格展示、分类明细独立卡片
+- **生产部署**（2026-07-28）：新增 `scripts/deploy_prod.py`；本地备份 `backups/prod_20260728_223823/`；线上备份 `/www/backup/qipai_20260728_223909/`；部署作废功能 + 全部报销 Tab + 报表布局优化；执行 `apply_expense_void` 迁移
+- 修复生产前端未重建：`deploy_prod.py` 改为每次部署强制 `npm run build`；补传含「全部报销」的前端包
+- 报销报表「导出 Excel」对股东开放（前后端移除股东 403 限制）
+
 ## 2026-07-23
 
 - 报销附件由数据库 Base64 改为**磁盘静态文件**：上传落盘至 `backend/uploads/expenses/{claim_id}/{uuid}.ext`，DB 仅存 `file_path`；列表/详情 API 返回 `url` 不再带图片内容，解决列表接口 24MB/24 秒问题
@@ -7,6 +21,7 @@
 - 迁移：`sql/supabase/06-expense-attachment-file.sql` + `scripts.apply_expense_attachment_file` + `scripts.migrate_expense_attachments`（旧库 Base64 导出为文件）
 - 生产 Nginx 需增加 `location /qipai/uploads/` alias 到 uploads 目录，并配置 `UPLOAD_DIR`、`UPLOAD_URL_PREFIX=/qipai/uploads`
 - 根目录 `README.md` 补充**快速启动**（配置数据库、`start.ps1`、访问地址），详细说明仍见 `code/README.md`
+- **生产部署**（`jb.jxfgg.com/qipai/`）：备份 DB 18MB + 站点 + 代码至 `/www/backup/qipai_20260723_115342/`；44 张报销附件 Base64 迁移至 `backend/uploads/`；前端 `vite build --base=/qipai/` 已上传；Nginx 增加 `location ^~ /qipai/uploads/`；Supervisor 重启 `qipai-api`
 
 ## 2026-07-03
 

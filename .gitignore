@@ -8,6 +8,7 @@ code/backend/.pytest_cache/
 code/backend/.mypy_cache/
 code/backend/.ruff_cache/
 code/backend/uploads/
+code/backend/.sync/
 code/backend/*.egg-info/
 
 # Node / Vite (frontend)
@@ -35,6 +36,9 @@ code/.vercel/
 # 部署敏感信息（含服务器密码/密钥路径，禁止提交）
 DEPLOY.md
 .deploy_scripts/
+
+# 本地生产环境备份（SQL + 附件）
+backups/
 
 # 系统与编辑器
 .DS_Store

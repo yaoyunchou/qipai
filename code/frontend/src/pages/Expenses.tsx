@@ -1,13 +1,17 @@
 import {
   Button,
   Card,
+  Col,
   DatePicker,
+  Divider,
+  Flex,
   Form,
   Image,
   Input,
   InputNumber,
   Layout,
   Modal,
+  Row,
   Segmented,
   Select,
   Space,
@@ -61,6 +65,7 @@ const STATUS_TAG: Record<string, { color: string; label: string }> = {
   PENDING: { color: "orange", label: "待审批" },
   APPROVED: { color: "green", label: "已完成" },
   REJECTED: { color: "red", label: "已驳回" },
+  VOIDED: { color: "default", label: "已作废" },
 };
 
 const APPROVER_STATUS: Record<string, string> = {
@@ -80,25 +85,31 @@ function fileToBase64(file: File): Promise<string> {
 }
 
 export default function ExpensesPage() {
-  const { me } = useMe();
+  const { me, loading: meLoading } = useMe();
   const [form] = Form.useForm();
   const [actionForm] = Form.useForm<{ comment: string }>();
+  const [voidForm] = Form.useForm<{ reason: string }>();
   const [submitting, setSubmitting] = useState(false);
   const [selectableApprovers, setSelectableApprovers] = useState<SelectableApprover[]>([]);
   const [myClaims, setMyClaims] = useState<ExpenseClaimItem[]>([]);
   const [pendingClaims, setPendingClaims] = useState<ExpenseClaimItem[]>([]);
+  const [allClaims, setAllClaims] = useState<ExpenseClaimItem[]>([]);
   const [listLoading, setListLoading] = useState(false);
   const [detailOpen, setDetailOpen] = useState(false);
   const [detail, setDetail] = useState<ExpenseClaimItem | null>(null);
   const [actionOpen, setActionOpen] = useState(false);
   const [actionType, setActionType] = useState<"approve" | "reject">("approve");
   const [actionClaimId, setActionClaimId] = useState<number | null>(null);
+  const [voidOpen, setVoidOpen] = useState(false);
+  const [voidClaimId, setVoidClaimId] = useState<number | null>(null);
+  const [voidSubmitting, setVoidSubmitting] = useState(false);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [dateRange, setDateRange] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null] | null>(null);
 
   const [period, setPeriod] = useState<"day" | "week" | "month">("day");
   const [anchorDate, setAnchorDate] = useState(dayjs());
   const [reportData, setReportData] = useState<ExpenseReportSummary | null>(null);
+  const [reportLoading, setReportLoading] = useState(false);
   const [exporting, setExporting] = useState(false);
 
   const [permissions, setPermissions] = useState<ApprovePermissionItem[]>([]);
@@ -112,7 +123,41 @@ export default function ExpensesPage() {
   const [editSubmitting, setEditSubmitting] = useState(false);
 
   const canManagePerm = me?.role === "ADMIN";
-  const canExportReport = me?.role !== "SHAREHOLDER";
+  const canVoidClaim = me?.role === "ADMIN";
+  const canExportReport = !!me && ["ADMIN", "MANAGER", "SHAREHOLDER", "CASHIER"].includes(me.role);
+
+  const listQuery = useCallback(() => {
+    const params = new URLSearchParams({ limit: "100" });
+    if (dateRange?.[0]) params.set("start", dateRange[0].format("YYYY-MM-DD"));
+    if (dateRange?.[1]) params.set("end", dateRange[1].format("YYYY-MM-DD"));
+    return params.toString();
+  }, [dateRange]);
+
+  const loadLists = useCallback(async () => {
+    if (meLoading) return;
+    setListLoading(true);
+    const qs = listQuery();
+    const isAdmin = me?.role === "ADMIN";
+    try {
+      const [mineRes, pendingRes, allRes] = await Promise.allSettled([
+        api<ExpenseClaimItem[]>(`/api/v1/expenses?scope=mine&${qs}`),
+        api<ExpenseClaimItem[]>(`/api/v1/expenses?scope=pending&${qs}`),
+        isAdmin
+          ? api<ExpenseClaimItem[]>(`/api/v1/expenses?scope=all&${qs}`)
+          : Promise.resolve([] as ExpenseClaimItem[]),
+      ]);
+      if (mineRes.status === "fulfilled") setMyClaims(mineRes.value);
+      else message.error(mineRes.reason instanceof Error ? mineRes.reason.message : "我的报销加载失败");
+      if (pendingRes.status === "fulfilled") setPendingClaims(pendingRes.value);
+      else message.error(pendingRes.reason instanceof Error ? pendingRes.reason.message : "待审批加载失败");
+      if (allRes.status === "fulfilled") setAllClaims(allRes.value);
+      else if (isAdmin) {
+        message.error(allRes.reason instanceof Error ? allRes.reason.message : "全部报销加载失败");
+      }
+    } finally {
+      setListLoading(false);
+    }
+  }, [meLoading, me?.role, listQuery]);
 
   const loadApprovers = useCallback(async () => {
     try {
@@ -123,26 +168,8 @@ export default function ExpensesPage() {
     }
   }, []);
 
-  const loadLists = useCallback(async () => {
-    setListLoading(true);
-    try {
-      const params = new URLSearchParams({ limit: "100" });
-      if (dateRange?.[0]) params.set("start", dateRange[0].format("YYYY-MM-DD"));
-      if (dateRange?.[1]) params.set("end", dateRange[1].format("YYYY-MM-DD"));
-      const [mine, pending] = await Promise.all([
-        api<ExpenseClaimItem[]>(`/api/v1/expenses?scope=mine&${params}`),
-        api<ExpenseClaimItem[]>(`/api/v1/expenses?scope=pending&${params}`),
-      ]);
-      setMyClaims(mine);
-      setPendingClaims(pending);
-    } catch (e) {
-      message.error(e instanceof Error ? e.message : "加载失败");
-    } finally {
-      setListLoading(false);
-    }
-  }, [dateRange]);
-
   const loadReport = useCallback(async () => {
+    setReportLoading(true);
     try {
       const data = await api<ExpenseReportSummary>(
         `/api/v1/expenses/reports/summary?period=${period}&start=${anchorDate.format("YYYY-MM-DD")}`
@@ -150,6 +177,8 @@ export default function ExpensesPage() {
       setReportData(data);
     } catch (e) {
       message.error(e instanceof Error ? e.message : "报表加载失败");
+    } finally {
+      setReportLoading(false);
     }
   }, [period, anchorDate]);
 
@@ -167,9 +196,10 @@ export default function ExpensesPage() {
   }, [canManagePerm]);
 
   useEffect(() => {
+    if (meLoading) return;
     loadApprovers();
     loadLists();
-  }, [loadApprovers, loadLists]);
+  }, [meLoading, loadApprovers, loadLists]);
 
   useEffect(() => {
     loadReport();
@@ -226,6 +256,46 @@ export default function ExpensesPage() {
     setActionType(type);
     actionForm.resetFields();
     setActionOpen(true);
+  };
+
+  const openVoid = (claimId: number) => {
+    setVoidClaimId(claimId);
+    voidForm.resetFields();
+    setVoidOpen(true);
+  };
+
+  const submitVoid = async (values: { reason: string }) => {
+    if (!voidClaimId) return;
+    setVoidSubmitting(true);
+    try {
+      await api<ExpenseClaimItem>(`/api/v1/expenses/${voidClaimId}/void`, {
+        method: "POST",
+        body: JSON.stringify({ reason: values.reason }),
+      });
+      message.success("报销单已作废");
+      setVoidOpen(false);
+      if (detail?.id === voidClaimId) {
+        setDetailOpen(false);
+        setDetail(null);
+      }
+      loadLists();
+      loadReport();
+    } catch (e) {
+      message.error(e instanceof Error ? e.message : "作废失败");
+    } finally {
+      setVoidSubmitting(false);
+    }
+  };
+
+  const confirmVoid = (claimId: number, claimNo: string) => {
+    Modal.confirm({
+      title: "确认作废报销单",
+      content: `确定作废 ${claimNo} 吗？作废后将从报表中排除，且不可恢复。`,
+      okText: "继续作废",
+      okButtonProps: { danger: true },
+      cancelText: "取消",
+      onOk: () => openVoid(claimId),
+    });
   };
 
   const submitAction = async (values: { comment: string }) => {
@@ -410,6 +480,11 @@ export default function ExpensesPage() {
               </Button>
             </>
           )}
+          {canVoidClaim && row.status === "APPROVED" && (
+            <Button type="link" danger size="small" onClick={() => confirmVoid(row.id, row.claim_no)}>
+              作废
+            </Button>
+          )}
         </Space>
       ),
     },
@@ -482,6 +557,9 @@ export default function ExpensesPage() {
 
   const pendingTab = (
     <Card title="待我审批">
+      <Typography.Paragraph type="secondary">
+        仅显示指定您为审批人且尚未处理的单据。超管如需审批，请先在「审批授权」中勾选自己。
+      </Typography.Paragraph>
       <Table
         rowKey="id"
         loading={listLoading}
@@ -493,40 +571,91 @@ export default function ExpensesPage() {
     </Card>
   );
 
+  const allTab = (
+    <Card title="全部报销">
+      <Typography.Paragraph type="secondary">
+        超管可查看全部报销单。状态为「已完成」的单据可作废（如退货退款）。
+      </Typography.Paragraph>
+      <Table
+        rowKey="id"
+        loading={listLoading}
+        dataSource={allClaims}
+        columns={claimColumns}
+        pagination={{ pageSize: 10 }}
+        scroll={{ x: 900 }}
+      />
+    </Card>
+  );
+
   const reportTab = (
-    <Card title="报销报表（仅统计已完成）">
-      <Space wrap style={{ marginBottom: 16 }}>
-        <Segmented
-          options={[
-            { label: "日报", value: "day" },
-            { label: "周报", value: "week" },
-            { label: "月报", value: "month" },
-          ]}
-          value={period}
-          onChange={(v) => setPeriod(v as "day" | "week" | "month")}
-        />
-        <DatePicker
-          value={anchorDate}
-          onChange={(d) => d && setAnchorDate(d)}
-          allowClear={false}
-          picker={period === "month" ? "month" : period === "week" ? "week" : "date"}
-        />
+    <Card title="报销报表">
+      <Typography.Paragraph type="secondary" style={{ marginBottom: 16 }}>
+        仅统计「已完成」报销单，已作废单据不计入。
+      </Typography.Paragraph>
+
+      <Flex wrap="wrap" gap={12} align="center" justify="space-between">
+        <Space wrap size="middle">
+          <Segmented
+            options={[
+              { label: "日报", value: "day" },
+              { label: "周报", value: "week" },
+              { label: "月报", value: "month" },
+            ]}
+            value={period}
+            onChange={(v) => setPeriod(v as "day" | "week" | "month")}
+          />
+          <DatePicker
+            value={anchorDate}
+            onChange={(d) => d && setAnchorDate(d)}
+            allowClear={false}
+            picker={period === "month" ? "month" : period === "week" ? "week" : "date"}
+          />
+        </Space>
         {canExportReport && (
           <Button loading={exporting} onClick={handleExport}>
             导出 Excel
           </Button>
         )}
-      </Space>
-      {reportData && (
-        <>
-          <Space size={48}>
-            <Statistic title="已完成笔数" value={reportData.claim_count} />
-            <Statistic title="报销总金额" value={reportData.amount_total} prefix="¥" precision={2} />
+      </Flex>
+
+      <Divider style={{ margin: "20px 0" }} />
+
+      <Card
+        loading={reportLoading}
+        bordered={false}
+        style={{ background: "#fafafa" }}
+        styles={{ body: { padding: "20px 24px" } }}
+      >
+        {reportData ? (
+          <Space direction="vertical" size="large" style={{ width: "100%" }}>
+            <Typography.Text type="secondary">
+              统计周期：{reportData.start_date} ~ {reportData.end_date}
+            </Typography.Text>
+            <Row gutter={[24, 24]}>
+              <Col xs={24} sm={12} md={8}>
+                <Statistic title="已完成笔数" value={reportData.claim_count} suffix="笔" />
+              </Col>
+              <Col xs={24} sm={12} md={8}>
+                <Statistic
+                  title="报销总金额"
+                  value={reportData.amount_total}
+                  prefix="¥"
+                  precision={2}
+                />
+              </Col>
+            </Row>
           </Space>
-          {reportData.by_category.length > 0 && (
+        ) : (
+          !reportLoading && (
+            <Typography.Text type="secondary">暂无报表数据</Typography.Text>
+          )
+        )}
+      </Card>
+
+      {reportData && reportData.by_category.length > 0 && (
+        <Card title="分类明细" size="small" style={{ marginTop: 16 }}>
           <Table
             size="small"
-            style={{ marginTop: 16, maxWidth: 480 }}
             rowKey="category"
             pagination={false}
             dataSource={reportData.by_category}
@@ -536,16 +665,16 @@ export default function ExpensesPage() {
                 dataIndex: "category",
                 render: (v: string) => CATEGORY_LABEL[v] || v,
               },
-              { title: "笔数", dataIndex: "claim_count" },
+              { title: "笔数", dataIndex: "claim_count", width: 100 },
               {
                 title: "金额",
                 dataIndex: "amount_total",
+                width: 140,
                 render: (v: string) => `¥${parseFloat(v).toFixed(2)}`,
               },
             ]}
           />
-        )}
-        </>
+        </Card>
       )}
     </Card>
   );
@@ -599,6 +728,7 @@ export default function ExpensesPage() {
     { key: "create", label: "新建报销", children: createTab },
     { key: "mine", label: "我的报销", children: listTab },
     { key: "pending", label: "待我审批", children: pendingTab },
+    ...(canManagePerm ? [{ key: "all", label: "全部报销", children: allTab }] : []),
     { key: "report", label: "报销报表", children: reportTab },
     ...(canManagePerm ? [{ key: "perm", label: "审批授权", children: permTab }] : []),
   ];
@@ -630,6 +760,21 @@ export default function ExpensesPage() {
               <Typography.Text type="secondary">状态：</Typography.Text>
               <Tag color={STATUS_TAG[detail.status]?.color}>{STATUS_TAG[detail.status]?.label}</Tag>
             </div>
+            {detail.status === "VOIDED" && (
+              <>
+                <div>
+                  <Typography.Text type="secondary">作废原因：</Typography.Text>
+                  {detail.void_reason || "无"}
+                </div>
+                <div>
+                  <Typography.Text type="secondary">作废人：</Typography.Text>
+                  {detail.voided_by_name || "-"}
+                  {detail.voided_at
+                    ? ` · ${dayjs(detail.voided_at).format("YYYY-MM-DD HH:mm")}`
+                    : ""}
+                </div>
+              </>
+            )}
             <div>
               <Typography.Text type="secondary">申请备注：</Typography.Text>
               {detail.remark || "无"}
@@ -680,8 +825,33 @@ export default function ExpensesPage() {
                 ]}
               />
             </div>
+            {canVoidClaim && detail.status === "APPROVED" && (
+              <Button danger onClick={() => confirmVoid(detail.id, detail.claim_no)}>
+                作废此报销单
+              </Button>
+            )}
           </Space>
         )}
+      </Modal>
+
+      <Modal
+        title="作废报销单"
+        open={voidOpen}
+        onCancel={() => setVoidOpen(false)}
+        onOk={() => voidForm.submit()}
+        confirmLoading={voidSubmitting}
+        okText="确认作废"
+        okButtonProps={{ danger: true }}
+      >
+        <Form form={voidForm} layout="vertical" onFinish={submitVoid}>
+          <Form.Item
+            name="reason"
+            label="作废原因"
+            rules={[{ required: true, message: "请填写作废原因，如：已退货退款" }]}
+          >
+            <TextArea rows={3} maxLength={500} showCount placeholder="例如：商品已退货，款项已退回公司账户" />
+          </Form.Item>
+        </Form>
       </Modal>
 
       <Modal

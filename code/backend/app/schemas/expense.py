@@ -30,6 +30,10 @@ class ApproverAction(BaseModel):
     comment: str = Field(min_length=1, max_length=500)
 
 
+class VoidAction(BaseModel):
+    reason: str = Field(min_length=1, max_length=500)
+
+
 class AttachmentOut(BaseModel):
     id: int
     filename: str
@@ -58,6 +62,9 @@ class ExpenseClaimOut(BaseModel):
     category: ExpenseCategory = ExpenseCategory.FIXED
     status: ExpenseClaimStatus
     submitted_at: datetime
+    void_reason: str | None = None
+    voided_by_name: str | None = None
+    voided_at: datetime | None = None
     attachments: list[AttachmentOut] = []
     approvers: list[ApproverRecordOut] = []
 

@@ -1,10 +1,14 @@
 const TOKEN_KEY = "qipai_token";
 const API_BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 
-/** 报销附件静态 URL（兼容子路径部署如 /qipai/） */
+/** 报销附件静态 URL（API 返回 /uploads/...，此处拼上 BASE_URL 如 /qipai） */
 export function attachmentUrl(url: string): string {
   if (url.startsWith("http://") || url.startsWith("https://")) return url;
-  return `${API_BASE}${url.startsWith("/") ? url : `/${url}`}`;
+  const base = API_BASE.replace(/\/$/, "");
+  const path = url.startsWith("/") ? url : `/${url}`;
+  // 兼容旧配置：API 已含 /qipai 前缀时不再重复拼接
+  if (base && (path === base || path.startsWith(`${base}/`))) return path;
+  return base ? `${base}${path}` : path;
 }
 
 export function getToken(): string | null {
@@ -124,8 +128,11 @@ export type ExpenseClaimItem = {
   amount: string;
   remark: string | null;
   category: "FIXED" | "OPERATIONS" | "SANDBOX";
-  status: "PENDING" | "APPROVED" | "REJECTED";
+  status: "PENDING" | "APPROVED" | "REJECTED" | "VOIDED";
   submitted_at: string;
+  void_reason?: string | null;
+  voided_by_name?: string | null;
+  voided_at?: string | null;
   attachments: ExpenseAttachment[];
   approvers: ExpenseApproverRecord[];
 };

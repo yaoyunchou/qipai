@@ -18,6 +18,7 @@ class ExpenseClaimStatus(str, enum.Enum):
     PENDING = "PENDING"
     APPROVED = "APPROVED"
     REJECTED = "REJECTED"
+    VOIDED = "VOIDED"
 
 
 class ExpenseApproverStatus(str, enum.Enum):
@@ -56,6 +57,9 @@ class ExpenseClaim(Base):
         default=ExpenseClaimStatus.PENDING,
     )
     submitted_at: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False)
+    void_reason: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    voided_by: Mapped[int | None] = mapped_column(BigInteger, ForeignKey("sys_user.id"), nullable=True)
+    voided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=False), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=False), server_default=func.now()
     )
