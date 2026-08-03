@@ -485,6 +485,115 @@ def expense_report_export(
     )
 
 
+@router.get("/export/list")
+def export_expense_list(
+    db: DbSession,
+    user: CurrentUser,
+    start: date | None = None,
+    end: date | None = None,
+):
+    """超管导出全部报销明细（可按提交日期筛选）。"""
+    if user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=403, detail="仅超级管理员可导出全部报销")
+
+    visible = _visible_claim_ids(db, user)
+    if not visible:
+        claims: list[ExpenseClaim] = []
+    else:
+        q = (
+            select(ExpenseClaim)
+            .where(ExpenseClaim.id.in_(visible))
+            .order_by(ExpenseClaim.submitted_at.desc())
+        )
+        if start:
+            q = q.where(ExpenseClaim.submitted_at >= datetime.combine(start, datetime.min.time()))
+        if end:
+            q = q.where(
+                ExpenseClaim.submitted_at
+                < datetime.combine(end + timedelta(days=1), datetime.min.time())
+            )
+        claims = list(db.scalars(q).all())
+
+    category_label = {"FIXED": "固定支出", "OPERATIONS": "营运支出", "SANDBOX": "沙箱支出"}
+    status_label = {
+        ExpenseClaimStatus.PENDING: "待审批",
+        ExpenseClaimStatus.APPROVED: "已完成",
+        ExpenseClaimStatus.REJECTED: "已驳回",
+        ExpenseClaimStatus.VOIDED: "已作废",
+    }
+
+    range_label = "全部"
+    if start and end:
+        range_label = f"{start.isoformat()} ~ {end.isoformat()}"
+    elif start:
+        range_label = f"{start.isoformat()} 起"
+    elif end:
+        range_label = f"至 {end.isoformat()}"
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "全部报销"
+    ws.append(["导出范围（按提交时间）", range_label])
+    ws.append(["导出笔数", len(claims)])
+    ws.append([])
+    ws.append(
+        [
+            "单号",
+            "申请人",
+            "分类",
+            "金额",
+            "状态",
+            "申请备注",
+            "提交时间",
+            "作废原因",
+            "审批人",
+            "审批意见",
+        ]
+    )
+    for claim in claims:
+        applicant = db.get(SysUser, claim.applicant_id)
+        approver_rows = db.scalars(
+            select(ExpenseClaimApprover)
+            .where(ExpenseClaimApprover.claim_id == claim.id)
+            .order_by(ExpenseClaimApprover.id)
+        ).all()
+        approver_parts: list[str] = []
+        comment_parts: list[str] = []
+        for ar in approver_rows:
+            approver = db.get(SysUser, ar.approver_id)
+            name = approver.display_name if approver else str(ar.approver_id)
+            approver_parts.append(f"{name}({ar.status.value})")
+            if ar.comment:
+                comment_parts.append(f"{name}:{ar.comment}")
+        ws.append(
+            [
+                claim.claim_no,
+                applicant.display_name if applicant else "",
+                category_label.get(claim.category.value, claim.category.value),
+                float(claim.amount),
+                status_label.get(claim.status, claim.status.value),
+                claim.remark or "",
+                claim.submitted_at.strftime("%Y-%m-%d %H:%M:%S"),
+                claim.void_reason or "",
+                "；".join(approver_parts),
+                "；".join(comment_parts),
+            ]
+        )
+
+    buf = BytesIO()
+    wb.save(buf)
+    buf.seek(0)
+    suffix = start.isoformat() if start else "all"
+    if end and (not start or end != start):
+        suffix = f"{start.isoformat() if start else 'start'}_{end.isoformat()}"
+    filename = f"expense_all_{suffix}.xlsx"
+    return StreamingResponse(
+        buf,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
+
 @router.get("/{claim_id}", response_model=ExpenseClaimOut)
 def get_expense(claim_id: int, db: DbSession, user: CurrentUser):
     claim = _ensure_visible(claim_id, user, db)

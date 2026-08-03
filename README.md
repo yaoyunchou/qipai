@@ -46,6 +46,29 @@ python -m scripts.migrate_expense_attachments
 
 按 `Ctrl+C` 可同时停止前后端。
 
+### 默认超管账号
+
+| 环境 | 地址 | 用户名 | 默认密码 |
+|------|------|--------|----------|
+| 本地开发 | http://127.0.0.1:5180 | `admin` | `admin123` |
+| 生产（宝塔） | https://jb.jxfgg.com/qipai/ | `admin` | `admin123`（与 `init_admin` 默认一致；若曾改过密码以线上为准） |
+
+密码由 `code/backend/scripts/init_admin.py` 创建，默认不传参即为 `admin123`。
+
+**重置 admin 密码**（在对应环境的 `code/backend` 目录、已配置 `.env` 且激活虚拟环境后）：
+
+```powershell
+python -m scripts.init_admin 新密码
+# 不传参则重置为 admin123
+python -m scripts.init_admin
+```
+
+生产服务器示例：
+
+```bash
+cd /www/server/qipai/code/backend && source .venv/bin/activate && python -m scripts.init_admin
+```
+
 ### 同步生产数据到 Supabase（与线上一致）
 
 本地 `.env` 指向 Supabase 时，一键把**生产库 + 附件**同步过来（会覆盖 Supabase 里 public 数据）：

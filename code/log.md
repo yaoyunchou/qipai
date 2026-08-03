@@ -13,6 +13,8 @@
 - **生产部署**（2026-07-28）：新增 `scripts/deploy_prod.py`；本地备份 `backups/prod_20260728_223823/`；线上备份 `/www/backup/qipai_20260728_223909/`；部署作废功能 + 全部报销 Tab + 报表布局优化；执行 `apply_expense_void` 迁移
 - 修复生产前端未重建：`deploy_prod.py` 改为每次部署强制 `npm run build`；补传含「全部报销」的前端包
 - 报销报表「导出 Excel」对股东开放（前后端移除股东 403 限制）
+- 超管「全部报销」：支持按提交日期 RangePicker 筛选；新增「导出 Excel」（`/api/v1/expenses/export/list`）
+- 根目录 `README.md` 补充默认超管账号（admin / admin123）及重置说明
 
 ## 2026-07-23
 
