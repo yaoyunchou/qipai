@@ -105,6 +105,10 @@ export default function ExpensesPage() {
   const [voidSubmitting, setVoidSubmitting] = useState(false);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [dateRange, setDateRange] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null] | null>(null);
+  const [allDateRange, setAllDateRange] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null] | null>(
+    null
+  );
+  const [allExporting, setAllExporting] = useState(false);
 
   const [period, setPeriod] = useState<"day" | "week" | "month">("day");
   const [anchorDate, setAnchorDate] = useState(dayjs());
@@ -133,17 +137,25 @@ export default function ExpensesPage() {
     return params.toString();
   }, [dateRange]);
 
+  const allListQuery = useCallback(() => {
+    const params = new URLSearchParams({ limit: "200" });
+    if (allDateRange?.[0]) params.set("start", allDateRange[0].format("YYYY-MM-DD"));
+    if (allDateRange?.[1]) params.set("end", allDateRange[1].format("YYYY-MM-DD"));
+    return params.toString();
+  }, [allDateRange]);
+
   const loadLists = useCallback(async () => {
     if (meLoading) return;
     setListLoading(true);
     const qs = listQuery();
+    const allQs = allListQuery();
     const isAdmin = me?.role === "ADMIN";
     try {
       const [mineRes, pendingRes, allRes] = await Promise.allSettled([
         api<ExpenseClaimItem[]>(`/api/v1/expenses?scope=mine&${qs}`),
         api<ExpenseClaimItem[]>(`/api/v1/expenses?scope=pending&${qs}`),
         isAdmin
-          ? api<ExpenseClaimItem[]>(`/api/v1/expenses?scope=all&${qs}`)
+          ? api<ExpenseClaimItem[]>(`/api/v1/expenses?scope=all&${allQs}`)
           : Promise.resolve([] as ExpenseClaimItem[]),
       ]);
       if (mineRes.status === "fulfilled") setMyClaims(mineRes.value);
@@ -157,7 +169,7 @@ export default function ExpensesPage() {
     } finally {
       setListLoading(false);
     }
-  }, [meLoading, me?.role, listQuery]);
+  }, [meLoading, me?.role, listQuery, allListQuery]);
 
   const loadApprovers = useCallback(async () => {
     try {
@@ -401,7 +413,8 @@ export default function ExpensesPage() {
     });
   };
 
-  const handleExport = async () => {    setExporting(true);
+  const handleExport = async () => {
+    setExporting(true);
     try {
       await downloadFile(
         `/api/v1/expenses/reports/export?period=${period}&start=${anchorDate.format("YYYY-MM-DD")}`,
@@ -412,6 +425,26 @@ export default function ExpensesPage() {
       message.error(e instanceof Error ? e.message : "导出失败");
     } finally {
       setExporting(false);
+    }
+  };
+
+  const handleExportAll = async () => {
+    setAllExporting(true);
+    try {
+      const params = new URLSearchParams();
+      if (allDateRange?.[0]) params.set("start", allDateRange[0].format("YYYY-MM-DD"));
+      if (allDateRange?.[1]) params.set("end", allDateRange[1].format("YYYY-MM-DD"));
+      const qs = params.toString();
+      const start = allDateRange?.[0]?.format("YYYY-MM-DD") ?? "all";
+      const end = allDateRange?.[1]?.format("YYYY-MM-DD");
+      const name =
+        end && end !== start ? `expense_all_${start}_${end}.xlsx` : `expense_all_${start}.xlsx`;
+      await downloadFile(`/api/v1/expenses/export/list${qs ? `?${qs}` : ""}`, name);
+      message.success("导出成功");
+    } catch (e) {
+      message.error(e instanceof Error ? e.message : "导出失败");
+    } finally {
+      setAllExporting(false);
     }
   };
 
@@ -573,8 +606,21 @@ export default function ExpensesPage() {
 
   const allTab = (
     <Card title="全部报销">
+      <Flex wrap="wrap" gap={12} align="center" justify="space-between" style={{ marginBottom: 16 }}>
+        <Space wrap>
+          <Typography.Text type="secondary">提交时间：</Typography.Text>
+          <RangePicker
+            value={allDateRange}
+            onChange={(v) => setAllDateRange(v)}
+            allowEmpty={[true, true]}
+          />
+        </Space>
+        <Button loading={allExporting} onClick={handleExportAll}>
+          导出 Excel
+        </Button>
+      </Flex>
       <Typography.Paragraph type="secondary">
-        超管可查看全部报销单。状态为「已完成」的单据可作废（如退货退款）。
+        超管可查看全部报销单；筛选日期后列表与导出均按提交时间过滤。状态为「已完成」的单据可作废。
       </Typography.Paragraph>
       <Table
         rowKey="id"
