@@ -3,6 +3,8 @@ import mimetypes
 import uuid
 from pathlib import Path
 
+import shutil
+
 from app.config import settings
 
 _CONTENT_TYPE_EXT = {
@@ -58,3 +60,10 @@ def delete_attachment_file(file_path: str | None) -> None:
 def delete_claim_attachment_files(file_paths: list[str | None]) -> None:
     for path in file_paths:
         delete_attachment_file(path)
+
+
+def clear_expense_uploads() -> None:
+    """删除 uploads/expenses 下全部报销附件目录。"""
+    expenses_dir = upload_root() / "expenses"
+    if expenses_dir.exists():
+        shutil.rmtree(expenses_dir)

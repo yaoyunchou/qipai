@@ -231,6 +231,10 @@ def _apply_local_migrations(database_url: str, ssl_mode: str) -> None:
         "05-expense-category.sql",
         "06-expense-attachment-file.sql",
         "07-expense-voided.sql",
+        "08-expense-category-living.sql",
+        "09-play-companion.sql",
+        "10-play-companion-signed-amount.sql",
+        "11-loan-record.sql",
     )
     files = [migration_dir / name for name in incremental if (migration_dir / name).is_file()]
     if not files:
@@ -262,8 +266,8 @@ def _local_restore_sql(sql_file: Path, database_url: str, ssl_mode: str) -> None
         with conn.cursor() as cur:
             cur.execute("DROP SCHEMA IF EXISTS public CASCADE")
             cur.execute("CREATE SCHEMA public")
-            cur.execute("GRANT ALL ON SCHEMA public TO postgres")
             cur.execute("GRANT ALL ON SCHEMA public TO public")
+            cur.execute(f"GRANT ALL ON SCHEMA public TO {db['user']}")
             for stmt in _split_sql(sql):
                 if _should_skip_restore_stmt(stmt):
                     continue
@@ -276,6 +280,40 @@ def _local_restore_sql(sql_file: Path, database_url: str, ssl_mode: str) -> None
     finally:
         conn.close()
     _apply_local_migrations(database_url, ssl_mode)
+    _fix_sequences(database_url, ssl_mode)
+
+
+def _fix_sequences(database_url: str, ssl_mode: str) -> None:
+    """pg_dump --inserts 导入后序列常未更新，需对齐 MAX(id)。"""
+    tables = (
+        "sys_user",
+        "price_change_log",
+        "room_table",
+        "biz_order",
+        "expense_claim",
+        "expense_claim_attachment",
+        "expense_claim_approver",
+        "play_companion_record",
+        "loan_record",
+    )
+    db = _parse_database_url(database_url)
+    conn = _connect(db, ssl_mode)
+    conn.autocommit = True
+    print("\n>>> 对齐 id 序列 ...")
+    try:
+        with conn.cursor() as cur:
+            for table in tables:
+                cur.execute("SELECT pg_get_serial_sequence(%s, 'id')", (table,))
+                seq = cur.fetchone()[0]
+                if not seq:
+                    continue
+                cur.execute(f"SELECT COALESCE(MAX(id), 0) FROM {table}")
+                max_id = cur.fetchone()[0] or 0
+                next_id = int(max_id) + 1
+                cur.execute("SELECT setval(%s, %s, false)", (seq, next_id))
+                print(f"    {table}: 下一 id = {next_id}")
+    finally:
+        conn.close()
 
 
 def _download_uploads(sftp: paramiko.SFTPClient, remote: str, local: Path) -> None:

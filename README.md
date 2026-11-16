@@ -10,10 +10,31 @@
 
 ### 1. 首次：配置数据库
 
+**方式 A：本地 Docker（推荐）**
+
+需已安装 Docker Desktop。
+
+```powershell
+cd code
+.\setup-local-db.ps1
+```
+
+会自动：启动 `postgres:15` 容器 → 建表 → 创建 `admin / admin123`。
+
+日常仅启动数据库容器：
+
+```powershell
+cd code
+.\docker-db.ps1 up    # 启动
+.\docker-db.ps1 down  # 停止
+```
+
+**方式 B：Supabase 云库**
+
 ```powershell
 cd code
 copy backend\.env.example backend\.env
-# 编辑 backend\.env，填入 DATABASE_URL、JWT_SECRET
+# 编辑 backend\.env，填入 Supabase DATABASE_URL
 .\setup-db.ps1
 ```
 
@@ -26,6 +47,38 @@ cd backend
 .\.venv\Scripts\Activate.ps1
 python -m scripts.apply_expense_attachment_file
 python -m scripts.migrate_expense_attachments
+```
+
+若库中已有报销模块但缺少「生活支出」分类，需执行：
+
+```powershell
+cd backend
+.\.venv\Scripts\Activate.ps1
+python -m scripts.apply_expense_category_living
+```
+
+若库中还没有陪玩记账表，需执行：
+
+```powershell
+cd backend
+.\.venv\Scripts\Activate.ps1
+python -m scripts.apply_play_companion
+```
+
+若库中已有陪玩记账表，但金额仍限制为非负数（输了记不上），需执行：
+
+```powershell
+cd backend
+.\.venv\Scripts\Activate.ps1
+python -m scripts.apply_play_companion_signed_amount
+```
+
+若库中还没有借钱还钱表（客人借还款无法记录），需执行：
+
+```powershell
+cd backend
+.\.venv\Scripts\Activate.ps1
+python -m scripts.apply_loan_record
 ```
 
 ### 2. 启动前后端
@@ -68,6 +121,24 @@ python -m scripts.init_admin
 ```bash
 cd /www/server/qipai/code/backend && source .venv/bin/activate && python -m scripts.init_admin
 ```
+
+### 同步生产数据到本地 Docker 库
+
+本地 `.env` 指向 Docker PostgreSQL 时，一键拉取线上数据 + 附件（会**覆盖**本地 `public` 数据）：
+
+```powershell
+cd code
+.\sync-prod-to-dev.ps1 --yes
+```
+
+或：
+
+```powershell
+cd code
+backend\.venv\Scripts\python.exe ..\scripts\sync_prod_to_dev.py --yes
+```
+
+同步后确认 `.env` 含 `UPLOAD_DIR=uploads`、`UPLOAD_URL_PREFIX=/uploads`，再 `.\start.ps1`。
 
 ### 同步生产数据到 Supabase（与线上一致）
 

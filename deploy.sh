@@ -94,6 +94,10 @@ if [ "$TABLE_COUNT" -eq 0 ]; then
   python -m scripts.apply_schema
   python -m scripts.apply_expense_schema
   python -m scripts.apply_expense_category
+  python -m scripts.apply_expense_category_living
+  python -m scripts.apply_play_companion
+  python -m scripts.apply_play_companion_signed_amount
+  python -m scripts.apply_loan_record
   echo "  >>> 请手动执行以下命令创建管理员账号（设置强密码）："
   echo "      cd $CODE_DIR/code/backend && source .venv/bin/activate && python -m scripts.init_admin <你的管理员密码>"
 else
