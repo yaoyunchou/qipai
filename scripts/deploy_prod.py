@@ -287,12 +287,129 @@ deactivate
     ssh.close()
 
 
+def _git(*args: str) -> tuple[int, str]:
+    """执行 git 命令，返回 (退出码, 输出)。"""
+    proc = subprocess.run(
+        ["git", *args],
+        cwd=str(ROOT),
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
+    return proc.returncode, (proc.stdout or "").strip()
+
+
+def verify_release_ready(release_branch: str, allow_dirty: bool) -> None:
+    """部署前置校验：只允许从已合并、无差异的主分支部署。
+
+    规则（任一不满足即中止）：
+    1. 当前分支必须是 release_branch（默认 main）
+    2. 工作区必须干净（无未提交改动、无未跟踪文件）
+    3. 本地分支必须与 origin/<branch> 完全一致（已推送）
+    4. 代码必须与 origin/main 一致（无未合并的开发分支差异）
+    """
+    print("=" * 60)
+    print("0/4 部署前置校验")
+    print("=" * 60)
+
+    problems: list[str] = []
+
+    code, branch = _git("rev-parse", "--abbrev-ref", "HEAD")
+    if code != 0:
+        raise SystemExit("无法读取当前分支，请确认在项目根目录执行。")
+    print(f"  当前分支: {branch}")
+    if branch != release_branch:
+        problems.append(
+            f"当前在 {branch}，必须切换到 {release_branch} 才能部署（禁止任意分支部署）"
+        )
+
+    if allow_dirty:
+        print("  工作区: 已用 --allow-dirty 跳过检查（不推荐）")
+    else:
+        code, status = _git("status", "--porcelain")
+        if status:
+            changed = [ln for ln in status.splitlines() if ln.strip()]
+            preview = "\n      ".join(changed[:10])
+            more = f"\n      ...还有 {len(changed) - 10} 个" if len(changed) > 10 else ""
+            problems.append(f"工作区有 {len(changed)} 个未提交改动，请先提交：\n      {preview}{more}")
+        else:
+            print("  工作区: 干净")
+
+    code, upstream = _git("rev-parse", "--abbrev-ref", f"{release_branch}@{{upstream}}")
+    if code != 0:
+        problems.append(f"{release_branch} 未设置上游分支，无法确认是否已推送")
+    else:
+        code, ahead = _git("rev-list", "--count", f"{upstream}..{release_branch}")
+        code2, behind = _git("rev-list", "--count", f"{release_branch}..{upstream}")
+        if ahead.isdigit() and int(ahead) > 0:
+            problems.append(f"本地 {release_branch} 领先 {upstream} {ahead} 个提交，请先 push")
+        if behind.isdigit() and int(behind) > 0:
+            problems.append(f"本地 {release_branch} 落后 {upstream} {behind} 个提交，请先 pull")
+        if ahead == "0" and behind == "0":
+            print(f"  与上游: 一致 ({upstream})")
+
+    # 合并完整性：确认没有游离的开发分支差异（防止漏合并）
+    code, diff_origin = _git("rev-list", "--count", f"origin/main..{release_branch}")
+    if code == 0 and diff_origin.isdigit() and int(diff_origin) > 0:
+        problems.append(f"{release_branch} 与 origin/main 有 {diff_origin} 个提交差异，请先合并并推送")
+
+    # 关键：确认本地代码与远端 main 内容一致（工作区已提交的前提下）
+    code, sha = _git("rev-parse", "HEAD")
+    code2, main_sha = _git("rev-parse", "origin/main")
+    if code == 0 and code2 == 0 and sha != main_sha:
+        problems.append(
+            "本地 HEAD 与 origin/main 不一致，请先合并到 main 并 push 后再部署\n"
+            f"      HEAD        = {sha[:10]}\n"
+            f"      origin/main = {main_sha[:10]}"
+        )
+    elif code == 0 and code2 == 0:
+        print(f"  版本一致: {sha[:10]} (origin/main)")
+
+    if problems:
+        print("\n部署已中止，存在以下问题：\n")
+        for i, p in enumerate(problems, 1):
+            print(f"  {i}) {p}")
+        print(
+            "\n正确流程：\n"
+            "  1. 开发分支完成 → 提交\n"
+            "  2. 合并到 main（git checkout main && git merge --no-ff <开发分支>）\n"
+            "  3. 推送（git push origin main）\n"
+            "  4. 确认无差异后，在 main 上执行部署\n"
+        )
+        raise SystemExit(1)
+
+    print("\n前置校验通过，开始部署。\n")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="生产备份与部署")
     parser.add_argument("--yes", action="store_true", help="跳过确认")
     parser.add_argument("--backup-only", action="store_true", help="仅本地+线上备份，不部署")
     parser.add_argument("--skip-local-backup", action="store_true", help="跳过从生产拉取到本地")
+    parser.add_argument(
+        "--release-branch",
+        default="main",
+        help="允许部署的主分支（默认 main，禁止从其他分支部署）",
+    )
+    parser.add_argument(
+        "--allow-dirty",
+        action="store_true",
+        help="跳过工作区干净检查（仅排障用，不推荐）",
+    )
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="只做部署前置校验，不执行任何部署动作",
+    )
     args = parser.parse_args()
+
+    # 前置校验：必须在主分支、已合并、无差异
+    verify_release_ready(args.release_branch, args.allow_dirty)
+
+    if args.check:
+        print("仅校验模式（--check），未执行任何部署动作。")
+        return 0
 
     if not args.yes:
         ans = input("将备份并部署到生产环境，确认？(yes/no): ").strip().lower()
