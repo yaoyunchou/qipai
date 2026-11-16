@@ -36,7 +36,16 @@ USER = os.environ.get("QIPAI_SSH_USER", "root")
 PASSWORD = os.environ.get("QIPAI_SSH_PASSWORD", "Jxfg357159..")
 CODE_DIR = "/www/server/qipai"
 BACKEND_REMOTE = f"{CODE_DIR}/code/backend"
-FRONTEND_REMOTE = "/www/wwwroot/jb.jxfgg.com/qipai"
+
+# 前端产物实际目录（沿用旧目录名，不随域名变更而改动）
+FRONTEND_ROOT = "/www/wwwroot/jb.jxfgg.com"
+FRONTEND_REMOTE = f"{FRONTEND_ROOT}/qipai"
+
+# 对外访问域名：jd.jxfg.top / www.jxfg.top 与 jb.jxfgg.com 指向同一目录，
+# 其中 jd.jxfg.top 为主域名（证书有效期最长、小程序等已切到该域名）
+PRIMARY_DOMAIN = "jd.jxfg.top"
+KNOWN_DOMAINS: tuple[str, ...] = ("jd.jxfg.top", "www.jxfg.top", "jb.jxfgg.com")
+
 UPLOADS_REMOTE = f"{BACKEND_REMOTE}/uploads"
 SQL_REMOTE = f"{CODE_DIR}/sql/supabase"
 
@@ -206,7 +215,7 @@ ls -lh {backup}/db/qipai_{ts}.dump
     )
     run(
         ssh,
-        f"tar -czf {backup}/site/qipai_frontend_{ts}.tar.gz -C /www/wwwroot/jb.jxfgg.com qipai 2>/dev/null || true",
+        f"tar -czf {backup}/site/qipai_frontend_{ts}.tar.gz -C {FRONTEND_ROOT} qipai 2>/dev/null || true",
         timeout=180,
     )
     run(
@@ -282,29 +291,34 @@ deactivate
             break
 
     run(ssh, "curl -s http://127.0.0.1:8000/health")
-    # 站点强制 HTTPS，必须用 https + 跟随重定向，否则 http 会返回 301 被误判为失败
+
+    # 站点强制 HTTPS，必须用 https + 跟随重定向，否则 http 会返回 301 被误判为失败。
+    # 多个域名指向同一目录，逐个用 Host 头验证，避免只测到旧域名而漏判。
+    for domain in KNOWN_DOMAINS:
+        run(
+            ssh,
+            f"curl -skL -o /dev/null -w '{domain} frontend:%{{http_code}}\\n' "
+            f"-H 'Host: {domain}' https://127.0.0.1/qipai/ 2>/dev/null || true",
+        )
     run(
         ssh,
-        "curl -skL -o /dev/null -w 'frontend:%{http_code}\\n' "
-        "-H 'Host: jb.jxfgg.com' https://127.0.0.1/qipai/ 2>/dev/null || true",
+        f"curl -skL -o /dev/null -w 'spa_route(/qipai/loans):%{{http_code}}\\n' "
+        f"-H 'Host: {PRIMARY_DOMAIN}' https://127.0.0.1/qipai/loans 2>/dev/null || true",
     )
     run(
         ssh,
-        "curl -skL -o /dev/null -w 'frontend_spa_route:%{http_code}\\n' "
-        "-H 'Host: jb.jxfgg.com' https://127.0.0.1/qipai/loans 2>/dev/null || true",
+        f"curl -sk -o /dev/null -w 'new_api_loans:%{{http_code}}\\n' "
+        f"-H 'Host: {PRIMARY_DOMAIN}' https://127.0.0.1/qipai/api/v1/loans/summary 2>/dev/null || true",
     )
     run(
         ssh,
-        "curl -sk -o /dev/null -w 'new_api_loans:%{http_code}\\n' "
-        "-H 'Host: jb.jxfgg.com' https://127.0.0.1/qipai/api/v1/loans/summary 2>/dev/null || true",
+        f"curl -sk -o /dev/null -w 'new_api_play_companion:%{{http_code}}\\n' "
+        f"-H 'Host: {PRIMARY_DOMAIN}' https://127.0.0.1/qipai/api/v1/play-companion/summary 2>/dev/null || true",
     )
-    run(
-        ssh,
-        "curl -sk -o /dev/null -w 'new_api_play_companion:%{http_code}\\n' "
-        "-H 'Host: jb.jxfgg.com' https://127.0.0.1/qipai/api/v1/play-companion/summary 2>/dev/null || true",
-    )
-    print("\n部署完成: https://jb.jxfgg.com/qipai/")
-    print("提示：frontend 应为 200；new_api_* 应为 401（存在且需鉴权，404 表示接口未挂载）")
+
+    print(f"\n部署完成: https://{PRIMARY_DOMAIN}/qipai/")
+    print(f"其它可用域名: {', '.join(d for d in KNOWN_DOMAINS if d != PRIMARY_DOMAIN)}（同一目录）")
+    print("判定：frontend 应为 200；new_api_* 应为 401（存在且需鉴权，404 表示接口未挂载）")
     ssh.close()
 
 

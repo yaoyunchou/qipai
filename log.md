@@ -4,7 +4,8 @@
 
 ### 生产发布：陪玩记账 + 借钱还钱 + 生活支出 + 移动端修复
 
-- **版本**：`84e7c3c` → 已上线 https://jb.jxfgg.com/qipai/
+- **版本**：`84e7c3c` → 已上线 https://jd.jxfg.top/qipai/
+- **域名说明**：`jd.jxfg.top`（主）、`www.jxfg.top`、`jb.jxfgg.com` 三个域名指向同一目录 `/www/wwwroot/jb.jxfgg.com/qipai/`，一次部署同时生效。
 - **流程**：按新规范执行（开发分支 → 6 个语义化提交 → cherry-pick 到 main → push → `--check` → 备份 → 部署 → 验证）。
 - **新增功能**：陪玩记账（金额支持输赢）、借钱还钱（一人一账 + 点进去看流水）、报销「生活支出」分类、移动端 `¥` 输入框修复、运营数据重置纳入陪玩与借还。
 - **数据库**：迁移 `05→11` 全部执行；新增 `loan_record`、`play_companion_record` 两表；`LIVING` 枚举已追加；陪玩金额非负约束已移除。

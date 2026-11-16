@@ -118,9 +118,24 @@ cd /www/backup/qipai_<时间戳>/site
 tar -xzf qipai_frontend_<时间戳>.tar.gz -C /www/wwwroot/jb.jxfgg.com
 ```
 
+> 目录名 `jb.jxfgg.com` 是历史遗留的实际路径，与对外域名无关，**不要改**。
+
 ---
 
-## 五、数据库迁移约定
+## 五、生产域名
+
+| 域名 | 角色 | 备注 |
+|---|---|---|
+| `jd.jxfg.top` | **主域名** | 部署脚本的完成提示、文档均以此为准 |
+| `www.jxfg.top` | 备用 | 同一目录 |
+| `jb.jxfgg.com` | 旧域名 | 同一目录，证书 2026-12-07 到期，后续可考虑下线 |
+
+三者 Nginx `root` 与 `/qipai/` 的 `alias` 均指向 `/www/wwwroot/jb.jxfgg.com/qipai/`，
+所以**一次部署对所有域名同时生效**。部署脚本会用 `Host` 头逐个验证三个域名的可访问性。
+
+---
+
+## 六、数据库迁移约定
 
 - 所有迁移脚本必须**幂等**（`IF NOT EXISTS` / `EXCEPTION WHEN duplicate_object`）
 - 新增迁移时，同步更新 `scripts/deploy_prod.py` 里的 `MIGRATIONS` 与 `MIGRATION_SCRIPTS`
@@ -129,7 +144,7 @@ tar -xzf qipai_frontend_<时间戳>.tar.gz -C /www/wwwroot/jb.jxfgg.com
 
 ---
 
-## 六、分支命名
+## 七、分支命名
 
 | 前缀 | 用途 |
 |---|---|

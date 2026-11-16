@@ -104,7 +104,9 @@ python -m scripts.apply_loan_record
 | 环境 | 地址 | 用户名 | 默认密码 |
 |------|------|--------|----------|
 | 本地开发 | http://127.0.0.1:5180 | `admin` | `admin123` |
-| 生产（宝塔） | https://jb.jxfgg.com/qipai/ | `admin` | `admin123`（与 `init_admin` 默认一致；若曾改过密码以线上为准） |
+| 生产（宝塔） | https://jd.jxfg.top/qipai/ | `admin` | `admin123`（与 `init_admin` 默认一致；若曾改过密码以线上为准） |
+
+> 生产站点另有 `www.jxfg.top`、`jb.jxfgg.com` 两个域名指向同一目录，`jd.jxfg.top` 为主域名。
 
 密码由 `code/backend/scripts/init_admin.py` 创建，默认不传参即为 `admin123`。
 
