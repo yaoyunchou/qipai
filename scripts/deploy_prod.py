@@ -282,8 +282,29 @@ deactivate
             break
 
     run(ssh, "curl -s http://127.0.0.1:8000/health")
-    run(ssh, "curl -s -o /dev/null -w 'frontend:%{http_code}\\n' http://127.0.0.1/qipai/ 2>/dev/null || true")
+    # 站点强制 HTTPS，必须用 https + 跟随重定向，否则 http 会返回 301 被误判为失败
+    run(
+        ssh,
+        "curl -skL -o /dev/null -w 'frontend:%{http_code}\\n' "
+        "-H 'Host: jb.jxfgg.com' https://127.0.0.1/qipai/ 2>/dev/null || true",
+    )
+    run(
+        ssh,
+        "curl -skL -o /dev/null -w 'frontend_spa_route:%{http_code}\\n' "
+        "-H 'Host: jb.jxfgg.com' https://127.0.0.1/qipai/loans 2>/dev/null || true",
+    )
+    run(
+        ssh,
+        "curl -sk -o /dev/null -w 'new_api_loans:%{http_code}\\n' "
+        "-H 'Host: jb.jxfgg.com' https://127.0.0.1/qipai/api/v1/loans/summary 2>/dev/null || true",
+    )
+    run(
+        ssh,
+        "curl -sk -o /dev/null -w 'new_api_play_companion:%{http_code}\\n' "
+        "-H 'Host: jb.jxfgg.com' https://127.0.0.1/qipai/api/v1/play-companion/summary 2>/dev/null || true",
+    )
     print("\n部署完成: https://jb.jxfgg.com/qipai/")
+    print("提示：frontend 应为 200；new_api_* 应为 401（存在且需鉴权，404 表示接口未挂载）")
     ssh.close()
 
 
