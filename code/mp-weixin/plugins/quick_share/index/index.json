@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "素材中心",
+  "usingComponents": {
+    "app-goods-preview-poster": "/components/page-component/goods/app-goods-preview-poster",
+    "app-share-video-number": "/components/page-component/app-share-video-number/app-share-video-number"
+  }
+}

@@ -105,6 +105,9 @@ npm run dev
 | `/floor` | 前台开单 |
 | `/orders` | 订单明细（股东不可见） |
 | `/reports` | 日/周/月报表 + 导出 Excel |
+| `/expenses` | 报销审批 |
+| `/play-companion` | 陪玩记账（独立模块） |
+| `/loans` | 借钱还钱（独立模块） |
 | `/admin` | 超管：门店配置、台位、账号；经理：后台入口 |
 
 **后台配置**（仅超级管理员 `ADMIN`）：http://127.0.0.1:5180/admin 或 `/config`  

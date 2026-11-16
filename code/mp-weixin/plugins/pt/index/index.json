@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "拼团首页",
+  "usingComponents": {
+    "app-image-ad": "/components/page-component/app-image-ad/app-image-ad",
+    "app-quick-navigation": "/components/page-component/app-quick-navigation/app-quick-navigation",
+    "app-swiper": "/components/page-component/app-swiper/app-swiper",
+    "app-goods": "/components/basic-component/app-goods/app-goods"
+  }
+}

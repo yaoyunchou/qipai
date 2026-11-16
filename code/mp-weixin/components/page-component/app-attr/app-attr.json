@@ -1,0 +1,9 @@
+{
+  "component": true,
+  "usingComponents": {
+    "app-price": "/components/page-component/goods/app-price",
+    "app-member-mark": "/components/page-component/app-member-mark/app-member-mark",
+    "app-sell-tip": "/components/page-component/goods/app-sell-tip",
+    "app-preview-image": "/components/basic-component/app-preview-image/app-preview-image"
+  }
+}

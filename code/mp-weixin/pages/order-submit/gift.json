@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "填写地址",
+  "usingComponents": {
+    "app-empty-bottom": "/components/basic-component/app-empty-bottom/app-empty-bottom",
+    "app-diy-form": "/components/page-component/app-diy-form/app-diy-form",
+    "app-submit-goods": "/pages/order-submit/app-submit-goods",
+    "app-address-bar": "/pages/order-submit/app-address-bar"
+  }
+}

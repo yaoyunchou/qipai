@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "红包墙",
+  "usingComponents": {
+    "app-buy-prompt": "/components/page-component/app-buy-prompt/app-buy-prompt",
+    "app-share-qr-code": "/components/page-component/app-share-qr-code-poster/app-share-qr-code-poster",
+    "app-goods-recommend": "/components/page-component/app-goods-recommend/app-goods-recommend"
+  }
+}

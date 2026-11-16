@@ -1,0 +1,1 @@
+<view class="iphone-x data-v-07ff1c96"><slot name="empty-area"></slot><block wx:if="{{getBoolEmpty.XBoolean}}"><view class="x-line data-v-07ff1c96" style="{{'height:'+(getBoolEmpty.emptyHeight+'rpx')+';'+('background-color:'+(backgroundColor)+';')}}"></view></block></view>

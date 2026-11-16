@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "利润提现",
+  "usingComponents": {
+    "app-menu": "/plugins/community/components/app-menu"
+  }
+}

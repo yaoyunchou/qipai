@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "",
+  "usingComponents": {
+    "app-goods-preview-poster": "/components/page-component/goods/app-goods-preview-poster"
+  }
+}

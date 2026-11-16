@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "商城设置",
+  "usingComponents": {
+    "app-radio": "/components/basic-component/app-radio/app-radio"
+  }
+}

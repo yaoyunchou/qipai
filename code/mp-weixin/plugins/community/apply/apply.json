@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "申请团长",
+  "usingComponents": {
+    "app-area-picker": "/components/page-component/app-area-picker/app-area-picker",
+    "app-text-area": "/components/basic-component/app-textarea/app-textarea",
+    "app-head": "/plugins/community/components/app-head"
+  }
+}

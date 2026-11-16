@@ -45,6 +45,14 @@ backups/
 Thumbs.db
 Desktop.ini
 .idea/
+.vscode/
 *.swp
 *~
 .vercel
+
+# 脚本/工具目录的字节码（根目录 scripts 不在上面 backend 规则内）
+**/__pycache__/
+**/*.py[cod]
+
+# 微信小程序（与网页版棋牌系统独立，另行管理）
+code/mp-weixin/

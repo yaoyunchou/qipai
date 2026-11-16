@@ -1,0 +1,6 @@
+{
+  "component": true,
+  "usingComponents": {
+    "app-vip-card": "/components/page-component/app-vip-card/app-vip-card"
+  }
+}

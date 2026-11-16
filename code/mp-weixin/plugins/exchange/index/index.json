@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "兑换中心",
+  "usingComponents": {
+    "app-tab-nav": "/components/basic-component/app-tab-nav/app-tab-nav",
+    "parse": "/components/basic-component/app-rich/parse",
+    "app-no-goods": "/components/page-component/app-no-goods/app-no-goods",
+    "u-mask": "/components/basic-component/u-mask/u-mask"
+  }
+}

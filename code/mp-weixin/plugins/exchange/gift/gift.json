@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "购买详情",
+  "usingComponents": {
+    "app-banner": "/components/page-component/goods/app-goods-banner",
+    "app-share-qr-code": "/components/page-component/app-share-qr-code-poster/app-share-qr-code-poster",
+    "bd-detail": "/components/page-component/goods/bd-detail"
+  }
+}

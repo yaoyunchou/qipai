@@ -1,0 +1,1 @@
+<app-layout vue-id="04ab2655-1" class="data-v-37ea913a" bind:__l="__l" vue-slots="{{['default']}}"><view class="u-rules data-v-37ea913a"><parse vue-id="{{('04ab2655-2')+','+('04ab2655-1')}}" content="{{html}}" class="data-v-37ea913a" bind:__l="__l"></parse></view></app-layout>

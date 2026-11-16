@@ -1,0 +1,10 @@
+(global["webpackJsonp"]=global["webpackJsonp"]||[]).push([["pages/order/components/app-order-goods-info"],{1579:function(e,t,n){"use strict";(function(e){Object.defineProperty(t,"__esModule",{value:!0}),t.default=void 0;var o=function(){n.e("components/page-component/goods/form-goods-time").then(function(){return resolve(n("88e8"))}.bind(null,n)).catch(n.oe)},r={name:"app-order-goods-info",data:function(){return{}},props:{order:Object,goods:{type:Object,default:{}},plugin:{type:String,default:""},isLastOne:{type:Boolean,default:!0},pluginData:{type:Object,default:{}},pluginIndex:{type:Number,default:0},type:{type:Number,default:1},position:{type:String,default:"order"},order_detail_id:[Number,String]},components:{formGoodsTime:o},methods:{toForm:function(t){this.order_detail_id&&e.navigateTo({url:"/plugins/diy/detail/detail?order_detail_id="+this.order_detail_id})}}};t.default=r}).call(this,n("543d")["default"])},"4e01":function(e,t,n){"use strict";n.r(t);var o=n("ae91"),r=n("f09e0");for(var i in r)["default"].indexOf(i)<0&&function(e){n.d(t,e,(function(){return r[e]}))}(i);n("8ce8");var u,a=n("f0c5"),d=Object(a["a"])(r["default"],o["b"],o["c"],!1,null,"63d67147",null,!1,o["a"],u);t["default"]=d.exports},"64fe":function(e,t,n){},"8ce8":function(e,t,n){"use strict";var o=n("64fe"),r=n.n(o);r.a},ae91:function(e,t,n){"use strict";var o;n.d(t,"b",(function(){return r})),n.d(t,"c",(function(){return i})),n.d(t,"a",(function(){return o}));var r=function(){var e=this,t=e.$createElement;e._self._c},i=[]},f09e0:function(e,t,n){"use strict";n.r(t);var o=n("1579"),r=n.n(o);for(var i in o)["default"].indexOf(i)<0&&function(e){n.d(t,e,(function(){return o[e]}))}(i);t["default"]=r.a}}]);
+;(global["webpackJsonp"] = global["webpackJsonp"] || []).push([
+    'pages/order/components/app-order-goods-info-create-component',
+    {
+        'pages/order/components/app-order-goods-info-create-component':(function(module, exports, __webpack_require__){
+            __webpack_require__('543d')['createComponent'](__webpack_require__("4e01"))
+        })
+    },
+    [['pages/order/components/app-order-goods-info-create-component']]
+]);

@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "订单核销",
+  "usingComponents": {
+    "app-order-goods-info": "/pages/order/components/app-order-goods-info",
+    "app-form-data": "/components/basic-component/app-order/app-form-data"
+  }
+}

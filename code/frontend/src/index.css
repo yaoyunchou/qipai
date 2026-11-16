@@ -15,6 +15,44 @@ input, textarea, select {
   font-size: 16px !important;
 }
 
+/*
+ * 上面的 16px 会改变 antd 数字输入框内部 input 的行高与自然高度，
+ * 导致输入内容贴顶、与 ¥ 前缀错位。
+ * 让内部输入区撑满容器，并让前缀与数字共用一条中线。
+ */
+.ant-input-number-affix-wrapper {
+  display: inline-flex;
+  align-items: center;
+}
+
+.ant-input-number-affix-wrapper > .ant-input-number {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.ant-input-number .ant-input-number-input-wrap {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.ant-input-number .ant-input-number-input {
+  height: 100%;
+}
+
+.ant-input-number-affix-wrapper .ant-input-number-prefix {
+  display: flex;
+  align-items: center;
+  align-self: center;
+}
+
 /* 移动端 Ant Design Header 内边距覆盖 */
 @media (max-width: 767px) {
   .ant-layout-header {
@@ -33,11 +71,17 @@ input, textarea, select {
     padding: 16px 12px !important;
   }
 
-  /* 输入框更大触控区域 */
+  /* 输入框更大触控区域（带 ¥ 前缀时外层是 affix-wrapper，必须一并声明） */
   .ant-input-number,
   .ant-input,
-  .ant-input-affix-wrapper {
+  .ant-input-affix-wrapper,
+  .ant-input-number-affix-wrapper {
     height: 42px;
+  }
+
+  /* 数字输入框内部随外层撑满，避免内容缩小后留白不均 */
+  .ant-input-number-affix-wrapper .ant-input-number {
+    height: 100%;
   }
 
   /* 弹窗底部按钮更大 */

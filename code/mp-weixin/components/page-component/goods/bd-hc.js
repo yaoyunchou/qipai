@@ -1,0 +1,10 @@
+(global["webpackJsonp"]=global["webpackJsonp"]||[]).push([["components/page-component/goods/bd-hc"],{"034c":function(t,n,e){"use strict";var u=e("51f3"),o=e.n(u);o.a},"51f3":function(t,n,e){},"6a4f":function(t,n,e){"use strict";e.r(n);var u=e("8599"),o=e.n(u);for(var c in u)["default"].indexOf(c)<0&&function(t){e.d(n,t,(function(){return u[t]}))}(c);n["default"]=o.a},8599:function(t,n,e){"use strict";Object.defineProperty(n,"__esModule",{value:!0}),n.default=void 0;var u=function(){e.e("components/basic-component/u-popup/u-popup").then(function(){return resolve(e("d55a"))}.bind(null,e)).catch(e.oe)},o={name:"bd-hc",components:{uPopup:u},props:{card:{type:Object,default:function(){return{}}},integral:{type:Object,default:function(){return{}}},balance:{type:Object,default:function(){return{}}},coupon:{type:Object,default:function(){return{}}},theme:{type:Object,default:function(){return{}}}},data:function(){return{show:!1,showModal:"",title:""}},methods:{change:function(t,n){this.showModal=t,this.title=n,this.show=!0}}};n.default=o},baad:function(t,n,e){"use strict";var u;e.d(n,"b",(function(){return o})),e.d(n,"c",(function(){return c})),e.d(n,"a",(function(){return u}));var o=function(){var t=this,n=t.$createElement;t._self._c;t._isMounted||(t.e0=function(n){t.show=!1},t.e1=function(n){t.show=!1})},c=[]},de37:function(t,n,e){"use strict";e.r(n);var u=e("baad"),o=e("6a4f");for(var c in o)["default"].indexOf(c)<0&&function(t){e.d(n,t,(function(){return o[t]}))}(c);e("034c");var a,r=e("f0c5"),f=Object(r["a"])(o["default"],u["b"],u["c"],!1,null,"976df5c0",null,!1,u["a"],a);n["default"]=f.exports}}]);
+;(global["webpackJsonp"] = global["webpackJsonp"] || []).push([
+    'components/page-component/goods/bd-hc-create-component',
+    {
+        'components/page-component/goods/bd-hc-create-component':(function(module, exports, __webpack_require__){
+            __webpack_require__('543d')['createComponent'](__webpack_require__("de37"))
+        })
+    },
+    [['components/page-component/goods/bd-hc-create-component']]
+]);

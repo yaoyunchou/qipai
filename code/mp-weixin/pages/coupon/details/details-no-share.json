@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "",
+  "usingComponents": {
+    "app-details": "/pages/coupon/details/app-details"
+  }
+}

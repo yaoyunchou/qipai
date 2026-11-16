@@ -1,0 +1,6 @@
+{
+  "component": true,
+  "usingComponents": {
+    "app-submit-checkbox": "/pages/order-submit/app-submit-checkbox"
+  }
+}

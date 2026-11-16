@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "团购活动",
+  "usingComponents": {
+    "app-tab-nav": "/components/basic-component/app-tab-nav/app-tab-nav",
+    "app-menu": "/plugins/community/components/app-menu",
+    "app-share-qr-code": "/components/page-component/app-share-qr-code-poster/app-share-qr-code-poster"
+  }
+}

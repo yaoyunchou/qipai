@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "步数挑战",
+  "usingComponents": {
+    "app-ad": "/components/page-component/app-ad/app-ad"
+  }
+}

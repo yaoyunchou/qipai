@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "专题列表",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "app-nav-bar": "/components/page-component/index/app-nav-bar",
+    "pre-topic": "/components/page-component/app-special-topic/pre-topic"
+  }
+}

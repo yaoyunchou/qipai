@@ -1,0 +1,1 @@
+<view class="search dir-left-nowrap main-center cross-center data-v-67794713"><view data-event-opts="{{[['tap',[['routeGo',['$event']]]]]}}" class="input dir-left-nowrap main-center cross-center data-v-67794713" bindtap="__e"><view class="data-v-67794713"></view><text class="data-v-67794713">搜索</text></view></view>

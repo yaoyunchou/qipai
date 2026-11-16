@@ -1,0 +1,1 @@
+<block wx:if="{{is_show}}"><view class="goods-vip data-v-0d88667a" style="{{'margin:'+(''+margin)+';'}}"><image src="/static/image/icon/svip.png" class="data-v-0d88667a"></image><view class="item vip-right cross-center data-v-0d88667a">{{vipText}}</view></view></block>

@@ -1,4 +1,4 @@
-﻿# start.ps1 - backend :8000 + frontend :5180
+# start.ps1 - backend :8000 + frontend :5180
 # Usage: .\start.ps1  or double-click start.cmd
 $ErrorActionPreference = "Stop"
 
@@ -68,16 +68,16 @@ if (-not $depsOk) {
 }
 
 if ($freshVenv -or -not (Test-Path $InitMarker)) {
-    Write-Step "Check Supabase database connection"
+    Write-Step "Check database connection"
     Push-Location $Backend
     & $VenvPython -m scripts.check_db
     $dbOk = $LASTEXITCODE -eq 0
     Pop-Location
     if (-not $dbOk) {
-        Write-Host "无法连接 Supabase 数据库。" -ForegroundColor Red
+        Write-Host "无法连接数据库。" -ForegroundColor Red
         Write-Host "初始化步骤:" -ForegroundColor Yellow
-        Write-Host '  1. 在 backend/.env 填写 DATABASE_URL，见 .env.example' -ForegroundColor Yellow
-        Write-Host '  2. 运行 .\setup-db.ps1 初始化 schema 与 admin 账号' -ForegroundColor Yellow
+        Write-Host '  本地 Docker: .\setup-local-db.ps1' -ForegroundColor Yellow
+        Write-Host '  或手动配置 backend/.env 中的 DATABASE_URL 后运行 .\setup-db.ps1' -ForegroundColor Yellow
         exit 1
     }
 

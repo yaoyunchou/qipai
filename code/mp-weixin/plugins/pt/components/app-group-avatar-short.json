@@ -1,0 +1,7 @@
+{
+  "component": true,
+  "usingComponents": {
+    "app-share-qr-code": "/components/page-component/app-share-qr-code-poster/app-share-qr-code-poster",
+    "app-attr": "/components/page-component/app-attr/app-attr"
+  }
+}

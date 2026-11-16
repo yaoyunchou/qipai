@@ -1,0 +1,10 @@
+(global["webpackJsonp"]=global["webpackJsonp"]||[]).push([["plugins/gift/components/detail/win-order"],{"419f":function(t,e,n){"use strict";n.r(e);var r=n("b2b5"),i=n.n(r);for(var o in r)["default"].indexOf(o)<0&&function(t){n.d(e,t,(function(){return r[t]}))}(o);e["default"]=i.a},"70e5":function(t,e,n){},b2b5:function(t,e,n){"use strict";(function(t){Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0;var n={name:"win-order",props:["order_list","status_num"],methods:{route_go:function(e){t.navigateTo({url:e})},setSwitch:function(t){this.$emit("setSwitch",t)},previewImage:function(e,n){t.previewImage({urls:e,current:n,longPressActions:{itemList:["发送给朋友","保存图片"],success:function(){},fail:function(){}}})}},filters:{getPicUrl:function(t){var e="[object String]"===Object.prototype.toString.call(t.goods_info)?JSON.parse(t.goods_info).goods_attr:t.goods_info.goods_attr;return e.pic_url?e.pic_url:t.cover_pic}}};e.default=n}).call(this,n("543d")["default"])},d62e:function(t,e,n){"use strict";var r=n("70e5"),i=n.n(r);i.a},eeed:function(t,e,n){"use strict";var r;n.d(e,"b",(function(){return i})),n.d(e,"c",(function(){return o})),n.d(e,"a",(function(){return r}));var i=function(){var t=this,e=t.$createElement,n=(t._self._c,t.__map(t.order_list,(function(e,n){var r=t.__get_orig(e),i=t._f("getPicUrl")(e);return{$orig:r,f0:i}})));t.$mp.data=Object.assign({},{$root:{l0:n}})},o=[]},f4a3:function(t,e,n){"use strict";n.r(e);var r=n("eeed"),i=n("419f");for(var o in i)["default"].indexOf(o)<0&&function(t){n.d(e,t,(function(){return i[t]}))}(o);n("d62e");var u,c=n("f0c5"),a=Object(c["a"])(i["default"],r["b"],r["c"],!1,null,"256e657d",null,!1,r["a"],u);e["default"]=a.exports}}]);
+;(global["webpackJsonp"] = global["webpackJsonp"] || []).push([
+    'plugins/gift/components/detail/win-order-create-component',
+    {
+        'plugins/gift/components/detail/win-order-create-component':(function(module, exports, __webpack_require__){
+            __webpack_require__('543d')['createComponent'](__webpack_require__("f4a3"))
+        })
+    },
+    [['plugins/gift/components/detail/win-order-create-component']]
+]);

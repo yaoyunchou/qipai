@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "限时抢购",
+  "usingComponents": {
+    "app-no-goods": "/components/page-component/app-no-goods/app-no-goods",
+    "u-attr": "/components/page-component/goods/u-attr"
+  }
+}

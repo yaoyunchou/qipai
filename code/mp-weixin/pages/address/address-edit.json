@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "编辑地址",
+  "usingComponents": {
+    "app-area-picker": "/components/page-component/app-area-picker/app-area-picker",
+    "app-text-area": "/components/basic-component/app-textarea/app-textarea"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "订单详情",
+  "usingComponents": {
+    "app-order-goods-info": "/pages/order/components/app-order-goods-info",
+    "app-order-express": "/pages/order/components/app-order-express",
+    "app-order-banner": "/pages/order/components/app-order-banner",
+    "app-rich-text": "/components/basic-component/app-rich/parse"
+  }
+}

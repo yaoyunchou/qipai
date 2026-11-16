@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "团购活动",
+  "usingComponents": {
+    "app-share-qr-code": "/components/page-component/app-share-qr-code-poster/app-share-qr-code-poster"
+  }
+}

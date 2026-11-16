@@ -1,0 +1,26 @@
+# 本地开发 PostgreSQL（与生产 schema 一致，端口 5432）
+# 启动: docker compose up -d
+# 停止: docker compose down
+# 清库: docker compose down -v
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: qipai-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: qipai
+      POSTGRES_PASSWORD: qipai_local_dev
+      POSTGRES_DB: qipai
+    volumes:
+      - qipai_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U qipai -d qipai"]
+      interval: 3s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  qipai_pg_data:

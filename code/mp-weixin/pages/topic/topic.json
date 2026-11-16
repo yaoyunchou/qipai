@@ -1,0 +1,12 @@
+{
+  "navigationBarTitleText": "",
+  "usingComponents": {
+    "app-diy-list": "/components/page-component/index/app-diy-list",
+    "mch-share": "/pages/topic/mch-share",
+    "app-diy-goods-list": "/pages/topic/components/app-diy-goods-list",
+    "app-rich": "/components/basic-component/app-rich/parse",
+    "app-video": "/components/page-component/app-video/app-video",
+    "app-image-ad": "/components/page-component/app-image-ad/app-image-ad",
+    "app-hotspot": "/components/basic-component/app-hotspot/app-hotspot"
+  }
+}

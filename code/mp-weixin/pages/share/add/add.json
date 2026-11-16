@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "分销商申请",
+  "usingComponents": {
+    "app-diy-form": "/components/page-component/app-diy-form/app-diy-form"
+  }
+}

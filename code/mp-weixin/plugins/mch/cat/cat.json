@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "店铺分类",
+  "usingComponents": {
+    "app-category-list": "/components/page-component/app-category-list/app-category-list",
+    "mch-navbar": "/plugins/mch/mch-navbar",
+    "n": "/components/page-component/app-no-goods/app-no-goods"
+  }
+}

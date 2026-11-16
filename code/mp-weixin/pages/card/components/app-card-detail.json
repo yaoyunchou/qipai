@@ -1,0 +1,8 @@
+{
+  "component": true,
+  "usingComponents": {
+    "app-clerk-historys": "/components/page-component/app-clerk-historys/app-clerk-historys",
+    "app-share-qr-code": "/components/page-component/app-share-qr-code-poster/app-share-qr-code-poster",
+    "app-shop": "/components/page-component/app-shop/app-shop"
+  }
+}

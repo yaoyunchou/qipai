@@ -40,6 +40,28 @@ FRONTEND_REMOTE = "/www/wwwroot/jb.jxfgg.com/qipai"
 UPLOADS_REMOTE = f"{BACKEND_REMOTE}/uploads"
 SQL_REMOTE = f"{CODE_DIR}/sql/supabase"
 
+# 生产需要补齐的迁移（按顺序、全部幂等，可重复执行）
+MIGRATIONS: tuple[str, ...] = (
+    "05-expense-category.sql",
+    "06-expense-attachment-file.sql",
+    "07-expense-voided.sql",
+    "08-expense-category-living.sql",
+    "09-play-companion.sql",
+    "10-play-companion-signed-amount.sql",
+    "11-loan-record.sql",
+)
+
+# 与上面的 SQL 一一对应的执行脚本（scripts.apply_xxx）
+MIGRATION_SCRIPTS: tuple[str, ...] = (
+    "apply_expense_category",
+    "apply_expense_attachment_file",
+    "apply_expense_void",
+    "apply_expense_category_living",
+    "apply_play_companion",
+    "apply_play_companion_signed_amount",
+    "apply_loan_record",
+)
+
 
 def run(ssh: paramiko.SSHClient, cmd: str, timeout: int = 600) -> tuple[int, str, str]:
     print(f"\n>>> {cmd[:300]}{'...' if len(cmd) > 300 else ''}")
@@ -201,40 +223,52 @@ ls -lh {backup}/db/qipai_{ts}.dump
     print("=" * 60)
     print("3/4 上传后端 + 执行迁移")
     print("=" * 60)
+    print("=" * 60)
+    print("3/4 上传迁移脚本 + 执行迁移（先迁移，避免新代码引用不存在的表）")
+    print("=" * 60)
     sftp = ssh.open_sftp()
     try:
-        for sub in ("app", "scripts"):
-            print(f"\n上传 backend/{sub}/ ...")
-            sftp_upload_dir(sftp, BACKEND_LOCAL / sub, f"{BACKEND_REMOTE}/{sub}")
         run(ssh, f"mkdir -p {SQL_REMOTE}")
-        for sql_name in (
-            "06-expense-attachment-file.sql",
-            "07-expense-voided.sql",
-        ):
+        # 上传 backend/scripts 下的迁移执行器（app 代码稍后上传，先不动运行中的服务）
+        sftp_upload_dir(sftp, BACKEND_LOCAL / "scripts", f"{BACKEND_REMOTE}/scripts")
+        for sql_name in MIGRATIONS:
             local_sql = ROOT / "sql" / "supabase" / sql_name
             if local_sql.is_file():
                 sftp.put(str(local_sql), f"{SQL_REMOTE}/{sql_name}")
-        print(f"\n上传前端 dist/ -> {FRONTEND_REMOTE}")
-        sftp_upload_dir(sftp, LOCAL_DIST, FRONTEND_REMOTE)
+                print(f"  {sql_name}")
+            else:
+                print(f"  [跳过] 本地缺少 {sql_name}")
     finally:
         sftp.close()
 
     ensure_env_upload_vars(ssh)
     run(ssh, f"mkdir -p {UPLOADS_REMOTE}")
 
+    migrate_cmds = "\n".join(f"python -m scripts.{m}" for m in MIGRATION_SCRIPTS)
     migrate = f"""
 cd {BACKEND_REMOTE}
 source .venv/bin/activate
 pip install -r requirements.txt -q
-python -m scripts.apply_expense_attachment_file
-python -m scripts.apply_expense_void
+{migrate_cmds}
 python -m scripts.check_db
 deactivate
 """
     code, _, _ = run(ssh, f"bash -lc '{migrate}'", timeout=600)
     if code != 0:
         ssh.close()
-        raise SystemExit("后端迁移失败")
+        raise SystemExit("后端迁移失败！已停止部署，线上代码未改动。")
+
+    print("=" * 60)
+    print("4/4 上传新代码 → 构建产物 → 重启服务")
+    print("=" * 60)
+    sftp = ssh.open_sftp()
+    try:
+        print("\n上传 backend/app/ ...")
+        sftp_upload_dir(sftp, BACKEND_LOCAL / "app", f"{BACKEND_REMOTE}/app")
+        print(f"\n上传前端 dist/ -> {FRONTEND_REMOTE}")
+        sftp_upload_dir(sftp, LOCAL_DIST, FRONTEND_REMOTE)
+    finally:
+        sftp.close()
 
     print("=" * 60)
     print("4/4 重启服务并验证")

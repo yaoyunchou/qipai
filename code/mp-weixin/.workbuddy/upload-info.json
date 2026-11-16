@@ -1,0 +1,259 @@
+{
+  "size": {
+    "total": 9305204,
+    "packages": [
+      {
+        "name": "TOTAL",
+        "size": 9305204
+      },
+      {
+        "name": "main",
+        "size": 2023907
+      },
+      {
+        "name": "/pages/address/",
+        "size": 36224
+      },
+      {
+        "name": "/pages/app_admin/",
+        "size": 806891
+      },
+      {
+        "name": "/pages/article/",
+        "size": 8670
+      },
+      {
+        "name": "/pages/balance/",
+        "size": 71476
+      },
+      {
+        "name": "/pages/binding/",
+        "size": 13514
+      },
+      {
+        "name": "/pages/card/",
+        "size": 51290
+      },
+      {
+        "name": "/pages/cart/",
+        "size": 71240
+      },
+      {
+        "name": "/pages/cats/",
+        "size": 115705
+      },
+      {
+        "name": "/pages/comments/",
+        "size": 11243
+      },
+      {
+        "name": "/pages/coupon/",
+        "size": 60069
+      },
+      {
+        "name": "/pages/disabled/",
+        "size": 3370
+      },
+      {
+        "name": "/pages/favorite/",
+        "size": 85417
+      },
+      {
+        "name": "/pages/foot/",
+        "size": 67823
+      },
+      {
+        "name": "/pages/full_reduce/",
+        "size": 48114
+      },
+      {
+        "name": "/pages/goods-edit/",
+        "size": 53823
+      },
+      {
+        "name": "/pages/goods/",
+        "size": 167790
+      },
+      {
+        "name": "/pages/member/",
+        "size": 52386
+      },
+      {
+        "name": "/pages/order-submit/",
+        "size": 189212
+      },
+      {
+        "name": "/pages/order/",
+        "size": 235957
+      },
+      {
+        "name": "/pages/poster/",
+        "size": 64144
+      },
+      {
+        "name": "/pages/quick-shop/",
+        "size": 35741
+      },
+      {
+        "name": "/pages/rules/",
+        "size": 3588
+      },
+      {
+        "name": "/pages/search/",
+        "size": 33689
+      },
+      {
+        "name": "/pages/share/",
+        "size": 529902
+      },
+      {
+        "name": "/pages/store/",
+        "size": 14520
+      },
+      {
+        "name": "/pages/template-msg/",
+        "size": 4410
+      },
+      {
+        "name": "/pages/topic/",
+        "size": 121431
+      },
+      {
+        "name": "/pages/user-center/",
+        "size": 100487
+      },
+      {
+        "name": "/pages/video/",
+        "size": 5757
+      },
+      {
+        "name": "/pages/web/",
+        "size": 3067
+      },
+      {
+        "name": "/plugins/advance/",
+        "size": 158456
+      },
+      {
+        "name": "/plugins/bargain/",
+        "size": 122733
+      },
+      {
+        "name": "/plugins/bonus/",
+        "size": 86395
+      },
+      {
+        "name": "/plugins/book/",
+        "size": 67342
+      },
+      {
+        "name": "/plugins/check_in/",
+        "size": 27029
+      },
+      {
+        "name": "/plugins/clerk/",
+        "size": 67253
+      },
+      {
+        "name": "/plugins/community/",
+        "size": 337778
+      },
+      {
+        "name": "/plugins/composition/",
+        "size": 65799
+      },
+      {
+        "name": "/plugins/diy/",
+        "size": 44163
+      },
+      {
+        "name": "/plugins/exchange/",
+        "size": 80124
+      },
+      {
+        "name": "/plugins/fission/",
+        "size": 195983
+      },
+      {
+        "name": "/plugins/flash_sale/",
+        "size": 57476
+      },
+      {
+        "name": "/plugins/fxhb/",
+        "size": 65895
+      },
+      {
+        "name": "/plugins/gift/",
+        "size": 513138
+      },
+      {
+        "name": "/plugins/integral_mall/",
+        "size": 112868
+      },
+      {
+        "name": "/plugins/lottery/",
+        "size": 107180
+      },
+      {
+        "name": "/plugins/mch/",
+        "size": 828564
+      },
+      {
+        "name": "/plugins/miaosha/",
+        "size": 80953
+      },
+      {
+        "name": "/plugins/pick/",
+        "size": 67408
+      },
+      {
+        "name": "/plugins/pond/",
+        "size": 56961
+      },
+      {
+        "name": "/plugins/pt/",
+        "size": 187231
+      },
+      {
+        "name": "/plugins/quick_share/",
+        "size": 48604
+      },
+      {
+        "name": "/plugins/region/",
+        "size": 148151
+      },
+      {
+        "name": "/plugins/scan_code/",
+        "size": 24970
+      },
+      {
+        "name": "/plugins/scratch/",
+        "size": 48119
+      },
+      {
+        "name": "/plugins/step/",
+        "size": 207632
+      },
+      {
+        "name": "/plugins/stock/",
+        "size": 117863
+      },
+      {
+        "name": "/plugins/teller/",
+        "size": 12671
+      },
+      {
+        "name": "/plugins/vip_card/",
+        "size": 109432
+      },
+      {
+        "name": "/plugins/weekly_buy/",
+        "size": 92309
+      },
+      {
+        "name": "/plugins/wholesale/",
+        "size": 73867
+      }
+    ]
+  }
+}

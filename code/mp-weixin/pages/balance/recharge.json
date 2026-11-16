@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "",
+  "usingComponents": {
+    "app-text": "/components/basic-component/app-rich/parse",
+    "app-model": "/components/basic-component/app-model/app-model"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "component": true,
+  "usingComponents": {
+    "app-radio": "/components/basic-component/app-radio/app-radio"
+  }
+}

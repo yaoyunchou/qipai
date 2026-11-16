@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "区域代理",
+  "usingComponents": {
+    "app-index": "/plugins/region/components/app-index",
+    "app-rich-text": "/components/basic-component/app-rich/parse",
+    "app-condition": "/plugins/region/components/app-condition"
+  }
+}

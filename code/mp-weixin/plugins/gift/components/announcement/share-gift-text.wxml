@@ -1,0 +1,1 @@
+<view class="page-width ready-send data-v-3fe0cc78"><view class="big data-v-3fe0cc78">{{''+big+''}}</view><block wx:if="{{small}}"><view class="small data-v-3fe0cc78">{{''+small+''}}</view></block></view>

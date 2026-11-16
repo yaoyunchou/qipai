@@ -1,0 +1,7 @@
+{
+  "component": true,
+  "usingComponents": {
+    "u-index-plugins": "/components/page-component/u-index-plugins/u-index-plugins",
+    "app-goods": "/components/basic-component/app-goods/app-goods"
+  }
+}

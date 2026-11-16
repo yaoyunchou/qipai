@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "购买超级会员卡",
+  "usingComponents": {
+    "app-diy-form": "/components/page-component/app-diy-form/app-diy-form",
+    "app-close": "/components/basic-component/app-close/app-close"
+  }
+}

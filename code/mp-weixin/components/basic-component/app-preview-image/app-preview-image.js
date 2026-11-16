@@ -1,0 +1,10 @@
+(global["webpackJsonp"]=global["webpackJsonp"]||[]).push([["components/basic-component/app-preview-image/app-preview-image"],{"37d2":function(t,e,n){"use strict";var i;n.d(e,"b",(function(){return r})),n.d(e,"c",(function(){return a})),n.d(e,"a",(function(){return i}));var r=function(){var t=this,e=t.$createElement;t._self._c},a=[]},"669c":function(t,e,n){},"8f77":function(t,e,n){"use strict";n.r(e);var i=n("37d2"),r=n("ebb8");for(var a in r)["default"].indexOf(a)<0&&function(t){n.d(e,t,(function(){return r[t]}))}(a);n("f116");var c,u=n("f0c5"),s=Object(u["a"])(r["default"],i["b"],i["c"],!1,null,"5781ec10",null,!1,i["a"],c);e["default"]=s.exports},b533:function(t,e,n){"use strict";Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0;var i={name:"app-preview-image",data:function(){return{currentIndex:0,currentName:"",list:[]}},props:{cover_list:Array,index:{type:Number,default:function(){return 0}}},created:function(){this.list=JSON.parse(JSON.stringify(this.cover_list)),this.currentIndex=this.index,this.currentName=this.list[this.currentIndex].name},methods:{close:function(){this.$emit("change",this.currentIndex)},changIndex:function(t){this.currentIndex=t.detail.current,this.currentName=this.list[t.detail.current].name},imageLoad:function(t,e){var n=e.detail.height,i=e.detail.width,r=n*(750/i);this.list[t].height=r+"rpx",this.$forceUpdate()}}};e.default=i},ebb8:function(t,e,n){"use strict";n.r(e);var i=n("b533"),r=n.n(i);for(var a in i)["default"].indexOf(a)<0&&function(t){n.d(e,t,(function(){return i[t]}))}(a);e["default"]=r.a},f116:function(t,e,n){"use strict";var i=n("669c"),r=n.n(i);r.a}}]);
+;(global["webpackJsonp"] = global["webpackJsonp"] || []).push([
+    'components/basic-component/app-preview-image/app-preview-image-create-component',
+    {
+        'components/basic-component/app-preview-image/app-preview-image-create-component':(function(module, exports, __webpack_require__){
+            __webpack_require__('543d')['createComponent'](__webpack_require__("8f77"))
+        })
+    },
+    [['components/basic-component/app-preview-image/app-preview-image-create-component']]
+]);

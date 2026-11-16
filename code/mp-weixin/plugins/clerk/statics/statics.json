@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "核销统计",
+  "usingComponents": {
+    "app-tab-nav": "/components/basic-component/app-tab-nav/app-tab-nav"
+  }
+}

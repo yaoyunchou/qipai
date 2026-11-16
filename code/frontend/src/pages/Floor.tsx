@@ -1,7 +1,9 @@
 import { Input, InputNumber, Layout, Modal, Tag, Typography, message } from "antd";
+import dayjs from "dayjs";
 import { useCallback, useEffect, useState } from "react";
 import { api, type TableBoardItem } from "../api/client";
 import AppHeader from "../components/AppHeader";
+import OpenTimeInput from "../components/OpenTimeInput";
 import { useIsMobile } from "../hooks/useIsMobile";
 import { useMe } from "../hooks/useMe";
 
@@ -43,6 +45,7 @@ export default function FloorPage() {
   const [openModal, setOpenModal] = useState<TableBoardItem | null>(null);
   const [closeModal, setCloseModal] = useState<TableBoardItem | null>(null);
   const [actualPrice, setActualPrice] = useState<number | null>(null);
+  const [openTime, setOpenTime] = useState<dayjs.Dayjs | null>(null);
   const [remark, setRemark] = useState("");
   const [closePrice, setClosePrice] = useState<number | null>(null);
   const [openSubmitting, setOpenSubmitting] = useState(false);
@@ -78,10 +81,24 @@ export default function FloorPage() {
 
   const handleOpen = async () => {
     if (!openModal || openSubmitting) return;
+    if (!openTime) {
+      message.error("请选择开始时间");
+      return;
+    }
+    if (openTime.isAfter(dayjs())) {
+      message.error("开始时间不能晚于当前时间");
+      return;
+    }
     setOpenSubmitting(true);
     try {
-      const payload: { table_id: number; actual_price?: number; remark?: string } = {
+      const payload: {
+        table_id: number;
+        actual_price?: number;
+        remark?: string;
+        opened_at: string;
+      } = {
         table_id: openModal.id,
+        opened_at: openTime.format("YYYY-MM-DDTHH:mm:ss"),
       };
       if (!timingEnabled && actualPrice != null) payload.actual_price = actualPrice;
       if (remark.trim()) payload.remark = remark.trim();
@@ -91,6 +108,7 @@ export default function FloorPage() {
       });
       message.success(timingEnabled ? `${openModal.name} 已开始计时` : `${openModal.name} 开单成功`);
       setOpenModal(null);
+      setOpenTime(null);
       setRemark("");
       load();
     } catch (e) {
@@ -150,6 +168,7 @@ export default function FloorPage() {
                 onClick={() => {
                   if (!occupied) {
                     setActualPrice(null);
+                    setOpenTime(dayjs());
                     setRemark("");
                     setOpenModal(t);
                   } else {
@@ -204,16 +223,19 @@ export default function FloorPage() {
         onCancel={() => {
           if (openSubmitting) return;
           setOpenModal(null);
+          setOpenTime(null);
           setRemark("");
         }}
       >
+        <Typography.Paragraph>开始时间</Typography.Paragraph>
+        <OpenTimeInput value={openTime} onChange={setOpenTime} isMobile={isMobile} />
         {timingEnabled ? (
-          <Typography.Paragraph>
+          <Typography.Paragraph style={{ marginTop: 12 }}>
             开单后开始计时，清台时按 ¥{storeCfg?.base_price}/{unitLabel(storeCfg?.billing_unit_minutes ?? 60)} 自动计费。
           </Typography.Paragraph>
         ) : (
           <>
-            <Typography.Paragraph>实收价（留空则用基准价）</Typography.Paragraph>
+            <Typography.Paragraph style={{ marginTop: 12 }}>实收价（留空则用基准价）</Typography.Paragraph>
             <InputNumber
               style={{ width: "100%" }}
               min={0}

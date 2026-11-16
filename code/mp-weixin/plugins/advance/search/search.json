@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "预售搜索",
+  "usingComponents": {
+    "index-product-list": "/plugins/advance/components/index-product-list"
+  }
+}

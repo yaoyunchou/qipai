@@ -1,0 +1,1 @@
+<image hidden="{{!(is_loading)}}" class="cats data-v-4c53bd5f" style="{{'background-color:'+(theme.background)+';'}}" src="{{goodsImg.cart}}" data-event-opts="{{[['load',[['imgLoad',['$event']]]]]}}" bindload="__e"></image>

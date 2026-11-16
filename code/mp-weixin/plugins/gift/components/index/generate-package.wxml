@@ -1,0 +1,1 @@
+<view class="page-width generate-package data-v-000c646c"><view class="price black data-v-000c646c">{{newPrice}}</view><button data-event-opts="{{[['tap',[['generatePackage',['$event']]]]]}}" class="{{['data-v-000c646c',theme,'button']}}" bindtap="__e">生成礼包</button><view class="cart-empty data-v-000c646c"></view></view>

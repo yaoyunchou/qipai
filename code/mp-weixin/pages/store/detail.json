@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "店铺详情",
+  "usingComponents": {
+    "app-swiper": "/components/page-component/app-swiper/app-swiper",
+    "app-rich-text": "/components/basic-component/app-rich/parse"
+  }
+}

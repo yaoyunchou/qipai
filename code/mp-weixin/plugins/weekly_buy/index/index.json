@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "周期购",
+  "usingComponents": {
+    "app-no-goods": "/components/page-component/app-no-goods/app-no-goods"
+  }
+}

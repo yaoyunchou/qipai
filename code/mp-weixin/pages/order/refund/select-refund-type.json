@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "选择售后类型",
+  "usingComponents": {
+    "app-order-goods-info": "/pages/order/components/app-order-goods-info"
+  }
+}

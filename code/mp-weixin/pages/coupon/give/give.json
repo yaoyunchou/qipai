@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "优惠券中心",
+  "usingComponents": {
+    "app-goods-recommend": "/components/page-component/app-goods-recommend/app-goods-recommend",
+    "app-share-qr-code": "/components/page-component/app-share-qr-code-poster/app-share-qr-code-poster"
+  }
+}

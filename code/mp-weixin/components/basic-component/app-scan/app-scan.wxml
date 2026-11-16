@@ -1,0 +1,1 @@
+<view data-event-opts="{{[['tap',[['scanCode',['$event']]]]]}}" class="app-scan main-center cross-center data-v-3a58d415" bindtap="__e"><image src="/static/image/icon/scan.png" class="data-v-3a58d415"></image></view>

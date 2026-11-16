@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "订单详情",
+  "usingComponents": {
+    "form-goods-time": "/components/page-component/goods/form-goods-time"
+  }
+}

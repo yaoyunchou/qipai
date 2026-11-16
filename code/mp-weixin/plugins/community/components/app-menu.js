@@ -1,0 +1,10 @@
+(global["webpackJsonp"]=global["webpackJsonp"]||[]).push([["plugins/community/components/app-menu"],{"44b7":function(n,e,t){"use strict";t.r(e);var i=t("c8dd"),a=t.n(i);for(var c in i)["default"].indexOf(c)<0&&function(n){t.d(e,n,(function(){return i[n]}))}(c);e["default"]=a.a},"80ea":function(n,e,t){"use strict";var i;t.d(e,"b",(function(){return a})),t.d(e,"c",(function(){return c})),t.d(e,"a",(function(){return i}));var a=function(){var n=this,e=n.$createElement;n._self._c},c=[]},"93b2":function(n,e,t){"use strict";t.r(e);var i=t("80ea"),a=t("44b7");for(var c in a)["default"].indexOf(c)<0&&function(n){t.d(e,n,(function(){return a[n]}))}(c);t("f336");var o,u=t("f0c5"),r=Object(u["a"])(a["default"],i["b"],i["c"],!1,null,"699cb5bb",null,!1,i["a"],o);e["default"]=r.exports},"9ff1":function(n,e,t){},c8dd:function(n,e,t){"use strict";(function(n){Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0;var t={name:"app-index",props:{active:{type:String},theme:Object},data:function(){return{list:[{show:!1,key:"activity",name:"活动",active_icon:"./../image/activity-active.png",icon:"./../image/activity.png",path:"/plugins/community/index/index"},{show:!1,key:"order",name:"订单",active_icon:"./../image/order-active.png",icon:"./../image/order.png",path:"/plugins/community/order/order"},{show:!1,key:"me",name:"我的",active_icon:"./../image/me-active.png",icon:"./../image/me.png",path:"/plugins/community/me/me"}]}},methods:{imgLoading:function(n){n.show=!0},toMenu:function(e){if(this.active===e.key)return!1;n.redirectTo({url:e.path})}}};e.default=t}).call(this,t("543d")["default"])},f336:function(n,e,t){"use strict";var i=t("9ff1"),a=t.n(i);a.a}}]);
+;(global["webpackJsonp"] = global["webpackJsonp"] || []).push([
+    'plugins/community/components/app-menu-create-component',
+    {
+        'plugins/community/components/app-menu-create-component':(function(module, exports, __webpack_require__){
+            __webpack_require__('543d')['createComponent'](__webpack_require__("93b2"))
+        })
+    },
+    [['plugins/community/components/app-menu-create-component']]
+]);

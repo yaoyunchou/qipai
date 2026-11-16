@@ -1,0 +1,11 @@
+{
+  "navigationBarTitleText": "微淘详情",
+  "usingComponents": {
+    "mch-share": "/plugins/mch/mch-share",
+    "app-diy-goods-list": "/plugins/mch/components/app-diy-goods-list",
+    "app-rich": "/components/basic-component/app-rich/parse",
+    "app-video": "/components/page-component/app-video/app-video",
+    "app-image-ad": "/components/page-component/app-image-ad/app-image-ad",
+    "app-hotspot": "/components/basic-component/app-hotspot/app-hotspot"
+  }
+}

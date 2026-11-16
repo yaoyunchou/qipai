@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "团队分红",
+  "usingComponents": {
+    "app-rich-text": "/components/basic-component/app-rich/parse"
+  }
+}

@@ -1,0 +1,10 @@
+(global["webpackJsonp"]=global["webpackJsonp"]||[]).push([["components/basic-component/app-image/app-image"],{"281c":function(t,n,e){"use strict";e.r(n);var i=e("a4f2"),r=e.n(i);for(var a in i)["default"].indexOf(a)<0&&function(t){e.d(n,t,(function(){return i[t]}))}(a);n["default"]=r.a},"59fe":function(t,n,e){},"6e1d":function(t,n,e){"use strict";var i=e("59fe"),r=e.n(i);r.a},"892d":function(t,n,e){"use strict";var i;e.d(n,"b",(function(){return r})),e.d(n,"c",(function(){return a})),e.d(n,"a",(function(){return i}));var r=function(){var t=this,n=t.$createElement,e=(t._self._c,t.imgSrc&&t.is_loading?t.__get_style([t.imgStyle,t.otherStyle]):null),i=t.imgSrc&&!t.is_error?t.__get_style([t.imgStyle,t.otherStyle]):null;t.$mp.data=Object.assign({},{$root:{s0:e,s1:i}})},a=[]},a4f2:function(t,n,e){"use strict";Object.defineProperty(n,"__esModule",{value:!0}),n.default=void 0;var i={name:"app-image",props:{imgSrc:String,width:String,height:String,otherStyle:Object,mode:{type:String,default:function(){return"aspectFill"}},borderRadius:String},data:function(){return{is_loading:!0,is_error:!1}},computed:{appBackground:function(){return"width: ".concat(this.width,";height: ").concat(this.height,";")},imgStyle:function(){return{borderRadius:"".concat(this.borderRadius)}}},methods:{imgError:function(){this.is_error=!0},imgLoad:function(){this.is_loading=!1}}};n.default=i},f54c:function(t,n,e){"use strict";e.r(n);var i=e("892d"),r=e("281c");for(var a in r)["default"].indexOf(a)<0&&function(t){e.d(n,t,(function(){return r[t]}))}(a);e("6e1d");var o,c=e("f0c5"),u=Object(c["a"])(r["default"],i["b"],i["c"],!1,null,"3f1ca575",null,!1,i["a"],o);n["default"]=u.exports}}]);
+;(global["webpackJsonp"] = global["webpackJsonp"] || []).push([
+    'components/basic-component/app-image/app-image-create-component',
+    {
+        'components/basic-component/app-image/app-image-create-component':(function(module, exports, __webpack_require__){
+            __webpack_require__('543d')['createComponent'](__webpack_require__("f54c"))
+        })
+    },
+    [['components/basic-component/app-image/app-image-create-component']]
+]);

@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "订单",
+  "usingComponents": {
+    "app-menu": "/plugins/community/components/app-menu",
+    "app-order": "/plugins/community/components/app-order",
+    "app-time-screening": "/components/page-component/app-time-screening/app-time-screening"
+  }
+}

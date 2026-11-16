@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "我的订单",
+  "usingComponents": {
+    "app-tab-nav": "/components/basic-component/app-tab-nav/app-tab-nav",
+    "app-goods-recommend": "/components/page-component/app-goods-recommend/app-goods-recommend",
+    "app-order-goods-info": "/pages/order/components/app-order-goods-info",
+    "app-no-goods": "/components/page-component/app-no-goods/app-no-goods"
+  }
+}

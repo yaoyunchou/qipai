@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "发货",
+  "usingComponents": {
+    "app-scan": "/components/basic-component/app-scan/app-scan"
+  }
+}

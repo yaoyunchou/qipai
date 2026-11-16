@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "结算",
+  "usingComponents": {
+    "app-dialog": "/pages/order-submit/app-dialog",
+    "app-check-box": "/pages/order-submit/app-check-box"
+  }
+}

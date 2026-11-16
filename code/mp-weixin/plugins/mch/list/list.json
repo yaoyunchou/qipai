@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "好店推荐",
+  "usingComponents": {
+    "app-good-shop-recommendation": "/components/page-component/app-good-shop-recommendation/app-good-shop-recommendation"
+  }
+}

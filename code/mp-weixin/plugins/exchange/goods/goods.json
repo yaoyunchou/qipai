@@ -1,0 +1,17 @@
+{
+  "navigationBarTitleText": "礼品卡详情",
+  "usingComponents": {
+    "app-banner": "/components/page-component/goods/app-goods-banner",
+    "app-close": "/components/basic-component/app-close/app-close",
+    "app-goods-full-reduce": "/components/page-component/goods/app-goods-full-reduce",
+    "bd-info": "/components/page-component/goods/bd-info",
+    "bd-coupon": "/components/page-component/goods/bd-coupon",
+    "bd-xbc": "/components/page-component/goods/bd-xbc",
+    "bd-kb": "/components/page-component/goods/bd-kb",
+    "bd-hc": "/components/page-component/goods/bd-hc",
+    "bd-detail": "/components/page-component/goods/bd-detail",
+    "bd-comments": "/components/page-component/goods/bd-comments",
+    "app-sell-tip": "/components/page-component/goods/app-sell-tip",
+    "app-quick-navigation": "/components/page-component/app-quick-navigation/app-quick-navigation"
+  }
+}

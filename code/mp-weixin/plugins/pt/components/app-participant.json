@@ -1,0 +1,7 @@
+{
+  "component": true,
+  "usingComponents": {
+    "app-surplus-time": "/plugins/pt/components/app-surplus_time",
+    "app-participant-model": "/plugins/pt/components/app-participant-model"
+  }
+}
