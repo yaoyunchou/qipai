@@ -12,6 +12,7 @@ class ExpenseCategory(str, enum.Enum):
     FIXED = "FIXED"
     OPERATIONS = "OPERATIONS"
     SANDBOX = "SANDBOX"
+    LIVING = "LIVING"
 
 
 class ExpenseClaimStatus(str, enum.Enum):

@@ -10,6 +10,7 @@ class OrderOpenRequest(BaseModel):
     table_id: int
     actual_price: Decimal | None = None
     remark: str | None = Field(default=None, max_length=500)
+    opened_at: datetime | None = None
 
 
 class OrderCloseRequest(BaseModel):
@@ -33,3 +34,11 @@ class OrderOut(BaseModel):
     closed_at: datetime | None
 
     model_config = {"from_attributes": True}
+
+
+class OperationsResetOut(BaseModel):
+    deleted_orders: int
+    deleted_expense_claims: int
+    deleted_price_logs: int
+    deleted_play_companion: int = 0
+    deleted_loan_records: int = 0

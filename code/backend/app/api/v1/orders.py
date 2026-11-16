@@ -1,16 +1,20 @@
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 
-from fastapi import APIRouter, HTTPException, Query, status
-from sqlalchemy import select
-from app.core.deps import CurrentUser, DbSession
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import func, select, text
+from app.core.deps import CurrentUser, DbSession, require_roles
 from app.core.timezone import now_cn
-from app.models import BizOrder, OrderStatus, RoomTable, SysStoreConfig, SysUser, UserRole
-from app.schemas.order import OrderCloseRequest, OrderOpenRequest, OrderOut
+from app.models import BizOrder, ExpenseClaim, LoanRecord, OrderStatus, PlayCompanionRecord, PriceChangeLog, RoomTable, SysStoreConfig, SysUser, UserRole
+from app.schemas.order import OrderCloseRequest, OrderOpenRequest, OrderOut, OperationsResetOut
 from app.services.billing import calc_timing_bill
+from app.services.expense_storage import clear_expense_uploads
 from app.services.order_no import generate_order_no
 
 router = APIRouter(prefix="/orders", tags=["orders"])
+AdminUser = Annotated[SysUser, Depends(require_roles(UserRole.ADMIN))]
 
 
 def _to_out(order: BizOrder, db) -> OrderOut:
@@ -72,7 +76,9 @@ def open_order(body: OrderOpenRequest, db: DbSession, user: CurrentUser):
     if not cfg:
         raise HTTPException(status_code=500, detail="门店配置未初始化")
     base = cfg.base_price
-    opened_at = now_cn()
+    opened_at = body.opened_at if body.opened_at is not None else now_cn()
+    if opened_at > now_cn():
+        raise HTTPException(status_code=400, detail="开始时间不能晚于当前时间")
     if cfg.enable_timing:
         if body.actual_price is not None:
             raise HTTPException(status_code=400, detail="计时模式下开单不需填写价格，清台时自动结算")
@@ -141,3 +147,31 @@ def close_order(
     db.commit()
     db.refresh(order)
     return _to_out(order, db)
+
+
+@router.post("/reset-operations", response_model=OperationsResetOut)
+def reset_operations(db: DbSession, user: AdminUser):
+    """清除全部运营数据：订单、报销单及附件、陪玩记录、借钱记录、基准价变更记录（仅超管）。"""
+    orders_count = db.scalar(select(func.count()).select_from(BizOrder)) or 0
+    claims_count = db.scalar(select(func.count()).select_from(ExpenseClaim)) or 0
+    logs_count = db.scalar(select(func.count()).select_from(PriceChangeLog)) or 0
+    play_count = db.scalar(select(func.count()).select_from(PlayCompanionRecord)) or 0
+    loan_count = db.scalar(select(func.count()).select_from(LoanRecord)) or 0
+
+    db.execute(
+        text(
+            "TRUNCATE expense_claim_approver, expense_claim_attachment, "
+            "expense_claim, play_companion_record, loan_record, biz_order, price_change_log "
+            "RESTART IDENTITY CASCADE"
+        )
+    )
+    db.commit()
+    clear_expense_uploads()
+
+    return OperationsResetOut(
+        deleted_orders=orders_count,
+        deleted_expense_claims=claims_count,
+        deleted_price_logs=logs_count,
+        deleted_play_companion=play_count,
+        deleted_loan_records=loan_count,
+    )
