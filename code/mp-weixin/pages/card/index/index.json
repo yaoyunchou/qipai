@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "",
+  "usingComponents": {
+    "app-tab-nav": "/components/basic-component/app-tab-nav/app-tab-nav",
+    "app-no-goods": "/components/page-component/app-no-goods/app-no-goods"
+  }
+}

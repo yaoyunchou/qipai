@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "订单管理",
+  "usingComponents": {
+    "app-time-screening": "/components/page-component/app-time-screening/app-time-screening",
+    "form-goods-time": "/components/page-component/goods/form-goods-time"
+  }
+}

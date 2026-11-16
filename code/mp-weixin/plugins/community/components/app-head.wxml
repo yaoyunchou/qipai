@@ -1,0 +1,1 @@
+<image class="head-bg data-v-55cea988" style="{{'height:'+(height)+';'+('background-color:'+(theme.background)+';')}}" src="{{apply?community.apply:community.bg}}"></image>

@@ -1,0 +1,617 @@
+{
+  "pages": [
+    "pages/index/index"
+  ],
+  "subPackages": [
+    {
+      "root": "pages/rules",
+      "pages": [
+        "index"
+      ]
+    },
+    {
+      "root": "pages/foot",
+      "pages": [
+        "index/index",
+        "summary/summary"
+      ]
+    },
+    {
+      "root": "pages/coupon",
+      "pages": [
+        "list/list",
+        "details/details",
+        "details/details-no-share",
+        "give/give",
+        "index/index"
+      ]
+    },
+    {
+      "root": "pages/binding",
+      "pages": [
+        "binding"
+      ]
+    },
+    {
+      "root": "pages/cats",
+      "pages": [
+        "cats"
+      ]
+    },
+    {
+      "root": "pages/card",
+      "pages": [
+        "index/index",
+        "details/details",
+        "details/details-no-share",
+        "clerk/clerk",
+        "give/give"
+      ]
+    },
+    {
+      "root": "pages/balance",
+      "pages": [
+        "recharge",
+        "balance",
+        "detail",
+        "password",
+        "forget"
+      ]
+    },
+    {
+      "root": "pages/topic",
+      "pages": [
+        "list",
+        "topic"
+      ]
+    },
+    {
+      "root": "pages/goods",
+      "pages": [
+        "list",
+        "goods",
+        "goods-form",
+        "video"
+      ]
+    },
+    {
+      "root": "pages/member",
+      "pages": [
+        "index/index",
+        "upgrade/upgrade",
+        "detail/detail"
+      ]
+    },
+    {
+      "root": "pages/user-center",
+      "pages": [
+        "user-center",
+        "integral-detail/integral-detail"
+      ]
+    },
+    {
+      "root": "pages/address",
+      "pages": [
+        "address",
+        "address-edit"
+      ]
+    },
+    {
+      "root": "pages/share",
+      "pages": [
+        "index/index",
+        "add/add",
+        "cash/cash",
+        "money/money",
+        "order/order",
+        "cash-detail/cash-detail",
+        "team/team",
+        "qrcode/qrcode",
+        "level/level"
+      ]
+    },
+    {
+      "root": "pages/order-submit",
+      "pages": [
+        "order-submit",
+        "address-pick",
+        "store-pick",
+        "pay-result",
+        "map",
+        "vip-card",
+        "gift"
+      ]
+    },
+    {
+      "root": "pages/poster",
+      "pages": [
+        "goods",
+        "poster"
+      ]
+    },
+    {
+      "root": "pages/goods-edit",
+      "pages": [
+        "goods-cat/goods-cat",
+        "cat-setting/cat-setting",
+        "cat-edit/cat-edit"
+      ]
+    },
+    {
+      "root": "plugins/pond",
+      "pages": [
+        "index/index",
+        "prize/prize"
+      ]
+    },
+    {
+      "root": "plugins/scratch",
+      "pages": [
+        "index/index",
+        "prize/prize"
+      ]
+    },
+    {
+      "root": "plugins/bonus",
+      "pages": [
+        "index/index",
+        "about/about",
+        "cash/cash",
+        "cash-detail/cash-detail",
+        "order/order",
+        "memeber/memeber",
+        "statics/statics"
+      ]
+    },
+    {
+      "root": "plugins/region",
+      "pages": [
+        "index/index",
+        "update/update",
+        "cash/cash",
+        "bonus/bonus",
+        "cash-detail/cash-detail",
+        "about/about"
+      ]
+    },
+    {
+      "root": "plugins/stock",
+      "pages": [
+        "index/index",
+        "update/update",
+        "cash/cash",
+        "bonus/bonus",
+        "cash-detail/cash-detail",
+        "balance/balance"
+      ]
+    },
+    {
+      "root": "plugins/lottery",
+      "pages": [
+        "index/index",
+        "detail/detail",
+        "goods/goods",
+        "lucky-code/lucky-code",
+        "prize/prize",
+        "qrcode/qrcode"
+      ]
+    },
+    {
+      "root": "plugins/check_in",
+      "pages": [
+        "index/index"
+      ]
+    },
+    {
+      "root": "plugins/fxhb",
+      "pages": [
+        "detail/detail"
+      ]
+    },
+    {
+      "root": "plugins/scan_code",
+      "pages": [
+        "index/index",
+        "index/coupon"
+      ]
+    },
+    {
+      "root": "plugins/integral_mall",
+      "pages": [
+        "index/index",
+        "goods/goods",
+        "coupon/coupon",
+        "exchange/exchange"
+      ]
+    },
+    {
+      "root": "plugins/clerk",
+      "pages": [
+        "index/index",
+        "statics/statics",
+        "order/order",
+        "detail/detail"
+      ]
+    },
+    {
+      "root": "pages/app_admin",
+      "pages": [
+        "index/index",
+        "order-message/order-message",
+        "order/order",
+        "change-add/change-add",
+        "express/express",
+        "send/send",
+        "order-detail/order-detail",
+        "user/user",
+        "goods/goods",
+        "add-goods/add-goods",
+        "goods-attr/goods-attr",
+        "goods-attr-edit/goods-attr-edit",
+        "goods-attr-info/goods-attr-info",
+        "goods-detail/goods-detail",
+        "goods-card/goods-card",
+        "goods-coupon/goods-coupon",
+        "comment-detail/comment-detail",
+        "comment/comment",
+        "setting/setting",
+        "cash/cash",
+        "review-message/review-message",
+        "mch-detail/mch-detail",
+        "payment-code/payment-code",
+        "region-detail/region-detail",
+        "community-detail/community-detail",
+        "open-time/open-time",
+        "clerk/clerk"
+      ]
+    },
+    {
+      "root": "plugins/mch",
+      "pages": [
+        "apply/apply",
+        "cat/cat",
+        "goods/goods",
+        "list/list",
+        "shop/shop",
+        "shop/summary",
+        "shop/goods",
+        "shop/weitao",
+        "shop/weitao-detail",
+        "summary/summary",
+        "mch/login/login",
+        "mch/myshop/myshop",
+        "mch/account/account",
+        "mch/account-log/account-log",
+        "mch/settle-detail/settle-detail",
+        "mch/cash-log/cash-log",
+        "mch/cash/cash",
+        "mch/count/count",
+        "mch/config/config",
+        "mch/password/password",
+        "mch/web-login/web-login",
+        "mch/qrcode/qrcode",
+        "mch/goods/goods",
+        "mch/add-goods/add-goods",
+        "mch/goods-detail/goods-detail",
+        "mch/order/order",
+        "mch/order-detail/order-detail",
+        "mch/send/send",
+        "mch/express/express",
+        "mch/change-add/change-add",
+        "mch/goods-attr/goods-attr",
+        "mch/goods-attr-edit/goods-attr-edit",
+        "mch/goods-attr-info/goods-attr-info",
+        "mch/open-time/open-time"
+      ]
+    },
+    {
+      "root": "plugins/book",
+      "pages": [
+        "index/index",
+        "goods/goods",
+        "reservationList/reservationList"
+      ]
+    },
+    {
+      "root": "plugins/miaosha",
+      "pages": [
+        "goods/goods",
+        "advance/advance"
+      ]
+    },
+    {
+      "root": "plugins/vip_card",
+      "pages": [
+        "index/index",
+        "buy/buy",
+        "rights/rights"
+      ]
+    },
+    {
+      "root": "pages/order",
+      "pages": [
+        "index/index",
+        "search/search",
+        "order-detail/order-detail",
+        "express-detail/express-detail",
+        "refund/refund",
+        "refund/select-refund-type",
+        "refund/order-refund",
+        "refund/index",
+        "refund-detail/refund-detail",
+        "clerk/clerk",
+        "appraise/appraise",
+        "appraise-finish/index",
+        "express-list/express-list",
+        "city-map/city-map"
+      ]
+    },
+    {
+      "root": "plugins/advance",
+      "pages": [
+        "index/index",
+        "detail/detail",
+        "order/order",
+        "search/search",
+        "order-detail/order-detail"
+      ]
+    },
+    {
+      "root": "plugins/quick_share",
+      "pages": [
+        "index/index"
+      ]
+    },
+    {
+      "root": "plugins/gift",
+      "pages": [
+        "index/index",
+        "goods/goods",
+        "list/list",
+        "share/share",
+        "order/order",
+        "address/address",
+        "detail/detail",
+        "receive/receive",
+        "search/search"
+      ]
+    },
+    {
+      "root": "plugins/pick",
+      "pages": [
+        "index/index",
+        "pond/pond",
+        "detail/detail",
+        "search/search"
+      ]
+    },
+    {
+      "root": "pages/live",
+      "pages": [
+        "index"
+      ],
+      "plugins": {
+        "live-player-plugin": {
+          "version": "1.3.2",
+          "provider": "wx2b03c6e691cd7370"
+        }
+      }
+    },
+    {
+      "root": "plugins/composition",
+      "pages": [
+        "index/index",
+        "search/search",
+        "detail/detail"
+      ]
+    },
+    {
+      "root": "plugins/community",
+      "pages": [
+        "apply/apply",
+        "index/index",
+        "detail/detail",
+        "record/record",
+        "order/order",
+        "order-detail/order-detail",
+        "me/me",
+        "poster/poster",
+        "profit/profit",
+        "profit-cash/profit-cash",
+        "cash/cash",
+        "cash-detail/cash-detail",
+        "clerk/clerk",
+        "activity/activity",
+        "list/list",
+        "captain/captain",
+        "goods/goods",
+        "recruit/recruit"
+      ]
+    },
+    {
+      "root": "pages/quick-shop",
+      "pages": [
+        "quick-shop"
+      ]
+    },
+    {
+      "root": "pages/favorite",
+      "pages": [
+        "favorite"
+      ]
+    },
+    {
+      "root": "pages/cart",
+      "pages": [
+        "cart"
+      ]
+    },
+    {
+      "root": "pages/article",
+      "pages": [
+        "article-list/article-list",
+        "article-detail/article-detail"
+      ]
+    },
+    {
+      "root": "pages/store",
+      "pages": [
+        "store",
+        "detail"
+      ]
+    },
+    {
+      "root": "pages/search",
+      "pages": [
+        "search"
+      ]
+    },
+    {
+      "root": "pages/video",
+      "pages": [
+        "video"
+      ]
+    },
+    {
+      "root": "pages/web",
+      "pages": [
+        "web"
+      ]
+    },
+    {
+      "root": "pages/comments",
+      "pages": [
+        "comments"
+      ]
+    },
+    {
+      "root": "pages/disabled",
+      "pages": [
+        "disabled"
+      ]
+    },
+    {
+      "root": "pages/template-msg",
+      "pages": [
+        "template-msg"
+      ]
+    },
+    {
+      "root": "plugins/flash_sale",
+      "pages": [
+        "index/index",
+        "goods/goods"
+      ]
+    },
+    {
+      "root": "plugins/weekly_buy",
+      "pages": [
+        "index/index",
+        "goods/goods",
+        "send/send",
+        "time/time"
+      ]
+    },
+    {
+      "root": "plugins/exchange",
+      "pages": [
+        "index/index",
+        "detail/detail",
+        "list/list",
+        "goods/goods",
+        "gift/gift"
+      ]
+    },
+    {
+      "root": "plugins/wholesale",
+      "pages": [
+        "index/index",
+        "goods/goods"
+      ]
+    },
+    {
+      "root": "pages/full_reduce",
+      "pages": [
+        "index/index",
+        "search/search"
+      ]
+    },
+    {
+      "root": "plugins/pt",
+      "pages": [
+        "index/index",
+        "order/order",
+        "detail/detail",
+        "goods/goods"
+      ]
+    },
+    {
+      "root": "plugins/bargain",
+      "pages": [
+        "index/index",
+        "goods/goods",
+        "order-list/order-list",
+        "activity/activity"
+      ]
+    },
+    {
+      "root": "plugins/teller",
+      "pages": [
+        "index/index",
+        "result/result"
+      ]
+    },
+    {
+      "root": "plugins/fission",
+      "pages": [
+        "index/index",
+        "log/log"
+      ]
+    },
+    {
+      "root": "plugins/diy",
+      "pages": [
+        "list/list",
+        "detail/detail",
+        "form-success"
+      ]
+    },
+    {
+      "root": "plugins/step",
+      "pages": [
+        "index/index",
+        "dare/dare",
+        "join/join",
+        "log/log",
+        "share/share",
+        "detail/detail",
+        "friend/friend",
+        "top/top",
+        "goods/goods"
+      ]
+    }
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "请求获取您的位置信息"
+    }
+  },
+  "usingComponents": {
+    "app-button": "/components/basic-component/app-button/app-button",
+    "app-form-id": "/components/basic-component/app-form-id/app-form-id",
+    "app-layout": "/components/basic-component/app-layout/app-layout",
+    "app-input": "/components/basic-component/app-input/app-input",
+    "app-jump-button": "/components/basic-component/app-jump-button/app-jump-button",
+    "app-load-text": "/components/basic-component/app-load-text/app-load-text",
+    "app-image": "/components/basic-component/app-image/app-image",
+    "app-css-icon": "/components/basic-component/app-css-icon/app-css-icon",
+    "app-member-price": "/components/page-component/app-member-mark/app-member-price",
+    "app-sup-vip": "/components/page-component/app-sup-vip/app-sup-vip"
+  }
+}

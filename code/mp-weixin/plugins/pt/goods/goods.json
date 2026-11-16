@@ -1,0 +1,24 @@
+{
+  "navigationBarTitleText": "商品详情",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "bd-info": "/components/page-component/goods/bd-info",
+    "bd-coupon": "/components/page-component/goods/bd-coupon",
+    "bd-xbc": "/components/page-component/goods/bd-xbc",
+    "bd-kb": "/components/page-component/goods/bd-kb",
+    "bd-hc": "/components/page-component/goods/bd-hc",
+    "bd-detail": "/components/page-component/goods/bd-detail",
+    "bd-comments": "/components/page-component/goods/bd-comments",
+    "app-goods-banner": "/components/page-component/goods/app-goods-banner",
+    "app-pt-time": "/plugins/pt/components/app-pt-time",
+    "app-merchant-guarantee": "/plugins/pt/components/app-merchant-guarantee",
+    "app-button-button": "/plugins/pt/components/app-buttom-button",
+    "app-pt-attr": "/plugins/pt/components/app-pt-attr",
+    "app-participant": "/plugins/pt/components/app-participant",
+    "app-quick-navigation": "/components/page-component/app-quick-navigation/app-quick-navigation",
+    "u-attr": "/components/page-component/goods/u-attr",
+    "app-goods-full-reduce": "/components/page-component/goods/app-goods-full-reduce",
+    "app-goods-recommend": "/components/page-component/app-goods-recommend/app-goods-recommend",
+    "app-close": "/components/basic-component/app-close/app-close"
+  }
+}

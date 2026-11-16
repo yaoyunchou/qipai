@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "店铺管理",
+  "usingComponents": {
+    "app-area-picker": "/components/page-component/app-area-picker/app-area-picker",
+    "app-radio": "/components/basic-component/app-radio/app-radio"
+  }
+}

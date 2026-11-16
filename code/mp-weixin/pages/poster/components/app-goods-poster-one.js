@@ -1,0 +1,10 @@
+(global["webpackJsonp"]=global["webpackJsonp"]||[]).push([["pages/poster/components/app-goods-poster-one"],{"3e04":function(e,t,n){"use strict";var o=n("966e"),r=n.n(o);r.a},"55d9":function(e,t,n){"use strict";var o;n.d(t,"b",(function(){return r})),n.d(t,"c",(function(){return c})),n.d(t,"a",(function(){return o}));var r=function(){var e=this,t=e.$createElement;e._self._c},c=[]},"77b5":function(e,t,n){"use strict";n.r(t);var o=n("b8a2"),r=n.n(o);for(var c in o)["default"].indexOf(c)<0&&function(e){n.d(t,e,(function(){return o[e]}))}(c);t["default"]=r.a},"966e":function(e,t,n){},b8a2:function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.default=void 0;var o=function(){n.e("pages/poster/components/app-poster-image").then(function(){return resolve(n("1bb0"))}.bind(null,n)).catch(n.oe)},r=function(){n.e("pages/poster/components/app-poster-price").then(function(){return resolve(n("4f43"))}.bind(null,n)).catch(n.oe)},c={name:"app-goods-poster-one",components:{appPosterImage:o,appPosterPrice:r},props:{multiple:{type:Number,required:!0},info:{type:Object,required:!0},form:{type:Object,required:!0}},computed:{customize:function(){return this.info.customize_text?this.info.customize_text:"向您推荐一个好物"},background:function(){return 2===parseInt(this.form.type)?"linear-gradient(".concat(this.form.color,",").concat(this.$utils.colorRgba(this.form.color,.5),")"):this.form.color}}};t.default=c},d520:function(e,t,n){"use strict";n.r(t);var o=n("55d9"),r=n("77b5");for(var c in r)["default"].indexOf(c)<0&&function(e){n.d(t,e,(function(){return r[e]}))}(c);n("3e04");var u,i=n("f0c5"),a=Object(i["a"])(r["default"],o["b"],o["c"],!1,null,"3b69c6db",null,!1,o["a"],u);t["default"]=a.exports}}]);
+;(global["webpackJsonp"] = global["webpackJsonp"] || []).push([
+    'pages/poster/components/app-goods-poster-one-create-component',
+    {
+        'pages/poster/components/app-goods-poster-one-create-component':(function(module, exports, __webpack_require__){
+            __webpack_require__('543d')['createComponent'](__webpack_require__("d520"))
+        })
+    },
+    [['pages/poster/components/app-goods-poster-one-create-component']]
+]);

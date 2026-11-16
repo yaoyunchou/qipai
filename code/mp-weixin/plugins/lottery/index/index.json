@@ -1,0 +1,8 @@
+{
+  "usingComponents": {
+    "app-swiper": "/components/page-component/app-swiper/app-swiper",
+    "common-buttom": "/plugins/lottery/common-buttom",
+    "integral-model": "/plugins/lottery/integral-model",
+    "app-goods": "/components/basic-component/app-goods/app-goods"
+  }
+}

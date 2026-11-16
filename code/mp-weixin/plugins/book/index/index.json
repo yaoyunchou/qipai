@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "预约首页",
+  "usingComponents": {
+    "app-head-nav-list": "/plugins/book/components/app-head-nav-list",
+    "app-product-list": "/plugins/book/components/app-product-list",
+    "app-no-goods": "/components/page-component/app-no-goods/app-no-goods",
+    "app-goods": "/components/basic-component/app-goods/app-goods"
+  }
+}

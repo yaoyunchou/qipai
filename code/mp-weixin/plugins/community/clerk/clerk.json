@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "提货核销",
+  "usingComponents": {
+    "app-order": "/plugins/community/components/app-order"
+  }
+}

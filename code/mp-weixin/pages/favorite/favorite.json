@@ -1,0 +1,9 @@
+{
+  "usingComponents": {
+    "good-action": "/pages/favorite/component/good-action",
+    "app-share-qr-code": "/components/page-component/app-share-qr-code-poster/app-share-qr-code-poster",
+    "app-special-topic-list": "/components/page-component/app-special-topic/app-special-topic-list",
+    "app-no-goods": "/components/page-component/app-no-goods/app-no-goods",
+    "app-goods-shop": "/components/page-component/app-good-shop-recommendation/app-good-shop-recommendation"
+  }
+}

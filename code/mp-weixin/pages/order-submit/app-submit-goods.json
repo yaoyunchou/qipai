@@ -1,0 +1,6 @@
+{
+  "component": true,
+  "usingComponents": {
+    "form-goods-time": "/components/page-component/goods/form-goods-time"
+  }
+}

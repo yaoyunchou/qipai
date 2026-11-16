@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "店铺微淘",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "mch-navbar": "/plugins/mch/mch-navbar",
+    "pre-topic": "/components/page-component/app-special-topic/pre-topic",
+    "app-nav-bar": "/components/page-component/index/app-nav-bar"
+  }
+}

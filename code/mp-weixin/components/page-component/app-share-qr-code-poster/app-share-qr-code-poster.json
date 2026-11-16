@@ -1,0 +1,7 @@
+{
+  "component": true,
+  "usingComponents": {
+    "app-permissions-auth": "/components/basic-component/app-layout/app-permissions-auth/app-permissions-auth",
+    "app-share-video-number": "/components/page-component/app-share-video-number/app-share-video-number"
+  }
+}

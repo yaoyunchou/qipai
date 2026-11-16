@@ -1,0 +1,6 @@
+{
+  "component": true,
+  "usingComponents": {
+    "pre-topic": "/components/page-component/app-special-topic/pre-topic"
+  }
+}

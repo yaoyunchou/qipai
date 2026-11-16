@@ -1,0 +1,24 @@
+{
+  "navigationBarTitleText": "",
+  "usingComponents": {
+    "app-rich": "/components/basic-component/app-rich/parse",
+    "app-empty": "/components/basic-component/app-empty/app-empty",
+    "app-image-ad": "/components/page-component/app-image-ad/app-image-ad",
+    "app-hotspot": "/components/basic-component/app-hotspot/app-hotspot",
+    "app-video": "/components/page-component/app-video/app-video",
+    "app-copyright": "/components/page-component/app-copyright/app-copyright",
+    "app-associated-link": "/components/page-component/app-associated-link/app-associated-link",
+    "app-swiper": "/components/page-component/app-swiper/app-swiper",
+    "diy-form-radio": "/components/page-component/diy-form/diy-form-radio",
+    "diy-form-input": "/components/page-component/diy-form/diy-form-input",
+    "diy-form-button": "/pages/goods/diy-form-button",
+    "diy-form-calendar": "/components/page-component/diy-form/diy-form-calendar",
+    "diy-form-menu": "/components/page-component/diy-form/diy-form-menu",
+    "diy-form-uimage": "/components/page-component/diy-form/diy-form-uimage",
+    "diy-form-uvideo": "/components/page-component/diy-form/diy-form-uvideo",
+    "diy-form-switch": "/components/page-component/diy-form/diy-form-switch",
+    "diy-form-agreement": "/components/page-component/diy-form/diy-form-agreement",
+    "diy-calc": "/pages/goods/diy-calc",
+    "diy-number-in": "/pages/goods/diy-number-in"
+  }
+}

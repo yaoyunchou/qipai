@@ -1,0 +1,11 @@
+{
+  "navigationBarTitleText": "商品详情",
+  "usingComponents": {
+    "app-quick-navigation": "/components/page-component/app-quick-navigation/app-quick-navigation",
+    "app-rich-text": "/components/basic-component/app-rich/parse",
+    "app-goods-banner": "/components/page-component/goods/app-goods-banner",
+    "app-share-qr-code": "/components/page-component/app-share-qr-code-poster/app-share-qr-code-poster",
+    "u-mask": "/components/basic-component/u-mask/u-mask",
+    "integral-model": "/plugins/lottery/integral-model"
+  }
+}

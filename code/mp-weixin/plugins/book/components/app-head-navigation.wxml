@@ -1,0 +1,1 @@
+<view class="app-head-navigation dir-left-nowrap data-v-52db0f4f"><block wx:for="{{list}}" wx:for-item="item" wx:for-index="index" wx:key="index"><view data-event-opts="{{[['tap',[['active',['$0'],[[['list','',index,'id']]]]]]]}}" class="{{['app-item','data-v-52db0f4f',(activeIndex===item.id)?'app-active-item':'']}}" bindtap="__e">{{item.name}}</view></block></view>

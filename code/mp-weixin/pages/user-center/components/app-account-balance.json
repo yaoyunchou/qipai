@@ -1,0 +1,6 @@
+{
+  "component": true,
+  "usingComponents": {
+    "app-account-style": "/pages/user-center/components/app-account-style"
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Backend: FastAPI",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": [
+        "app.main:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000"
+      ],
+      "cwd": "${workspaceFolder}/code/backend",
+      "python": "${workspaceFolder}/code/backend/.venv/Scripts/python.exe",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/code/backend"
+      },
+      "jinja": true,
+      "justMyCode": true,
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Backend: FastAPI (reload)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": [
+        "app.main:app",
+        "--reload",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000"
+      ],
+      "cwd": "${workspaceFolder}/code/backend",
+      "python": "${workspaceFolder}/code/backend/.venv/Scripts/python.exe",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/code/backend"
+      },
+      "jinja": true,
+      "justMyCode": true,
+      "subProcess": true,
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Frontend: Vite",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/code/frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"],
+      "serverReadyAction": {
+        "action": "debugWithChrome",
+        "pattern": "http://127\\.0\\.0\\.1:5180",
+        "uriFormat": "http://127.0.0.1:5180",
+        "webRoot": "${workspaceFolder}/code/frontend/src"
+      }
+    },
+    {
+      "name": "Frontend: Chrome",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://127.0.0.1:5180",
+      "webRoot": "${workspaceFolder}/code/frontend/src",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "/src/*": "${webRoot}/*",
+        "/@fs/*": "${webRoot}/*"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "全栈调试 (Backend + Frontend)",
+      "configurations": ["Backend: FastAPI", "Frontend: Vite"],
+      "stopAll": true,
+      "presentation": {
+        "group": "qipai",
+        "order": 1
+      }
+    }
+  ]
+}

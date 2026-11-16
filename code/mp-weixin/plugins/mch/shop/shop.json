@@ -1,0 +1,26 @@
+{
+  "navigationBarTitleText": "店铺首页",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "app-diy-list": "/components/page-component/index/app-diy-list",
+    "mch-diy-home": "/plugins/mch/mch-diy-home",
+    "mch-customer": "/plugins/mch/mch-customer",
+    "mch-navbar": "/plugins/mch/mch-navbar",
+    "app-nav-bar": "/components/page-component/index/app-nav-bar",
+    "app-search-for": "/components/page-component/app-search-for/app-search-for",
+    "app-navigation-two-icon": "/components/page-component/app-navigation-icon/app-navigation-two-icon",
+    "app-swiper": "/components/page-component/app-swiper/app-swiper",
+    "u-announcement": "/components/page-component/u-announcement/u-announcement",
+    "app-rich": "/components/basic-component/app-rich/parse",
+    "app-associated-link": "/components/page-component/app-associated-link/app-associated-link",
+    "app-image-ad": "/components/page-component/app-image-ad/app-image-ad",
+    "app-hotspot": "/components/basic-component/app-hotspot/app-hotspot",
+    "app-video": "/components/page-component/app-video/app-video",
+    "app-recommended-product-list": "/components/page-component/app-recommended-product/app-recommended-product-list",
+    "app-empty": "/components/basic-component/app-empty/app-empty",
+    "app-customer": "/components/page-component/app-customer/app-customer",
+    "mch-share": "/plugins/mch/mch-share",
+    "app-attr": "/components/page-component/app-attr/app-attr",
+    "u-swiper": "/components/page-component/app-swiper/swiper"
+  }
+}

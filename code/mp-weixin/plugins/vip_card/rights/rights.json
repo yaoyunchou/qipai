@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "超级会员卡权益",
+  "usingComponents": {
+    "app-goods": "/components/basic-component/app-goods/app-goods"
+  }
+}

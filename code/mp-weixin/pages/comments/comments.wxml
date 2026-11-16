@@ -1,0 +1,1 @@
+<app-layout vue-id="12c898c0-1" bind:__l="__l" vue-slots="{{['default']}}"><block wx:if="{{goodsId}}"><view><app-comments vue-id="{{('12c898c0-2')+','+('12c898c0-1')}}" show-type="all" goods-id="{{goodsId}}" reach-bottom="{{onReachBottom}}" bind:__l="__l"></app-comments></view></block></app-layout>

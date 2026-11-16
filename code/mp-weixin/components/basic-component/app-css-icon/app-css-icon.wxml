@@ -1,0 +1,1 @@
+<view class="{{['app-css-icon','data-v-5675dd36',icon,round?'round':'',padding?'padding':'']}}" style="{{'border-color:'+(color)+';'+('font-size:'+(iSize)+';')+('transform:'+(transform)+';')+('background-color:'+(background)+';')}}"></view>

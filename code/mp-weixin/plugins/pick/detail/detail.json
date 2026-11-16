@@ -1,0 +1,18 @@
+{
+  "navigationBarTitleText": "商品详情",
+  "usingComponents": {
+    "app-quick-navigation": "/components/page-component/app-quick-navigation/app-quick-navigation",
+    "app-goods-banner": "/components/page-component/goods/app-goods-banner",
+    "app-goods-recommend": "/components/page-component/app-goods-recommend/app-goods-recommend",
+    "u-attr": "/components/page-component/goods/u-attr",
+    "bd-info": "/components/page-component/goods/bd-info",
+    "bd-coupon": "/components/page-component/goods/bd-coupon",
+    "bd-xbc": "/components/page-component/goods/bd-xbc",
+    "bd-kb": "/components/page-component/goods/bd-kb",
+    "bd-hc": "/components/page-component/goods/bd-hc",
+    "bd-detail": "/components/page-component/goods/bd-detail",
+    "bd-comments": "/components/page-component/goods/bd-comments",
+    "app-close": "/components/basic-component/app-close/app-close",
+    "bd-service": "/components/page-component/goods/bd-service"
+  }
+}

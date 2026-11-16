@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "提现明细",
+  "usingComponents": {
+    "app-tab-nav": "/components/basic-component/app-tab-nav/app-tab-nav"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "商品",
+  "disableScroll": true,
+  "usingComponents": {
+    "video-new": "/components/page-component/goods/app-goods-video",
+    "app-pt-attr": "/components/page-component/app-pt-attr/app-pt-attr",
+    "app-attr": "/components/page-component/app-attr/app-attr",
+    "u-attr": "/components/page-component/goods/u-attr"
+  }
+}

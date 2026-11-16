@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "",
+  "usingComponents": {
+    "app-card-give": "/pages/card/components/app-card-give",
+    "app-card-detail": "/pages/card/components/app-card-detail"
+  }
+}

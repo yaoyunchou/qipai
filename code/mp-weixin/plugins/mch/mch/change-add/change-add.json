@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "修改地址",
+  "usingComponents": {
+    "app-area-picker": "/components/page-component/app-area-picker/app-area-picker"
+  }
+}

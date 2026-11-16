@@ -1,0 +1,1 @@
+<app-layout vue-id="fd5904f6-1" bind:__l="__l" vue-slots="{{['default']}}"><view><app-card-detail vue-id="{{('fd5904f6-2')+','+('fd5904f6-1')}}" list="{{list}}" bind:__l="__l"></app-card-detail></view></app-layout>

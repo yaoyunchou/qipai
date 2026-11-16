@@ -1,0 +1,1 @@
+<block wx:if="{{actual.price!=-1}}"><view class="{{['app-price','t-omit','data-v-137125d8',sign!=='gift'?'':theme+'-color '+theme]}}" style="{{'color:'+(sign!=='gift'&&theme?theme.color:'')+';'}}">{{''+(sign==='integral_mall'&&actual.price!==''?'+':'')}}<text class="{{['data-v-137125d8',actual.type]}}">{{actual.price}}</text></view></block>

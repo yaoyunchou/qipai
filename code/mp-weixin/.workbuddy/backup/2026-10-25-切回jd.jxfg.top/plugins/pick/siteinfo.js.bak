@@ -1,0 +1,6 @@
+module.exports = {
+   acid: -1,
+   version: "1.0.0",
+   siteroot: "https://jb.jxfgg.com",
+   apiroot: "https://jb.jxfgg.com/web/index.php?_mall_id=1"
+};

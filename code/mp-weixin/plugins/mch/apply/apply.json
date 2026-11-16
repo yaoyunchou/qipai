@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "app-area-picker": "/components/page-component/app-area-picker/app-area-picker",
+    "app-diy-form": "/components/page-component/app-diy-form/app-diy-form"
+  }
+}

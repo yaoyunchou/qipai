@@ -1,0 +1,7 @@
+{
+  "component": true,
+  "usingComponents": {
+    "u-new-price": "/components/page-component/u-goods-list/u-new-price",
+    "u-attr": "/components/page-component/goods/u-attr"
+  }
+}

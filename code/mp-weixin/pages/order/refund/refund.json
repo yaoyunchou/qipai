@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "app-order-goods-info": "/pages/order/components/app-order-goods-info",
+    "app-upload-image": "/components/basic-component/app-upload-image/app-upload-image",
+    "app-select": "/pages/order/components/app-select"
+  }
+}

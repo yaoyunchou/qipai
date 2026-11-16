@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "分销订单",
+  "usingComponents": {
+    "app-tab-nav": "/components/basic-component/app-tab-nav/app-tab-nav"
+  }
+}

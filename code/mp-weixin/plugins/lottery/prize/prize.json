@@ -1,0 +1,5 @@
+{
+  "usingComponents": {
+    "common-buttom": "/plugins/lottery/common-buttom"
+  }
+}

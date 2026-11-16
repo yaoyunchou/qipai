@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "订单售后",
+  "usingComponents": {
+    "app-order-banner": "/pages/order/components/app-order-banner",
+    "app-order-goods-info": "/pages/order/components/app-order-goods-info",
+    "app-order-express": "/pages/order/components/app-order-express",
+    "app-scan": "/components/basic-component/app-scan/app-scan"
+  }
+}

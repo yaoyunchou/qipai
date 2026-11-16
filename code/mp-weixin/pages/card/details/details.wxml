@@ -1,0 +1,1 @@
+<app-layout vue-id="43cf9f77-1" bind:__l="__l" vue-slots="{{['default']}}"><view><app-card-detail vue-id="{{('43cf9f77-2')+','+('43cf9f77-1')}}" list="{{list}}" data-event-opts="{{[['^share',[['hShareAppMessage']]]]}}" bind:share="__e" bind:__l="__l"></app-card-detail></view></app-layout>

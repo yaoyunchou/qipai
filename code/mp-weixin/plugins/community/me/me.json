@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "我的",
+  "usingComponents": {
+    "app-menu": "/plugins/community/components/app-menu",
+    "app-head": "/plugins/community/components/app-head"
+  }
+}

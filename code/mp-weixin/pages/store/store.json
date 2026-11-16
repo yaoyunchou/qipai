@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "门店列表",
+  "usingComponents": {
+    "app-shop": "/components/page-component/app-shop/app-shop"
+  }
+}

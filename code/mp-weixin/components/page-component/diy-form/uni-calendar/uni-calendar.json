@@ -1,0 +1,6 @@
+{
+  "component": true,
+  "usingComponents": {
+    "calendar-item": "/components/page-component/diy-form/uni-calendar/uni-calendar-item"
+  }
+}

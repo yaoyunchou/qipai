@@ -1,0 +1,13 @@
+{
+  "component": true,
+  "usingComponents": {
+    "app-tab-bar": "/components/basic-component/app-tab-bar/app-tab-bar",
+    "app-payment": "/components/basic-component/app-layout/app-payment/app-payment",
+    "app-user-login": "/components/basic-component/app-layout/app-user-login/app-user-login",
+    "app-loading": "/components/basic-component/app-loading/app-loading",
+    "app-report-error": "/components/basic-component/app-report-error/app-report-error",
+    "app-prompt-box": "/components/basic-component/app-prompt-box/app-prompt-box",
+    "app-coupon-modal": "/components/basic-component/app-layout/app-coupon-modal/app-coupon-modal",
+    "u-iphone-frame": "/components/basic-component/app-layout/u-authorized-iphone/u-authorized-iphone"
+  }
+}

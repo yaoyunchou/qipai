@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "礼品详情",
+  "usingComponents": {
+    "app-radio": "/components/basic-component/app-radio/app-radio",
+    "u-mask": "/components/basic-component/u-mask/u-mask",
+    "app-iphone-x": "/components/basic-component/app-iphone-x/app-iphone-x"
+  }
+}

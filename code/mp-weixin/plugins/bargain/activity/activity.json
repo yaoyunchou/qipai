@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "砍价",
+  "usingComponents": {
+    "app-limit-model": "/plugins/bargain/components/app-limit-model"
+  }
+}

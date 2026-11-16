@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "礼品卡中心",
+  "usingComponents": {
+    "app-tab-nav": "/components/basic-component/app-tab-nav/app-tab-nav",
+    "app-price": "/components/page-component/goods/app-price",
+    "app-no-goods": "/components/page-component/app-no-goods/app-no-goods",
+    "u-mask": "/components/basic-component/u-mask/u-mask",
+    "app-goods": "/components/basic-component/app-goods/app-goods"
+  }
+}

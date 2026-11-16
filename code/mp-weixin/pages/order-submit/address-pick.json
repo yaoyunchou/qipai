@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "选择地址",
+  "usingComponents": {
+    "app-shipping-address": "/components/page-component/app-shipping-address/app-shipping-address"
+  }
+}

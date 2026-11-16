@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "拼团详情",
+  "navigationStyle": "default",
+  "usingComponents": {
+    "app-detail-top": "/plugins/pt/components/app-detail-top",
+    "app-group-short": "/plugins/pt/components/app-group-avatar-short",
+    "app-goods": "/components/basic-component/app-goods/app-goods"
+  }
+}

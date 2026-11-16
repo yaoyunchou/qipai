@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "店铺印象",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "mch-navbar": "/plugins/mch/mch-navbar",
+    "mch-customer": "/plugins/mch/mch-customer",
+    "app-nav-bar": "/components/page-component/index/app-nav-bar"
+  }
+}

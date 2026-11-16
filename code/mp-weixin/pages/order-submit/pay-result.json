@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "提交完成",
+  "usingComponents": {
+    "app-goods-recommend": "/components/page-component/app-goods-recommend/app-goods-recommend",
+    "app-order-share-modal": "/pages/order-submit/app-order-share-modal",
+    "app-image-ad": "/components/page-component/app-image-ad/app-image-ad",
+    "app-hotspot": "/components/basic-component/app-hotspot/app-hotspot"
+  }
+}

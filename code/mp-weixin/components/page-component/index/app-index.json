@@ -1,0 +1,27 @@
+{
+  "component": true,
+  "usingComponents": {
+    "app-search-for": "/components/page-component/app-search-for/app-search-for",
+    "app-swiper": "/components/page-component/app-swiper/app-swiper",
+    "app-navigation-icon": "/components/page-component/app-navigation-icon/app-navigation-icon",
+    "u-announcement": "/components/page-component/u-announcement/u-announcement",
+    "app-video": "/components/page-component/app-video/app-video",
+    "app-topic": "/components/page-component/app-special-topic/app-special-topic-normal",
+    "app-exclusive-coupon": "/components/page-component/app-exclusive-coupon/app-exclusive-coupon",
+    "app-image-ad": "/components/page-component/app-image-ad/app-image-ad",
+    "app-reservation": "/components/page-component/app-reservation/app-reservation",
+    "bd-g-s-r": "/components/page-component/app-good-shop-recommendation/app-good-shop-recommendation",
+    "app-timer": "/components/basic-component/app-timer/app-timer",
+    "app-quick-navigation": "/components/page-component/app-quick-navigation/app-quick-navigation",
+    "app-popup-ad": "/components/page-component/app-popup-ad/app-popup-ad",
+    "app-index-cat": "/components/page-component/app-index-cat/app-index-cat",
+    "u-wholesale": "/components/page-component/u-index-plugins/u-wholesale",
+    "u-advance": "/components/page-component/u-index-plugins/u-advance",
+    "u-miaosha": "/components/page-component/u-index-plugins/u-miaosha",
+    "u-pintuan": "/components/page-component/u-index-plugins/u-pintuan",
+    "u-booking": "/components/page-component/u-index-plugins/u-booking",
+    "u-flash-sale": "/components/page-component/u-index-plugins/u-flash-sale",
+    "u-pick": "/components/page-component/u-index-plugins/u-pick",
+    "u-weekly-buy": "/components/page-component/u-index-plugins/u-weekly-buy"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "订单搜索",
+  "usingComponents": {
+    "app-iphone-x": "/components/basic-component/app-iphone-x/app-iphone-x"
+  }
+}

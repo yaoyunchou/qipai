@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "商品列表",
+  "onReachBottomDistance": 80,
+  "usingComponents": {
+    "app-sort-rule": "/components/page-component/app-sort-rule/app-sort-rule",
+    "app-no-goods": "/components/page-component/app-no-goods/app-no-goods",
+    "mch-navbar": "/pages/goods/mch-navbar",
+    "app-goods": "/components/basic-component/app-goods/app-goods"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "component": true,
+  "usingComponents": {
+    "app-vip-card": "/components/page-component/app-vip-card/app-vip-card",
+    "bd-flash-sale": "/components/page-component/goods/bd-flash-sale",
+    "app-price": "/components/page-component/goods/app-price",
+    "app-member-mark": "/components/page-component/app-member-mark/app-member-mark",
+    "bd-join-member": "/components/page-component/goods/bd-join-member",
+    "bd-quick-share": "/components/page-component/goods/bd-quick-share",
+    "app-share-qr-code": "/components/page-component/app-share-qr-code-poster/app-share-qr-code-poster",
+    "bd-info-extra": "/components/page-component/goods/bd-info-extra"
+  }
+}

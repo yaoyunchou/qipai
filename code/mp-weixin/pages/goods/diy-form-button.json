@@ -1,0 +1,7 @@
+{
+  "component": true,
+  "usingComponents": {
+    "app-model": "/components/basic-component/app-model/app-model",
+    "u-popup": "/components/basic-component/u-popup/u-popup"
+  }
+}

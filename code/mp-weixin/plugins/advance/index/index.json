@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "预售首页",
+  "usingComponents": {
+    "search-input": "/plugins/advance/components/search-input",
+    "index-swipe": "/plugins/advance/components/index-swipe",
+    "product-list": "/plugins/advance/components/index-product-list",
+    "app-goods": "/components/basic-component/app-goods/app-goods"
+  }
+}

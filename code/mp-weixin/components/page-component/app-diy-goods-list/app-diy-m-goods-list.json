@@ -1,0 +1,9 @@
+{
+  "component": true,
+  "usingComponents": {
+    "app-price": "/components/page-component/goods/app-price",
+    "app-goods-timer": "/components/page-component/app-diy-goods-list/app-goods-timer",
+    "app-diy-composition-image": "/components/page-component/app-diy-goods-list/app-diy-composition-image",
+    "app-goods": "/components/basic-component/app-goods/app-goods"
+  }
+}

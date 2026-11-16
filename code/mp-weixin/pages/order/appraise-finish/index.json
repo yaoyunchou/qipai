@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "评价完成",
+  "usingComponents": {
+    "app-goods-recommend": "/components/page-component/app-goods-recommend/app-goods-recommend"
+  }
+}

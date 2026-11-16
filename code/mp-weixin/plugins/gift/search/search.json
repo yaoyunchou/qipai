@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "搜索",
+  "usingComponents": {
+    "app-no-goods": "/components/page-component/app-no-goods/app-no-goods",
+    "app-goods": "/components/basic-component/app-goods/app-goods"
+  }
+}

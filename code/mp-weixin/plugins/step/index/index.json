@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "app-ad": "/components/page-component/app-ad/app-ad",
+    "u-count-to": "/components/basic-component/u-count-to/u-count-to"
+  }
+}

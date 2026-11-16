@@ -1,0 +1,13 @@
+{
+  "navigationBarTitleText": "结算",
+  "navigationStyle": "default",
+  "usingComponents": {
+    "app-submit-checkbox": "/pages/order-submit/app-submit-checkbox",
+    "app-address-bar": "/pages/order-submit/app-address-bar",
+    "app-bottom-modal": "/pages/order-submit/app-bottom-modal",
+    "app-coupon-pick": "/pages/order-submit/app-coupon-pick",
+    "app-diy-form": "/components/page-component/app-diy-form/app-diy-form",
+    "app-submit-goods": "/pages/order-submit/app-submit-goods",
+    "app-close": "/components/basic-component/app-close/app-close"
+  }
+}

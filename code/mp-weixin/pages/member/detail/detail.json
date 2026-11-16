@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "会员特权说明",
+  "usingComponents": {
+    "app-rich-text": "/components/basic-component/app-rich/parse"
+  }
+}

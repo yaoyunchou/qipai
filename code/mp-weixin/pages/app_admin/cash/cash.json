@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "提现申请",
+  "usingComponents": {
+    "u-mask": "/components/basic-component/u-mask/u-mask"
+  }
+}

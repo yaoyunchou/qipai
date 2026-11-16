@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "订单评价",
+  "usingComponents": {
+    "app-upload-image": "/components/basic-component/app-upload-image/app-upload-image"
+  }
+}

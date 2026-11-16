@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "订单详情",
+  "usingComponents": {
+    "order-menu": "/pages/app_admin/components/order-menu",
+    "form-goods-time": "/components/page-component/goods/form-goods-time"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "navigationBarTitleText": "",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "app-copyright": "/components/page-component/app-copyright/app-copyright",
+    "app-user-center-top": "/components/page-component/app-user-center-top/app-user-center-top",
+    "app-account-balance": "/pages/user-center/components/app-account-balance",
+    "app-my-order": "/components/page-component/app-my-order/app-my-order",
+    "app-vip-card": "/components/page-component/app-vip-card/app-vip-card",
+    "app-user": "/pages/user-center/components/app-user",
+    "app-foot": "/pages/user-center/components/app-foot",
+    "app-order": "/pages/user-center/components/app-order",
+    "app-svip": "/pages/user-center/components/app-svip",
+    "app-account": "/pages/user-center/components/app-account",
+    "app-menu": "/pages/user-center/components/app-menu",
+    "app-recommended-product-list": "/components/page-component/app-recommended-product/app-recommended-product-list",
+    "u-announcement": "/components/page-component/u-announcement/u-announcement",
+    "app-swiper": "/components/page-component/app-swiper/app-swiper",
+    "u-swiper": "/components/page-component/app-swiper/swiper",
+    "app-image-ad": "/components/page-component/app-image-ad/app-image-ad",
+    "app-associated-link": "/components/page-component/app-associated-link/app-associated-link",
+    "app-hotspot": "/components/basic-component/app-hotspot/app-hotspot",
+    "app-empty": "/components/basic-component/app-empty/app-empty",
+    "app-customer": "/components/page-component/app-customer/app-customer",
+    "app-attr": "/components/page-component/app-attr/app-attr",
+    "app-nav-bar": "/components/page-component/index/app-nav-bar",
+    "app-diy-list": "/components/page-component/index/app-diy-list"
+  }
+}

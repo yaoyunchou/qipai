@@ -1,0 +1,10 @@
+(global["webpackJsonp"]=global["webpackJsonp"]||[]).push([["plugins/gift/components/detail/logistics"],{"0447":function(e,t,s){"use strict";(function(e){Object.defineProperty(t,"__esModule",{value:!0}),t.default=void 0;var s={name:"logistics",props:["send_type","store","is_send","express","express_no","customer_name","cover_pic"],methods:{routeGo:function(){1!=this.send_type&&1==this.is_send&&this.express_no?e.navigateTo({url:"/pages/order/express-detail/express-detail?express=".concat(this.express,"&express_no=").concat(this.express_no,"&customer_name=").concat(this.customer_name,"&cover_pic=").concat(this.cover_pic)}):e.openLocation({latitude:parseFloat(this.store.latitude),longitude:parseFloat(this.store.longitude),address:this.store.address,name:this.store.name})}}};t.default=s}).call(this,s("543d")["default"])},"0c75":function(e,t,s){"use strict";s.r(t);var n=s("560b"),o=s("7f87");for(var r in o)["default"].indexOf(r)<0&&function(e){s.d(t,e,(function(){return o[e]}))}(r);s("e03a");var i,a=s("f0c5"),c=Object(a["a"])(o["default"],n["b"],n["c"],!1,null,"57f5797c",null,!1,n["a"],i);t["default"]=c.exports},5139:function(e,t,s){},"560b":function(e,t,s){"use strict";var n;s.d(t,"b",(function(){return o})),s.d(t,"c",(function(){return r})),s.d(t,"a",(function(){return n}));var o=function(){var e=this,t=e.$createElement;e._self._c},r=[]},"7f87":function(e,t,s){"use strict";s.r(t);var n=s("0447"),o=s.n(n);for(var r in n)["default"].indexOf(r)<0&&function(e){s.d(t,e,(function(){return n[e]}))}(r);t["default"]=o.a},e03a:function(e,t,s){"use strict";var n=s("5139"),o=s.n(n);o.a}}]);
+;(global["webpackJsonp"] = global["webpackJsonp"] || []).push([
+    'plugins/gift/components/detail/logistics-create-component',
+    {
+        'plugins/gift/components/detail/logistics-create-component':(function(module, exports, __webpack_require__){
+            __webpack_require__('543d')['createComponent'](__webpack_require__("0c75"))
+        })
+    },
+    [['plugins/gift/components/detail/logistics-create-component']]
+]);

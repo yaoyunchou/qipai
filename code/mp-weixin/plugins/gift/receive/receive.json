@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "送礼物",
+  "usingComponents": {
+    "share-gift-text": "/plugins/gift/components/announcement/share-gift-text",
+    "receive-content": "/plugins/gift/components/receive/receive-content"
+  }
+}

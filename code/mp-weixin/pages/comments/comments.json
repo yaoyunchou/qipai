@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "全部评价",
+  "usingComponents": {
+    "app-comments": "/pages/comments/app-comments"
+  }
+}
