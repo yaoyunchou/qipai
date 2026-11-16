@@ -9,7 +9,6 @@ import {
   Layout,
   Modal,
   Popconfirm,
-  Segmented,
   Select,
   Space,
   Statistic,
@@ -27,6 +26,7 @@ import {
   type TableBoardItem,
 } from "../api/client";
 import AppHeader from "../components/AppHeader";
+import DirectionSwitch, { type DirectionOption } from "../components/DirectionSwitch";
 import { useMe } from "../hooks/useMe";
 
 const { Content } = Layout;
@@ -43,9 +43,9 @@ type FormValues = {
   remark?: string;
 };
 
-const AMOUNT_DIRECTION_OPTIONS = [
-  { label: "赢", value: "WIN" },
-  { label: "输", value: "LOSE" },
+const AMOUNT_DIRECTION_OPTIONS: DirectionOption[] = [
+  { label: "赢", value: "WIN", tone: "red" },
+  { label: "输", value: "LOSE", tone: "blue" },
 ];
 
 const INCOME_COLOR = "#3f8600";
@@ -265,17 +265,19 @@ export default function PlayCompanionPage() {
                   <Button type="link" size="small" onClick={() => openEdit(row)}>
                     编辑
                   </Button>
-                  <Popconfirm
-                    title="确认删除这条陪玩记录？"
-                    okText="删除"
-                    okButtonProps={{ danger: true }}
-                    cancelText="取消"
-                    onConfirm={() => removeRecord(row.id)}
-                  >
-                    <Button type="link" danger size="small">
-                      删除
-                    </Button>
-                  </Popconfirm>
+                  {isAdmin && (
+                    <Popconfirm
+                      title="确认删除这条陪玩记录？"
+                      okText="删除"
+                      okButtonProps={{ danger: true }}
+                      cancelText="取消"
+                      onConfirm={() => removeRecord(row.id)}
+                    >
+                      <Button type="link" danger size="small">
+                        删除
+                      </Button>
+                    </Popconfirm>
+                  )}
                 </Space>
               );
             },
@@ -375,7 +377,7 @@ export default function PlayCompanionPage() {
                   initialValue="WIN"
                   style={{ flex: "0 0 auto", minWidth: 110 }}
                 >
-                  <Segmented options={AMOUNT_DIRECTION_OPTIONS} />
+                  <DirectionSwitch options={AMOUNT_DIRECTION_OPTIONS} />
                 </Form.Item>
                 <Form.Item
                   name="amount_abs"
@@ -461,7 +463,7 @@ export default function PlayCompanionPage() {
             <InputNumber min={0} step={0.5} precision={2} style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item name="amount_direction" label="输赢" initialValue="WIN">
-            <Segmented options={AMOUNT_DIRECTION_OPTIONS} />
+            <DirectionSwitch options={AMOUNT_DIRECTION_OPTIONS} />
           </Form.Item>
           <Form.Item
             name="amount_abs"

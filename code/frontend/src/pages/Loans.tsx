@@ -30,6 +30,7 @@ import {
   type LoanSummary,
 } from "../api/client";
 import AppHeader from "../components/AppHeader";
+import DirectionSwitch, { type DirectionOption } from "../components/DirectionSwitch";
 import { useIsMobile } from "../hooks/useIsMobile";
 import { useMe } from "../hooks/useMe";
 
@@ -47,9 +48,9 @@ type FormValues = {
   remark?: string;
 };
 
-const AMOUNT_DIRECTION_OPTIONS = [
-  { label: "借出", value: "LEND" },
-  { label: "还钱", value: "REPAY" },
+const AMOUNT_DIRECTION_OPTIONS: DirectionOption[] = [
+  { label: "借钱", value: "LEND", tone: "blue" },
+  { label: "还钱", value: "REPAY", tone: "red" },
 ];
 
 const LEND_COLOR = "#cf1322";
@@ -414,17 +415,19 @@ export default function LoansPage() {
                   <Button type="link" size="small" onClick={() => openEdit(row)}>
                     编辑
                   </Button>
-                  <Popconfirm
-                    title="确认删除这条借钱记录？"
-                    okText="删除"
-                    okButtonProps={{ danger: true }}
-                    cancelText="取消"
-                    onConfirm={() => removeRecord(row.id)}
-                  >
-                    <Button type="link" danger size="small">
-                      删除
-                    </Button>
-                  </Popconfirm>
+                  {isAdmin && (
+                    <Popconfirm
+                      title="确认删除这条借钱记录？"
+                      okText="删除"
+                      okButtonProps={{ danger: true }}
+                      cancelText="取消"
+                      onConfirm={() => removeRecord(row.id)}
+                    >
+                      <Button type="link" danger size="small">
+                        删除
+                      </Button>
+                    </Popconfirm>
+                  )}
                 </Space>
               );
             },
@@ -623,7 +626,7 @@ export default function LoansPage() {
           initialValue="LEND"
           style={{ flex: "0 0 auto", minWidth: 130 }}
         >
-          <Segmented options={AMOUNT_DIRECTION_OPTIONS} />
+          <DirectionSwitch options={AMOUNT_DIRECTION_OPTIONS} />
         </Form.Item>
         <Form.Item
           name="amount_abs"
@@ -967,7 +970,7 @@ export default function LoansPage() {
             <Input placeholder="选填" maxLength={64} />
           </Form.Item>
           <Form.Item name="amount_direction" label="类型" initialValue="LEND">
-            <Segmented options={AMOUNT_DIRECTION_OPTIONS} />
+            <DirectionSwitch options={AMOUNT_DIRECTION_OPTIONS} />
           </Form.Item>
           <Form.Item name="amount_abs" label="金额" rules={amountRules}>
             <InputNumber min={0.01} precision={2} prefix="¥" style={{ width: "100%" }} />
