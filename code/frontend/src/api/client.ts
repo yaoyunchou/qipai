@@ -127,7 +127,7 @@ export type ExpenseClaimItem = {
   applicant_name: string | null;
   amount: string;
   remark: string | null;
-  category: "FIXED" | "OPERATIONS" | "SANDBOX";
+  category: "FIXED" | "OPERATIONS" | "SANDBOX" | "LIVING";
   status: "PENDING" | "APPROVED" | "REJECTED" | "VOIDED";
   submitted_at: string;
   void_reason?: string | null;
@@ -138,7 +138,7 @@ export type ExpenseClaimItem = {
 };
 
 export type CategorySummary = {
-  category: "FIXED" | "OPERATIONS" | "SANDBOX";
+  category: "FIXED" | "OPERATIONS" | "SANDBOX" | "LIVING";
   claim_count: number;
   amount_total: string;
 };
@@ -166,6 +166,77 @@ export type UserAccount = {
   display_name: string;
   role: "CASHIER" | "MANAGER" | "SHAREHOLDER" | "ADMIN";
   is_enabled: boolean;
+};
+
+export type PlayCompanionRecord = {
+  id: number;
+  play_date: string;
+  table_id: number | null;
+  table_name: string;
+  duration_hours: string | null;
+  amount: string;
+  remark: string | null;
+  created_by: number;
+  created_by_name: string | null;
+  created_at: string;
+};
+
+export type PlayCompanionSummary = {
+  record_count: number;
+  /** 赢的合计金额（非负数） */
+  win_total: string;
+  /** 输的合计金额，以正数表示输了多少钱 */
+  lose_total: string;
+  /** 净额 = win_total - lose_total，可为负数 */
+  net_total: string;
+  duration_total: string;
+};
+
+export type LoanRecord = {
+  id: number;
+  loan_date: string;
+  borrower: string;
+  contact: string | null;
+  /** 正数为借出，负数为还钱 */
+  amount: string;
+  remark: string | null;
+  created_by: number;
+  created_by_name: string | null;
+  created_at: string;
+};
+
+export type LoanBorrowerDetail = {
+  borrower: string;
+  /** 该客人借出合计（非负数） */
+  lent_total: string;
+  /** 该客人还钱合计（非负数） */
+  repaid_total: string;
+  /** 该客人未还余额 = lent_total - repaid_total，可为负数（多还了） */
+  balance: string;
+  record_count: number;
+  last_date: string | null;
+  /** 该客人的全部流水，按日期倒序 */
+  records: LoanRecord[];
+};
+
+export type LoanSummary = {
+  record_count: number;
+  /** 借出合计（非负数） */
+  lent_total: string;
+  /** 还钱合计，以正数表示已还多少钱 */
+  repaid_total: string;
+  /** 未还余额 = 借出 - 还钱，可为负数 */
+  balance_total: string;
+};
+
+export type LoanBorrowerSummary = {
+  borrower: string;
+  lent_total: string;
+  repaid_total: string;
+  /** 该客人未还余额 = lent_total - repaid_total */
+  balance: string;
+  record_count: number;
+  last_date: string;
 };
 
 export async function downloadFile(path: string, filename = "download.xlsx") {

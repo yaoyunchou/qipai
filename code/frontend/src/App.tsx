@@ -5,7 +5,9 @@ import AdminPage from "./pages/Admin";
 import ExpensesPage from "./pages/Expenses";
 import FloorPage from "./pages/Floor";
 import LoginPage from "./pages/Login";
+import LoansPage from "./pages/Loans";
 import OrdersPage from "./pages/Orders";
+import PlayCompanionPage from "./pages/PlayCompanion";
 import ReportsPage from "./pages/Reports";
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
@@ -46,6 +48,22 @@ function AppRoutes() {
           element={
             <RequireAuth>
               <ExpensesPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/play-companion"
+          element={
+            <RequireAuth>
+              <PlayCompanionPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/loans"
+          element={
+            <RequireAuth>
+              <LoansPage />
             </RequireAuth>
           }
         />
