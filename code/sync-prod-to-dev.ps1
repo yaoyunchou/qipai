@@ -4,7 +4,7 @@ $Root = $PSScriptRoot
 $RepoRoot = Split-Path $Root -Parent
 $Python = Join-Path $Root "backend\.venv\Scripts\python.exe"
 
-Write-Host "==> 同步生产数据到 Supabase" -ForegroundColor Cyan
+Write-Host "==> 同步生产数据到本地库（backend/.env 中的 DATABASE_URL）" -ForegroundColor Cyan
 & $Python -m pip install paramiko python-dotenv -q 2>$null
 & $Python "$RepoRoot\scripts\sync_prod_to_dev.py" @args
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
