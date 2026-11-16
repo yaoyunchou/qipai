@@ -91,3 +91,31 @@ input, textarea, select {
     padding: 0 20px;
   }
 }
+
+/*
+ * 借钱/还钱、输/赢开关：未选中时文字自带颜色，选中后整块底色跟着变。
+ * 借钱、输 = 蓝；还钱、赢 = 红。
+ */
+.direction-label-blue {
+  color: #1677ff;
+  font-weight: 600;
+}
+
+.direction-label-red {
+  color: #cf1322;
+  font-weight: 600;
+}
+
+.direction-switch.ant-segmented .ant-segmented-item-selected .direction-label {
+  color: #fff;
+}
+
+.direction-switch.direction-switch-blue.ant-segmented .ant-segmented-thumb,
+.direction-switch.direction-switch-blue.ant-segmented .ant-segmented-item-selected {
+  background-color: #1677ff;
+}
+
+.direction-switch.direction-switch-red.ant-segmented .ant-segmented-thumb,
+.direction-switch.direction-switch-red.ant-segmented .ant-segmented-item-selected {
+  background-color: #cf1322;
+}

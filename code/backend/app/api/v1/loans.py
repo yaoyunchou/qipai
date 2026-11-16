@@ -4,7 +4,8 @@
 不混入台位订单、报销与陪玩记账。
 
 权限：
-- 收银员 / 经理 / 超管：录入、查看明细、修改删除（非超管仅能改删自己录入的记录）
+- 收银员 / 经理 / 超管：录入、查看明细、修改（非超管仅能改自己录入的记录）
+- 删除仅超管可操作，录入人录错也不能自行删除
 - 股东：仅可查看汇总（借出 / 还钱 / 未还余额），不可见明细
 
 金额语义：正数为借出（客人欠店里），负数为还钱（客人还款）。
@@ -236,10 +237,11 @@ def update_record(
 
 @router.delete("/{record_id}")
 def delete_record(record_id: int, db: DbSession, user: EditorUser):
+    if user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=403, detail="只有管理员可以删除借还记录")
     record = db.get(LoanRecord, record_id)
     if not record:
         raise HTTPException(status_code=404, detail="记录不存在")
-    _ensure_editable(record, user)
     db.delete(record)
     db.commit()
     return {"ok": True}

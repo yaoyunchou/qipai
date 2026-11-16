@@ -2,6 +2,7 @@
 
 场景：客人不够人时安排陪玩，陪玩相关的收支单独记账，不混入台位订单与报销。
 权限：收银员 / 经理 / 超管可录入与查看明细；股东只能看汇总。
+删除仅超管可操作，录入人录错也不能自行删除。
 金额语义：正数为赢（进账），负数为输（支出）。
 """
 from datetime import date
@@ -157,10 +158,11 @@ def update_record(record_id: int, body: PlayCompanionUpdate, db: DbSession, user
 
 @router.delete("/{record_id}")
 def delete_record(record_id: int, db: DbSession, user: EditorUser):
+    if user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=403, detail="只有管理员可以删除陪玩记录")
     record = db.get(PlayCompanionRecord, record_id)
     if not record:
         raise HTTPException(status_code=404, detail="记录不存在")
-    _ensure_editable(record, user)
     db.delete(record)
     db.commit()
     return {"ok": True}
