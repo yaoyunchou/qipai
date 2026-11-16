@@ -7,7 +7,9 @@ from app.models.expense import (
     ExpenseClaimAttachment,
     ExpenseClaimStatus,
 )
+from app.models.loan_record import LoanRecord
 from app.models.order import BizOrder, OrderStatus
+from app.models.play_companion import PlayCompanionRecord
 from app.models.price_log import PriceChangeLog
 from app.models.room_table import RoomTable
 from app.models.store_config import SysStoreConfig
@@ -21,6 +23,8 @@ __all__ = [
     "RoomTable",
     "BizOrder",
     "OrderStatus",
+    "PlayCompanionRecord",
+    "LoanRecord",
     "ExpenseApprovePermission",
     "ExpenseApproverStatus",
     "ExpenseCategory",
