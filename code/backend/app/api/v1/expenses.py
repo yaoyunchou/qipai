@@ -404,7 +404,12 @@ def expense_report_export(
 
     claims = db.scalars(q).all()
 
-    CATEGORY_LABEL = {"FIXED": "固定支出", "OPERATIONS": "营运支出", "SANDBOX": "沙箱支出"}
+    CATEGORY_LABEL = {
+        "FIXED": "固定支出",
+        "OPERATIONS": "营运支出",
+        "SANDBOX": "沙箱支出",
+        "LIVING": "生活支出",
+    }
 
     wb = Workbook()
     ws_sum = wb.active
@@ -422,7 +427,7 @@ def expense_report_export(
     for c in claims:
         cat_count[c.category.value] += 1
         cat_amount[c.category.value] += float(c.amount)
-    for cat_key in ["FIXED", "OPERATIONS", "SANDBOX"]:
+    for cat_key in ["FIXED", "OPERATIONS", "SANDBOX", "LIVING"]:
         if cat_count[cat_key]:
             ws_sum.append([CATEGORY_LABEL[cat_key], cat_count[cat_key], cat_amount[cat_key]])
 
@@ -514,7 +519,12 @@ def export_expense_list(
             )
         claims = list(db.scalars(q).all())
 
-    category_label = {"FIXED": "固定支出", "OPERATIONS": "营运支出", "SANDBOX": "沙箱支出"}
+    category_label = {
+        "FIXED": "固定支出",
+        "OPERATIONS": "营运支出",
+        "SANDBOX": "沙箱支出",
+        "LIVING": "生活支出",
+    }
     status_label = {
         ExpenseClaimStatus.PENDING: "待审批",
         ExpenseClaimStatus.APPROVED: "已完成",

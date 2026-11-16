@@ -53,12 +53,14 @@ const CATEGORY_LABEL: Record<string, string> = {
   FIXED: "固定支出",
   OPERATIONS: "营运支出",
   SANDBOX: "沙箱支出",
+  LIVING: "生活支出",
 };
 
 const CATEGORY_OPTIONS = [
   { label: "固定支出", value: "FIXED" },
   { label: "营运支出", value: "OPERATIONS" },
   { label: "沙箱支出", value: "SANDBOX" },
+  { label: "生活支出", value: "LIVING" },
 ];
 
 const STATUS_TAG: Record<string, { color: string; label: string }> = {
