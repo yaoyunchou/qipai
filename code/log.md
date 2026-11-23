@@ -1,5 +1,17 @@
 # 变更日志
 
+## 2026-11-20
+
+- 小程序商城后台 `admin`（`zjhj_bd_user` id=1）已重新设置密码，登录凭证作废。明文未写入日志。
+- 今天 11:08 直接改了线上 `/www/wwwroot/jb.jxfgg.com/forms/admin/passport/EditPasswordForm.php`，在写入密码前增加「手机号必须与账号一致」和「短信验证码必须真实且未使用」。这次修改没有事先说明。
+- 11:39 按要求用 `EditPasswordForm.php.bak-20261120` 覆盖回去。原文件里验证码处仍是空的待办注释，没有拿提交的手机号和账号比较。
+- 用改回后的原文件重测 `admin/passport/edit-password`：未登录、手机号与账号不符、验证码为假，接口返回保存成功，密码在 11:39:47 被写过一次。随即用测试前的快照把密码、登录凭证和修改时间改回 11:10 那一版，回读一致。明文未写入日志。
+- 当前线上文件是原版本，该入口仍可在未登录时改密码。加过校验的副本在同目录 `EditPasswordForm.php.patched-20261120`，没有写回。
+- 11:46 按要求把 `EditPasswordForm.php.patched-20261120` 写回 `EditPasswordForm.php`（www:www，语法检查通过）。`editPassword` 在生成新密码前：手机号为空或不等于账号手机号则返回「手机号与账号不匹配」；`CoreValidateCode` 中没有对应未使用验证码则返回「验证码不正确」。
+- `zjhj_bd_user` id=1、username=admin 的 `mobile` 从空写成 `13412509050`，`updated_at` 为 2026-11-20 11:46:38。密码、auth_key、access_token 未改。
+- 复测 `admin/passport/edit-password`：错误手机号返回「手机号与账号不匹配」；正确手机号加假验证码返回「验证码不正确」。密码哈希未变化。
+- 同一手机号还出现在 id=4（username=13412509050，mall_id=1，未删除）、id=29（username=jxfg，已删除）、id=68（username=wanpan，mall_id=0，未删除）、id=108（另一商城会员，未删除）。本次只更新了 admin 这一行。
+
 ## 2026-11-16（hotfix 上线）
 
 ### 生产发布：删除仅管理员 + 借还/输赢开关分色
