@@ -55,6 +55,7 @@ Write-Host "==> 应用报销模块迁移" -ForegroundColor Cyan
 & $VenvPython -m scripts.apply_play_companion
 & $VenvPython -m scripts.apply_play_companion_signed_amount
 & $VenvPython -m scripts.apply_loan_record
+& $VenvPython -m scripts.apply_companion_staff
 
 Write-Host ""
 Write-Host "==> 创建 admin 账号" -ForegroundColor Cyan

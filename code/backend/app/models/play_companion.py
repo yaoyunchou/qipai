@@ -1,7 +1,7 @@
-from datetime import date, datetime
+from datetime import datetime
 from decimal import Decimal
 
-from sqlalchemy import BigInteger, Date, DateTime, ForeignKey, Numeric, String, func
+from sqlalchemy import BigInteger, DateTime, ForeignKey, Numeric, String, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database import Base
@@ -13,7 +13,10 @@ class PlayCompanionRecord(Base):
     __tablename__ = "play_companion_record"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
-    play_date: Mapped[date] = mapped_column(Date, nullable=False)
+    play_date: Mapped[datetime] = mapped_column(DateTime(timezone=False), nullable=False)
+    companion_user_id: Mapped[int | None] = mapped_column(
+        BigInteger, ForeignKey("sys_user.id"), nullable=True
+    )
     table_id: Mapped[int | None] = mapped_column(
         BigInteger, ForeignKey("room_table.id", ondelete="SET NULL"), nullable=True
     )

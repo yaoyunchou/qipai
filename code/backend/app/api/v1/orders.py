@@ -47,6 +47,8 @@ def list_orders(
     end: date | None = None,
     limit: int = Query(50, le=500),
 ):
+    if user.role == UserRole.COMPANION:
+        raise HTTPException(status_code=403, detail="陪玩账号不能查看订单")
     q = select(BizOrder).order_by(BizOrder.opened_at.desc()).limit(limit)
     if status_filter:
         q = q.where(BizOrder.status == status_filter)
@@ -62,6 +64,8 @@ def list_orders(
 
 @router.post("/open", response_model=OrderOut, status_code=status.HTTP_201_CREATED)
 def open_order(body: OrderOpenRequest, db: DbSession, user: CurrentUser):
+    if user.role == UserRole.COMPANION:
+        raise HTTPException(status_code=403, detail="陪玩账号不能开单")
     table = db.get(RoomTable, body.table_id)
     if not table or not table.is_enabled:
         raise HTTPException(status_code=400, detail="桌台不可用")
@@ -114,6 +118,8 @@ def close_order(
     db: DbSession,
     user: CurrentUser,
 ):
+    if user.role == UserRole.COMPANION:
+        raise HTTPException(status_code=403, detail="陪玩账号不能结单")
     order = db.get(BizOrder, order_id)
     if not order or order.status != OrderStatus.OPEN:
         raise HTTPException(status_code=404, detail="订单不存在或已归档")

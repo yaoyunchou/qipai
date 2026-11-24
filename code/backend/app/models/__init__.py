@@ -1,3 +1,4 @@
+from app.models.companion_loan import CompanionLoan, CompanionLoanDirection, CompanionLoanStatus
 from app.models.expense import (
     ExpenseApprovePermission,
     ExpenseApproverStatus,
@@ -25,6 +26,9 @@ __all__ = [
     "OrderStatus",
     "PlayCompanionRecord",
     "LoanRecord",
+    "CompanionLoan",
+    "CompanionLoanDirection",
+    "CompanionLoanStatus",
     "ExpenseApprovePermission",
     "ExpenseApproverStatus",
     "ExpenseCategory",

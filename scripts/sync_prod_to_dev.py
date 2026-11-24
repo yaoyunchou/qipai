@@ -235,6 +235,7 @@ def _apply_local_migrations(database_url: str, ssl_mode: str) -> None:
         "09-play-companion.sql",
         "10-play-companion-signed-amount.sql",
         "11-loan-record.sql",
+        "12-companion-staff.sql",
     )
     files = [migration_dir / name for name in incremental if (migration_dir / name).is_file()]
     if not files:

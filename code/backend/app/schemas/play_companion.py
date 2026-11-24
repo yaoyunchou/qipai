@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import datetime
 from decimal import Decimal
 
 from pydantic import BaseModel, Field, field_validator
@@ -9,7 +9,8 @@ _AMOUNT_MAX = Decimal("99999999.99")
 
 
 class PlayCompanionBase(BaseModel):
-    play_date: date
+    play_date: datetime
+    companion_user_id: int
     table_id: int | None = None
     duration_hours: Decimal | None = Field(default=None, ge=0, decimal_places=2)
     amount: Decimal = Field(
@@ -27,6 +28,13 @@ class PlayCompanionBase(BaseModel):
             raise ValueError("金额不能为 0，赢或输至少记录一笔金额")
         return v
 
+    @field_validator("play_date")
+    @classmethod
+    def _naive_play_date(cls, v: datetime) -> datetime:
+        if v.tzinfo is not None:
+            return v.replace(tzinfo=None)
+        return v
+
 
 class PlayCompanionCreate(PlayCompanionBase):
     pass
@@ -38,7 +46,10 @@ class PlayCompanionUpdate(PlayCompanionBase):
 
 class PlayCompanionOut(BaseModel):
     id: int
-    play_date: date
+    play_date: datetime
+    companion_user_id: int | None = None
+    companion_username: str | None = None
+    companion_name: str | None = None
     table_id: int | None = None
     table_name: str
     duration_hours: Decimal | None = None
@@ -60,3 +71,10 @@ class PlayCompanionSummaryOut(BaseModel):
     net_total: Decimal
     """净额 = win_total - lose_total，可为负数"""
     duration_total: Decimal
+
+
+class CompanionStaffOut(BaseModel):
+    id: int
+    username: str
+    display_name: str
+    is_enabled: bool

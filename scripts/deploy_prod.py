@@ -58,6 +58,7 @@ MIGRATIONS: tuple[str, ...] = (
     "09-play-companion.sql",
     "10-play-companion-signed-amount.sql",
     "11-loan-record.sql",
+    "12-companion-staff.sql",
 )
 
 # 与上面的 SQL 一一对应的执行脚本（scripts.apply_xxx）
@@ -69,6 +70,7 @@ MIGRATION_SCRIPTS: tuple[str, ...] = (
     "apply_play_companion",
     "apply_play_companion_signed_amount",
     "apply_loan_record",
+    "apply_companion_staff",
 )
 
 

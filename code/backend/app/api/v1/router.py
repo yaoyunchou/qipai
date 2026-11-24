@@ -2,6 +2,7 @@ from fastapi import APIRouter
 
 from app.api.v1 import (
     auth,
+    companion_loans,
     config,
     expenses,
     loans,
@@ -21,4 +22,5 @@ api_router.include_router(config.router)
 api_router.include_router(reports.router)
 api_router.include_router(expenses.router)
 api_router.include_router(play_companion.router)
+api_router.include_router(companion_loans.router)
 api_router.include_router(loans.router)

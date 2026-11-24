@@ -5,6 +5,7 @@ ROLE_HOME: dict[UserRole, str] = {
     UserRole.MANAGER: "/admin",
     UserRole.SHAREHOLDER: "/reports",
     UserRole.ADMIN: "/admin",
+    UserRole.COMPANION: "/companion-loans",
 }
 
 
