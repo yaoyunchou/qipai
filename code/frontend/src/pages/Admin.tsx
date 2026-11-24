@@ -60,6 +60,7 @@ export default function AdminPage() {
     { label: "收银员", value: "CASHIER" },
     { label: "门店经理", value: "MANAGER" },
     { label: "股东", value: "SHAREHOLDER" },
+    { label: "陪玩", value: "COMPANION" },
     { label: "超级管理员", value: "ADMIN" },
   ];
 
@@ -511,7 +512,7 @@ export default function AdminPage() {
           onFinish={addUser}
           initialValues={{ role: "CASHIER" as UserAccount["role"] }}
         >
-          <Form.Item name="username" label="用户名" rules={[{ required: true, min: 2 }]}>
+          <Form.Item name="username" label="用户名" extra="陪玩账号的用户名就是工号，显示名当作别名" rules={[{ required: true, min: 2 }]}>
             <Input />
           </Form.Item>
           <Form.Item name="password" label="密码" rules={[{ required: true, min: 4 }]}>

@@ -16,6 +16,9 @@ TABLES_WITH_ID_SERIAL = (
     "expense_claim",
     "expense_claim_attachment",
     "expense_claim_approver",
+    "play_companion_record",
+    "loan_record",
+    "companion_loan",
 )
 
 

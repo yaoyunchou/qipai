@@ -12,6 +12,7 @@ class UserRole(str, enum.Enum):
     MANAGER = "MANAGER"
     SHAREHOLDER = "SHAREHOLDER"
     ADMIN = "ADMIN"
+    COMPANION = "COMPANION"
 
 
 class SysUser(Base):

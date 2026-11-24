@@ -21,6 +21,7 @@ import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   api,
+  type CompanionStaff,
   type PlayCompanionRecord,
   type PlayCompanionSummary,
   type TableBoardItem,
@@ -34,8 +35,11 @@ const { RangePicker } = DatePicker;
 
 type AmountDirection = "WIN" | "LOSE";
 
+const TIME_FORMAT = "YYYY-MM-DD HH:mm";
+
 type FormValues = {
   play_date: dayjs.Dayjs;
+  companion_user_id?: number;
   table_id?: number | null;
   duration_hours?: number | null;
   amount_direction: AmountDirection;
@@ -74,29 +78,31 @@ export default function PlayCompanionPage() {
 
   const [records, setRecords] = useState<PlayCompanionRecord[]>([]);
   const [tables, setTables] = useState<TableBoardItem[]>([]);
+  const [companions, setCompanions] = useState<CompanionStaff[]>([]);
+  const [companionId, setCompanionId] = useState<number | undefined>();
   const [summary, setSummary] = useState<PlayCompanionSummary | null>(null);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [dateRange, setDateRange] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null]>([
-    dayjs().startOf("month"),
-    dayjs(),
+    dayjs().startOf("month").startOf("day"),
+    dayjs().endOf("day"),
   ]);
 
   const [editOpen, setEditOpen] = useState(false);
   const [editRecord, setEditRecord] = useState<PlayCompanionRecord | null>(null);
   const [editSubmitting, setEditSubmitting] = useState(false);
 
-  // 股东只读；收银员 / 经理 / 超管可录入
+  // 收银员 / 经理 / 超管录入；股东可看。普通陪玩不能进入本页。
   const canEdit = !!me && ["CASHIER", "MANAGER", "ADMIN"].includes(me.role);
-  const canViewList = canEdit;
   const isAdmin = me?.role === "ADMIN";
 
   const queryString = useCallback(() => {
     const params = new URLSearchParams();
-    if (dateRange?.[0]) params.set("start", dateRange[0].format("YYYY-MM-DD"));
-    if (dateRange?.[1]) params.set("end", dateRange[1].format("YYYY-MM-DD"));
+    if (dateRange?.[0]) params.set("start", dateRange[0].format("YYYY-MM-DDTHH:mm:ss"));
+    if (dateRange?.[1]) params.set("end", dateRange[1].format("YYYY-MM-DDTHH:mm:ss"));
+    if (companionId) params.set("companion_user_id", String(companionId));
     return params.toString();
-  }, [dateRange]);
+  }, [companionId, dateRange]);
 
   const loadTables = useCallback(async () => {
     try {
@@ -107,14 +113,21 @@ export default function PlayCompanionPage() {
     }
   }, []);
 
+  const loadCompanions = useCallback(async () => {
+    try {
+      const data = await api<CompanionStaff[]>("/api/v1/play-companion/companions");
+      setCompanions(data);
+    } catch {
+      setCompanions([]);
+    }
+  }, []);
+
   const loadRecords = useCallback(async () => {
     const qs = queryString();
     setLoading(true);
     try {
       const [listRes, sumRes] = await Promise.allSettled([
-        canViewList
-          ? api<PlayCompanionRecord[]>(`/api/v1/play-companion?${qs}`)
-          : Promise.resolve([] as PlayCompanionRecord[]),
+        api<PlayCompanionRecord[]>(`/api/v1/play-companion?${qs}`),
         api<PlayCompanionSummary>(`/api/v1/play-companion/summary?${qs}`),
       ]);
       if (listRes.status === "fulfilled") setRecords(listRes.value);
@@ -123,12 +136,13 @@ export default function PlayCompanionPage() {
     } finally {
       setLoading(false);
     }
-  }, [canViewList, queryString]);
+  }, [queryString]);
 
   useEffect(() => {
     if (meLoading) return;
     loadTables();
-  }, [meLoading, loadTables]);
+    loadCompanions();
+  }, [meLoading, loadTables, loadCompanions]);
 
   useEffect(() => {
     if (meLoading) return;
@@ -139,6 +153,14 @@ export default function PlayCompanionPage() {
     () => tables.map((t) => ({ label: t.name, value: t.id })),
     [tables]
   );
+  const companionOptions = useMemo(
+    () =>
+      companions.map((c) => ({
+        value: c.id,
+        label: c.display_name && c.display_name !== c.username ? `${c.username} ${c.display_name}` : c.username,
+      })),
+    [companions]
+  );
 
   const submitRecord = async (values: FormValues) => {
     setSubmitting(true);
@@ -146,7 +168,8 @@ export default function PlayCompanionPage() {
       await api<PlayCompanionRecord>("/api/v1/play-companion", {
         method: "POST",
         body: JSON.stringify({
-          play_date: values.play_date.format("YYYY-MM-DD"),
+          play_date: values.play_date.format("YYYY-MM-DDTHH:mm:ss"),
+          companion_user_id: values.companion_user_id,
           table_id: values.table_id ?? null,
           duration_hours: values.duration_hours ?? null,
           amount: toSignedAmount(values.amount_direction, values.amount_abs),
@@ -169,6 +192,7 @@ export default function PlayCompanionPage() {
     const signed = Number(record.amount);
     editForm.setFieldsValue({
       play_date: dayjs(record.play_date),
+      companion_user_id: record.companion_user_id ?? undefined,
       table_id: record.table_id,
       duration_hours: record.duration_hours ? Number(record.duration_hours) : null,
       amount_direction: signed < 0 ? "LOSE" : "WIN",
@@ -185,7 +209,8 @@ export default function PlayCompanionPage() {
       await api<PlayCompanionRecord>(`/api/v1/play-companion/${editRecord.id}`, {
         method: "PUT",
         body: JSON.stringify({
-          play_date: values.play_date.format("YYYY-MM-DD"),
+          play_date: values.play_date.format("YYYY-MM-DDTHH:mm:ss"),
+          companion_user_id: values.companion_user_id,
           table_id: values.table_id ?? null,
           duration_hours: values.duration_hours ?? null,
           amount: toSignedAmount(values.amount_direction, values.amount_abs),
@@ -216,10 +241,21 @@ export default function PlayCompanionPage() {
 
   const columns: ColumnsType<PlayCompanionRecord> = [
     {
-      title: "日期",
+      title: "时间",
       dataIndex: "play_date",
+      width: 150,
+      render: (v: string) => dayjs(v).format(TIME_FORMAT),
+    },
+    {
+      title: "陪玩",
+      dataIndex: "companion_username",
       width: 120,
-      render: (v: string) => dayjs(v).format("YYYY-MM-DD"),
+      render: (_: string | null, row: PlayCompanionRecord) =>
+        row.companion_username
+          ? row.companion_name && row.companion_name !== row.companion_username
+            ? `${row.companion_username} ${row.companion_name}`
+            : row.companion_username
+          : "未指定",
     },
     {
       title: "台位",
@@ -349,11 +385,29 @@ export default function PlayCompanionPage() {
               <Flex wrap="wrap" gap={12}>
                 <Form.Item
                   name="play_date"
-                  label="日期"
-                  rules={[{ required: true, message: "请选择日期" }]}
+                  label="时间"
+                  rules={[{ required: true, message: "请选择时间" }]}
+                  style={{ flex: "1 1 200px", minWidth: 200 }}
+                >
+                  <DatePicker
+                    style={{ width: "100%" }}
+                    allowClear={false}
+                    showTime={{ format: "HH:mm" }}
+                    format={TIME_FORMAT}
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="companion_user_id"
+                  label="陪玩"
+                  rules={[{ required: true, message: "请选择陪玩" }]}
                   style={{ flex: "1 1 180px", minWidth: 180 }}
                 >
-                  <DatePicker style={{ width: "100%" }} allowClear={false} />
+                  <Select
+                    placeholder="工号或别名"
+                    options={companionOptions}
+                    showSearch
+                    optionFilterProp="label"
+                  />
                 </Form.Item>
                 <Form.Item name="table_id" label="台位" style={{ flex: "1 1 160px", minWidth: 160 }}>
                   <Select
@@ -407,11 +461,23 @@ export default function PlayCompanionPage() {
         )}
 
         <Card
-          title={canEdit ? "陪玩明细" : "陪玩汇总"}
+          title="陪玩明细"
           extra={
             <Space wrap>
+              <Select
+                allowClear
+                placeholder="全部陪玩"
+                style={{ minWidth: 160 }}
+                options={companionOptions}
+                value={companionId}
+                onChange={(v) => setCompanionId(v)}
+                showSearch
+                optionFilterProp="label"
+              />
               <RangePicker
                 value={dateRange}
+                showTime={{ format: "HH:mm" }}
+                format={TIME_FORMAT}
                 onChange={(v) => setDateRange(v ?? [null, null])}
                 allowEmpty={[true, true]}
               />
@@ -422,20 +488,14 @@ export default function PlayCompanionPage() {
           }
         >
           {summaryCards}
-          {canEdit ? (
-            <Table
-              rowKey="id"
-              loading={loading}
-              columns={columns}
-              dataSource={records}
-              pagination={{ pageSize: 10, showSizeChanger: false }}
-              scroll={{ x: 860 }}
-            />
-          ) : (
-            <Typography.Paragraph type="secondary" style={{ margin: 0 }}>
-              当前账号为股东角色，仅可查看陪玩汇总数据，明细由收银员 / 经理 / 超管录入。
-            </Typography.Paragraph>
-          )}
+          <Table
+            rowKey="id"
+            loading={loading}
+            columns={columns}
+            dataSource={records}
+            pagination={{ pageSize: 10, showSizeChanger: false }}
+            scroll={{ x: 980 }}
+          />
         </Card>
       </Content>
 
@@ -451,10 +511,18 @@ export default function PlayCompanionPage() {
         <Form form={editForm} layout="vertical" onFinish={submitEdit}>
           <Form.Item
             name="play_date"
-            label="日期"
-            rules={[{ required: true, message: "请选择日期" }]}
+            label="时间"
+            rules={[{ required: true, message: "请选择时间" }]}
           >
-            <DatePicker style={{ width: "100%" }} allowClear={false} />
+            <DatePicker
+              style={{ width: "100%" }}
+              allowClear={false}
+              showTime={{ format: "HH:mm" }}
+              format={TIME_FORMAT}
+            />
+          </Form.Item>
+          <Form.Item name="companion_user_id" label="陪玩" rules={[{ required: true, message: "请选择陪玩" }]}>
+            <Select placeholder="工号或别名" options={companionOptions} showSearch optionFilterProp="label" />
           </Form.Item>
           <Form.Item name="table_id" label="台位">
             <Select allowClear placeholder="可不选" options={tableOptions} showSearch optionFilterProp="label" />

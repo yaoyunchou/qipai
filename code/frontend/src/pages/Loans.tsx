@@ -113,6 +113,11 @@ export default function LoansPage() {
   const [repaySubmitting, setRepaySubmitting] = useState(false);
   const [repayForm] = Form.useForm<{ repay_date: dayjs.Dayjs; amount_abs: number; remark?: string }>();
 
+  const [lendOpen, setLendOpen] = useState(false);
+  const [lendTarget, setLendTarget] = useState<{ borrower: string; contact: string | null } | null>(null);
+  const [lendSubmitting, setLendSubmitting] = useState(false);
+  const [lendForm] = Form.useForm<{ loan_date: dayjs.Dayjs; amount_abs: number; remark?: string }>();
+
   // 客人总账详情抽屉
   const [detailOpen, setDetailOpen] = useState(false);
   const [detailBorrower, setDetailBorrower] = useState<string>("");
@@ -228,6 +233,43 @@ export default function LoansPage() {
       remark: undefined,
     });
     setRepayOpen(true);
+  };
+
+  /** 从客人总账继续借钱：客人锁定，金额由当场填写 */
+  const openLendForBorrower = (borrower: string, contact: string | null) => {
+    setLendTarget({ borrower, contact });
+    lendForm.setFieldsValue({
+      loan_date: dayjs(),
+      amount_abs: undefined,
+      remark: undefined,
+    });
+    setLendOpen(true);
+  };
+
+  const submitLend = async (values: { loan_date: dayjs.Dayjs; amount_abs: number; remark?: string }) => {
+    if (!lendTarget) return;
+    setLendSubmitting(true);
+    try {
+      await api<LoanRecord>("/api/v1/loans", {
+        method: "POST",
+        body: JSON.stringify({
+          loan_date: values.loan_date.format("YYYY-MM-DD"),
+          borrower: lendTarget.borrower,
+          contact: lendTarget.contact ?? null,
+          amount: Math.abs(values.amount_abs),
+          remark: values.remark ?? null,
+        }),
+      });
+      message.success(`已记录 ${lendTarget.borrower} 借钱`);
+      setLendOpen(false);
+      setLendTarget(null);
+      loadAll();
+      if (detailOpen && detailBorrower) loadDetail(detailBorrower);
+    } catch (e) {
+      message.error(e instanceof Error ? e.message : "借钱记录保存失败");
+    } finally {
+      setLendSubmitting(false);
+    }
   };
 
   /** 从「客人总账」行尾点「还钱」：弹框交互，默认金额为当前未还余额 */
@@ -778,19 +820,31 @@ export default function LoansPage() {
         width="min(720px, 100vw)"
         destroyOnClose
         extra={
-          canEdit && detail && Number(detail.balance) > 0 ? (
-            <Button
-              type="primary"
-              onClick={() =>
-                openRepayForBorrower(
-                  detail.borrower,
-                  Number(detail.balance),
-                  detail.records[0]?.contact ?? null
-                )
-              }
-            >
-              还钱
-            </Button>
+          canEdit && detail ? (
+            <Space>
+              <Button
+                type="primary"
+                onClick={() =>
+                  openLendForBorrower(detail.borrower, detail.records[0]?.contact ?? null)
+                }
+              >
+                借钱
+              </Button>
+              {Number(detail.balance) > 0 && (
+                <Button
+                  danger
+                  onClick={() =>
+                    openRepayForBorrower(
+                      detail.borrower,
+                      Number(detail.balance),
+                      detail.records[0]?.contact ?? null
+                    )
+                  }
+                >
+                  还钱
+                </Button>
+              )}
+            </Space>
           ) : null
         }
       >
@@ -897,6 +951,50 @@ export default function LoansPage() {
           )}
         </div>
       </Drawer>
+
+      <Modal
+        title={lendTarget ? `继续借钱 · ${lendTarget.borrower}` : "继续借钱"}
+        open={lendOpen}
+        onCancel={() => {
+          setLendOpen(false);
+          setLendTarget(null);
+        }}
+        onOk={() => lendForm.submit()}
+        okText="保存借钱"
+        confirmLoading={lendSubmitting}
+        destroyOnClose
+      >
+        <Form form={lendForm} layout="vertical" onFinish={submitLend}>
+          <Typography.Paragraph type="secondary" style={{ marginBottom: 16 }}>
+            记在「{lendTarget?.borrower}」名下，作为一笔新的借出。原来的流水不动，未还余额按全部记录重算。
+          </Typography.Paragraph>
+          <Form.Item
+            name="loan_date"
+            label="借钱日期"
+            rules={[{ required: true, message: "请选择日期" }]}
+          >
+            <DatePicker style={{ width: "100%" }} allowClear={false} />
+          </Form.Item>
+          <Form.Item
+            name="amount_abs"
+            label="借钱金额"
+            rules={[
+              { required: true, message: "请输入借钱金额" },
+              {
+                validator: (_, value) =>
+                  value === undefined || value === null || Number(value) > 0
+                    ? Promise.resolve()
+                    : Promise.reject(new Error("金额需大于 0")),
+              },
+            ]}
+          >
+            <InputNumber min={0.01} precision={2} prefix="¥" style={{ width: "100%" }} />
+          </Form.Item>
+          <Form.Item name="remark" label="备注">
+            <Input.TextArea rows={2} maxLength={500} showCount placeholder="例如：又借了一笔" />
+          </Form.Item>
+        </Form>
+      </Modal>
 
       <Modal
         title={repayTarget ? `记录还钱 · ${repayTarget.borrower}` : "记录还钱"}

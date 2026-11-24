@@ -1,7 +1,9 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { getToken } from "./api/client";
 import { UserProvider } from "./context/UserContext";
+import { useMe } from "./hooks/useMe";
 import AdminPage from "./pages/Admin";
+import CompanionLoansPage from "./pages/CompanionLoans";
 import ExpensesPage from "./pages/Expenses";
 import FloorPage from "./pages/Floor";
 import LoginPage from "./pages/Login";
@@ -10,8 +12,11 @@ import OrdersPage from "./pages/Orders";
 import PlayCompanionPage from "./pages/PlayCompanion";
 import ReportsPage from "./pages/Reports";
 
-function RequireAuth({ children }: { children: React.ReactNode }) {
+function RoleGate({ allow, children }: { allow: string[]; children: React.ReactNode }) {
+  const { me, loading } = useMe();
   if (!getToken()) return <Navigate to="/login" replace />;
+  if (loading || !me) return null;
+  if (!allow.includes(me.role)) return <Navigate to={me.home_path || "/login"} replace />;
   return <>{children}</>;
 }
 
@@ -22,57 +27,65 @@ function AppRoutes() {
         <Route
           path="/floor"
           element={
-            <RequireAuth>
+            <RoleGate allow={["CASHIER", "MANAGER", "SHAREHOLDER", "ADMIN"]}>
               <FloorPage />
-            </RequireAuth>
+            </RoleGate>
           }
         />
         <Route
           path="/reports"
           element={
-            <RequireAuth>
+            <RoleGate allow={["CASHIER", "MANAGER", "SHAREHOLDER", "ADMIN"]}>
               <ReportsPage />
-            </RequireAuth>
+            </RoleGate>
           }
         />
         <Route
           path="/orders"
           element={
-            <RequireAuth>
+            <RoleGate allow={["CASHIER", "MANAGER", "SHAREHOLDER", "ADMIN"]}>
               <OrdersPage />
-            </RequireAuth>
+            </RoleGate>
           }
         />
         <Route
           path="/expenses"
           element={
-            <RequireAuth>
+            <RoleGate allow={["CASHIER", "MANAGER", "SHAREHOLDER", "ADMIN"]}>
               <ExpensesPage />
-            </RequireAuth>
+            </RoleGate>
           }
         />
         <Route
           path="/play-companion"
           element={
-            <RequireAuth>
+            <RoleGate allow={["CASHIER", "MANAGER", "SHAREHOLDER", "ADMIN"]}>
               <PlayCompanionPage />
-            </RequireAuth>
+            </RoleGate>
+          }
+        />
+        <Route
+          path="/companion-loans"
+          element={
+            <RoleGate allow={["ADMIN", "SHAREHOLDER", "COMPANION"]}>
+              <CompanionLoansPage />
+            </RoleGate>
           }
         />
         <Route
           path="/loans"
           element={
-            <RequireAuth>
+            <RoleGate allow={["CASHIER", "MANAGER", "SHAREHOLDER", "ADMIN"]}>
               <LoansPage />
-            </RequireAuth>
+            </RoleGate>
           }
         />
         <Route
           path="/admin"
           element={
-            <RequireAuth>
+            <RoleGate allow={["MANAGER", "ADMIN"]}>
               <AdminPage />
-            </RequireAuth>
+            </RoleGate>
           }
         />
         <Route path="/config" element={<Navigate to="/admin" replace />} />

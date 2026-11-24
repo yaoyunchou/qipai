@@ -164,13 +164,23 @@ export type UserAccount = {
   id: number;
   username: string;
   display_name: string;
-  role: "CASHIER" | "MANAGER" | "SHAREHOLDER" | "ADMIN";
+  role: "CASHIER" | "MANAGER" | "SHAREHOLDER" | "ADMIN" | "COMPANION";
+  is_enabled: boolean;
+};
+
+export type CompanionStaff = {
+  id: number;
+  username: string;
+  display_name: string;
   is_enabled: boolean;
 };
 
 export type PlayCompanionRecord = {
   id: number;
   play_date: string;
+  companion_user_id: number | null;
+  companion_username: string | null;
+  companion_name: string | null;
   table_id: number | null;
   table_name: string;
   duration_hours: string | null;
@@ -190,6 +200,35 @@ export type PlayCompanionSummary = {
   /** 净额 = win_total - lose_total，可为负数 */
   net_total: string;
   duration_total: string;
+};
+
+export type CompanionLoanRecord = {
+  id: number;
+  companion_user_id: number;
+  companion_username: string | null;
+  companion_name: string | null;
+  direction: "LEND" | "REPAY";
+  amount: string;
+  status: "PENDING" | "CONFIRMED";
+  occurred_at: string;
+  remark: string | null;
+  created_by: number;
+  created_by_name: string | null;
+  confirmed_by: number | null;
+  confirmed_by_name: string | null;
+  confirmed_at: string | null;
+  created_at: string;
+};
+
+export type CompanionBalance = {
+  companion_user_id: number;
+  username: string;
+  display_name: string;
+  is_enabled: boolean;
+  lend_total: string;
+  repay_total: string;
+  balance: string;
+  pending_count: number;
 };
 
 export type LoanRecord = {

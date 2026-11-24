@@ -73,6 +73,14 @@ cd backend
 python -m scripts.apply_play_companion_signed_amount
 ```
 
+若库中还没有陪玩员工角色和陪玩借款表，需执行：
+
+```powershell
+cd backend
+.\.venv\Scripts\Activate.ps1
+python -m scripts.apply_companion_staff
+```
+
 若库中还没有借钱还钱表（客人借还款无法记录），需执行：
 
 ```powershell

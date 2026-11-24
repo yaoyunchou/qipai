@@ -342,6 +342,8 @@ def expense_report_summary(
     period: str = Query("day", pattern="^(day|week|month)$"),
     start: date | None = None,
 ):
+    if user.role == UserRole.COMPANION:
+        raise HTTPException(status_code=403, detail="陪玩账号不能查看报销")
     s, e, start_str, end_str = _parse_range(period, start)
     q = select(
         func.count(ExpenseClaim.id),

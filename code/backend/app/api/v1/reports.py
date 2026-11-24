@@ -60,6 +60,8 @@ def summary(
     start: date | None = None,
     end: date | None = None,
 ):
+    if user.role == UserRole.COMPANION:
+        raise HTTPException(status_code=403, detail="陪玩账号不能查看营业报表")
     s, e, start_str, end_str = _parse_range(period, start, end)
     _apply_report_limit(user, db, s)
     q = select(

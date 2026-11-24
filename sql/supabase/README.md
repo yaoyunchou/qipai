@@ -34,8 +34,9 @@ DATABASE_SSL_MODE=require
 | `price_change_log` | 基准价修改审计 |
 | `room_table` | 台位名称、排序、启用/停用 |
 | `biz_order` | 开单订单：快照基准价、实收价、开单/清台人与时间、OPEN/CLOSED |
-| `play_companion_record` | 陪玩记账：日期、台位快照、时长、带符号金额（赢正输负） |
-| `loan_record` | 借钱还钱：日期、客人、联系方式、带符号金额（借出正/还钱负）、备注 |
+| `play_companion_record` | 陪玩记账：发生时间、陪玩员工、台位快照、时长、带符号金额（赢正输负） |
+| `loan_record` | 客人借钱还钱：日期、客人、联系方式、带符号金额（借出正/还钱负）、备注 |
+| `companion_loan` | 陪玩向股东借款：放款待陪玩确认，还款待股东确认，未确认不计入欠款 |
 
 ### 增量迁移脚本
 
@@ -43,7 +44,8 @@ DATABASE_SSL_MODE=require
 |------|------|
 | `04-expense-module.sql` ~ `08-expense-category-living.sql` | 报销审批模块及其分类演进 |
 | `09-play-companion.sql` / `10-play-companion-signed-amount.sql` | 陪玩记账建表 / 金额改为带符号 |
-| `11-loan-record.sql` | 借钱还钱建表（`python -m scripts.apply_loan_record`） |
+| `11-loan-record.sql` | 客人借钱还钱建表（`python -m scripts.apply_loan_record`） |
+| `12-companion-staff.sql` | 陪玩角色、记账到小时、陪玩借款（`python -m scripts.apply_companion_staff`） |
 
 ## 安全
 
