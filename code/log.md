@@ -3,6 +3,7 @@
 ## 2026-11-24
 
 - 陪玩记账从陪玩角色收回。菜单不再显示「陪玩记账」，路由只允许收银员、经理、股东、管理员。`/api/v1/play-companion` 对陪玩返回 403。陪玩登录落地页改为 `/companion-loans`。
+- 生产发布 `6b62e24`。先备份再执行迁移 05 到 12，`apply_companion_staff` 成功后才上传代码并重启 `qipai-api`。三个域名首页 200，`/qipai/api/v1/companion-loans` 与陪玩记账接口均为 401。线上备份 `/www/backup/qipai_20261124_174543/`。
 
 ## 2026-11-23
 
