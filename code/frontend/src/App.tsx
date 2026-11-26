@@ -67,7 +67,7 @@ function AppRoutes() {
         <Route
           path="/companion-loans"
           element={
-            <RoleGate allow={["ADMIN", "SHAREHOLDER", "COMPANION"]}>
+            <RoleGate allow={["CASHIER", "MANAGER", "COMPANION", "SHAREHOLDER", "ADMIN"]}>
               <CompanionLoansPage />
             </RoleGate>
           }

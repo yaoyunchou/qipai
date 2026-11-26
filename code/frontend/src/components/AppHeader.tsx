@@ -28,7 +28,7 @@ export default function AppHeader({ title }: AppHeaderProps) {
   const showExpenses = !isCompanion;
   const showGuestLoans = !isCompanion;
   const showPlayCompanion = !isCompanion;
-  const showCompanionLoans = !!me && ["ADMIN", "SHAREHOLDER", "COMPANION"].includes(me.role);
+  const showCompanionLoans = !!me;
   const showAdmin = me?.role === "ADMIN" || me?.role === "MANAGER";
 
   const logout = () => {

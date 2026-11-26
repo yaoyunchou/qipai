@@ -1,7 +1,7 @@
 """陪玩向股东借款。
 
-股东或超管记放款，陪玩登录后自己确认。陪玩发起还款，股东或超管确认。
-未确认的记录不进欠款。客人借钱不走这里。
+股东或管理员记放款。前台、经理、陪玩都能当收款人，用自己的账号确认放款、发起还款。
+还款由股东或管理员确认。未确认的记录不进欠款。客人借钱不走这里。
 """
 from decimal import Decimal
 from typing import Annotated
@@ -21,9 +21,13 @@ from app.schemas.companion_loan import (
 
 router = APIRouter(prefix="/companion-loans", tags=["companion-loans"])
 
-LenderUser = Annotated[SysUser, Depends(require_roles(UserRole.SHAREHOLDER, UserRole.ADMIN))]
+LENDER_ROLES = (UserRole.SHAREHOLDER, UserRole.ADMIN)
+BORROWER_ROLES = (UserRole.CASHIER, UserRole.MANAGER, UserRole.COMPANION)
+
+LenderUser = Annotated[SysUser, Depends(require_roles(*LENDER_ROLES))]
 ViewerUser = Annotated[
-    SysUser, Depends(require_roles(UserRole.SHAREHOLDER, UserRole.ADMIN, UserRole.COMPANION))
+    SysUser,
+    Depends(require_roles(*LENDER_ROLES, *BORROWER_ROLES)),
 ]
 
 
@@ -56,26 +60,30 @@ def _to_out(record: CompanionLoan, db) -> CompanionLoanOut:
     )
 
 
-def _require_active_companion(db, companion_user_id: int) -> SysUser:
+def _is_borrower(user: SysUser) -> bool:
+    return user.role in BORROWER_ROLES
+
+
+def _require_active_borrower(db, companion_user_id: int) -> SysUser:
     companion = db.get(SysUser, companion_user_id)
-    if not companion or companion.role != UserRole.COMPANION:
-        raise HTTPException(status_code=400, detail="请选择陪玩员工")
+    if not companion or companion.role not in BORROWER_ROLES:
+        raise HTTPException(status_code=400, detail="请选择前台、经理或陪玩")
     if not companion.is_enabled:
-        raise HTTPException(status_code=400, detail="该陪玩已停用")
+        raise HTTPException(status_code=400, detail="该账号已停用")
     return companion
 
 
 def _scope(user: SysUser, companion_user_id: int | None) -> int | None:
-    if user.role == UserRole.COMPANION:
+    if _is_borrower(user):
         return user.id
     return companion_user_id
 
 
 @router.get("/balances", response_model=list[CompanionBalanceOut])
 def balances(db: DbSession, user: ViewerUser):
-    """每个陪玩一条：只统计已确认的放款和还款。"""
-    staff_q = select(SysUser).where(SysUser.role == UserRole.COMPANION).order_by(SysUser.username)
-    if user.role == UserRole.COMPANION:
+    """每个可陪玩的账号一条：只统计已确认的放款和还款。前台、经理、陪玩只看自己。"""
+    staff_q = select(SysUser).where(SysUser.role.in_(BORROWER_ROLES)).order_by(SysUser.username)
+    if _is_borrower(user):
         staff_q = staff_q.where(SysUser.id == user.id)
     staff = db.scalars(staff_q).all()
     if not staff:
@@ -161,7 +169,7 @@ def list_loans(
 def create_lend(body: CompanionLoanCreate, db: DbSession, user: LenderUser):
     if body.companion_user_id is None:
         raise HTTPException(status_code=400, detail="请选择陪玩")
-    _require_active_companion(db, body.companion_user_id)
+    _require_active_borrower(db, body.companion_user_id)
     record = CompanionLoan(
         companion_user_id=body.companion_user_id,
         direction=CompanionLoanDirection.LEND.value,
@@ -180,8 +188,8 @@ def create_lend(body: CompanionLoanCreate, db: DbSession, user: LenderUser):
 
 @router.post("/repay", response_model=CompanionLoanOut, status_code=status.HTTP_201_CREATED)
 def create_repay(body: CompanionLoanCreate, db: DbSession, user: ViewerUser):
-    if user.role != UserRole.COMPANION:
-        raise HTTPException(status_code=403, detail="还款由陪玩本人发起")
+    if not _is_borrower(user):
+        raise HTTPException(status_code=403, detail="还款由本人发起")
     record = CompanionLoan(
         companion_user_id=user.id,
         direction=CompanionLoanDirection.REPAY.value,
@@ -206,8 +214,8 @@ def confirm_loan(loan_id: int, db: DbSession, user: ViewerUser):
     if record.status == CompanionLoanStatus.CONFIRMED.value:
         raise HTTPException(status_code=400, detail="这条已经确认过了")
     if record.direction == CompanionLoanDirection.LEND.value:
-        if user.role != UserRole.COMPANION or user.id != record.companion_user_id:
-            raise HTTPException(status_code=403, detail="放款要由这笔账的陪玩自己确认")
+        if not _is_borrower(user) or user.id != record.companion_user_id:
+            raise HTTPException(status_code=403, detail="放款要由这笔账的本人确认")
     elif user.role not in (UserRole.SHAREHOLDER, UserRole.ADMIN):
         raise HTTPException(status_code=403, detail="还款要由股东或管理员确认")
     record.status = CompanionLoanStatus.CONFIRMED.value

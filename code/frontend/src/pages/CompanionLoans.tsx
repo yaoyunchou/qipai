@@ -48,7 +48,7 @@ export default function CompanionLoansPage() {
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const isCompanion = me?.role === "COMPANION";
+  const isBorrower = !!me && ["CASHIER", "MANAGER", "COMPANION"].includes(me.role);
   const canLend = !!me && ["SHAREHOLDER", "ADMIN"].includes(me.role);
   const canConfirmRepay = canLend;
   const isAdmin = me?.role === "ADMIN";
@@ -56,7 +56,7 @@ export default function CompanionLoansPage() {
   const loadAll = useCallback(async () => {
     setLoading(true);
     const params = new URLSearchParams();
-    if (!isCompanion && companionId) params.set("companion_user_id", String(companionId));
+    if (canLend && companionId) params.set("companion_user_id", String(companionId));
     const qs = params.toString();
     try {
       const [balanceRes, listRes] = await Promise.all([
@@ -70,7 +70,7 @@ export default function CompanionLoansPage() {
     } finally {
       setLoading(false);
     }
-  }, [companionId, isCompanion]);
+  }, [companionId, canLend]);
 
   useEffect(() => {
     if (meLoading) return;
@@ -107,7 +107,7 @@ export default function CompanionLoansPage() {
           remark: values.remark ?? null,
         }),
       });
-      message.success(canLend ? "放款已记下，等陪玩确认" : "还款已提交，等股东确认");
+      message.success(canLend ? "放款已记下，等对方确认" : "还款已提交，等股东或管理员确认");
       form.resetFields();
       form.setFieldsValue({ occurred_at: dayjs() });
       loadAll();
@@ -146,7 +146,7 @@ export default function CompanionLoansPage() {
       render: (v: string) => dayjs(v).format(TIME_FORMAT),
     },
     {
-      title: "陪玩",
+      title: "员工",
       width: 140,
       render: (_, row) =>
         row.companion_name && row.companion_name !== row.companion_username
@@ -179,7 +179,7 @@ export default function CompanionLoansPage() {
       title: "确认人",
       width: 120,
       render: (_, row) =>
-        row.status === "CONFIRMED" ? row.confirmed_by_name || "-" : row.direction === "LEND" ? "待陪玩" : "待股东",
+        row.status === "CONFIRMED" ? row.confirmed_by_name || "-" : row.direction === "LEND" ? "待本人" : "待股东",
     },
     {
       title: "操作",
@@ -187,7 +187,7 @@ export default function CompanionLoansPage() {
       render: (_, row) => {
         const canConfirm =
           row.status === "PENDING" &&
-          ((row.direction === "LEND" && isCompanion) || (row.direction === "REPAY" && canConfirmRepay));
+          ((row.direction === "LEND" && isBorrower) || (row.direction === "REPAY" && canConfirmRepay));
         return (
           <Space size={0}>
             {canConfirm && (
@@ -222,12 +222,12 @@ export default function CompanionLoansPage() {
               {canLend && (
                 <Form.Item
                   name="companion_user_id"
-                  label="陪玩"
-                  rules={[{ required: true, message: "请选择陪玩" }]}
+                  label="收款人"
+                  rules={[{ required: true, message: "请选择收款人" }]}
                   style={{ flex: "1 1 180px", minWidth: 180 }}
                 >
                   <Select
-                    placeholder="工号或别名"
+                    placeholder="前台、经理或陪玩"
                     options={companionOptions.filter((opt) => balances.find((b) => b.companion_user_id === opt.value)?.is_enabled)}
                     showSearch
                     optionFilterProp="label"
@@ -261,13 +261,13 @@ export default function CompanionLoansPage() {
         </Card>
 
         <Card
-          title={isCompanion ? "我的借还" : "陪玩借还"}
+          title={isBorrower ? "我的借还" : "陪玩借还"}
           extra={
             <Space wrap>
-              {!isCompanion && (
+              {canLend && (
                 <Select
                   allowClear
-                  placeholder="全部陪玩"
+                  placeholder="全部员工"
                   style={{ minWidth: 160 }}
                   options={companionOptions}
                   value={companionId}
@@ -297,7 +297,7 @@ export default function CompanionLoansPage() {
             </Card>
           </Flex>
           <Typography.Paragraph type="secondary" style={{ marginTop: 0 }}>
-            欠款只算已确认的流水。放款要陪玩自己点确认，还款要股东或管理员点确认。
+            欠款只算已确认的流水。放款由收款人自己确认，还款由股东或管理员确认。前台、经理和陪玩用自己的账号还款。
           </Typography.Paragraph>
           <Table
             rowKey="id"
