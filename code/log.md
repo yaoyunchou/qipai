@@ -2,6 +2,7 @@
 
 ## 2026-11-26
 
+- `AppHeader` 去掉「陪玩记账」入口。`/play-companion` 路由和接口未删。
 - 陪玩借还的收款人从仅 `COMPANION` 扩到前台、经理、陪玩。这三类登录 `/companion-loans` 只看自己的待确认放款和还款入口。股东、管理员保留放款，并确认还款。菜单对所有已登录角色显示。
 - 生产发布 `d0fbfbe`。三个域名首页 200，`/qipai/api/v1/companion-loans` 为 401。线上备份 `/www/backup/qipai_20261126_122438/`。
 

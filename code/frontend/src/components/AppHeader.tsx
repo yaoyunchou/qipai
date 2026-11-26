@@ -27,7 +27,6 @@ export default function AppHeader({ title }: AppHeaderProps) {
   const showReports = !isCompanion;
   const showExpenses = !isCompanion;
   const showGuestLoans = !isCompanion;
-  const showPlayCompanion = !isCompanion;
   const showCompanionLoans = !!me;
   const showAdmin = me?.role === "ADMIN" || me?.role === "MANAGER";
 
@@ -42,7 +41,6 @@ export default function AppHeader({ title }: AppHeaderProps) {
     showOrders && { to: "/orders", label: "订单明细" },
     showReports && { to: "/reports", label: "营业报表" },
     showExpenses && { to: "/expenses", label: "报销审批" },
-    showPlayCompanion && { to: "/play-companion", label: "陪玩记账" },
     showCompanionLoans && { to: "/companion-loans", label: "陪玩借还" },
     showGuestLoans && { to: "/loans", label: "借钱还钱" },
     showAdmin && { to: "/admin", label: me?.role === "ADMIN" ? "后台配置" : "后台" },
